@@ -9,7 +9,7 @@ const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 임시 로그인 상태관리
 
   return (
-    <nav className="flex h-[85px] px-40 justify-between items-center bg-warmGray50 border-b border-warmGray300">
+    <nav className="sticky top-0 flex h-[85px] px-40 justify-between items-center bg-warmGray50 border-b border-warmGray300">
       {/* 로고 영역 */}
       <Link href="/">
         <Image src="/logo.png" alt="Logo" width={92} height={28} />
@@ -38,7 +38,7 @@ const Navigation = () => {
             </Link>
           </div>
         ) : (
-          <NavigationItem href="/login">login</NavigationItem>
+          <NavigationItem href="/ㅇㅇ">login</NavigationItem>
         )}
       </div>
     </nav>
