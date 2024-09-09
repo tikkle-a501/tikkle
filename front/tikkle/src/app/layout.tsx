@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local"
+import localFont from "next/font/local";
 import "./globals.css";
+import Navigation from "@/components/navigation/Navigation";
 
 const pretendard = localFont({
   src: "./_font/PretendardVariable.woff2",
@@ -20,9 +21,15 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+        />
       </head>
-      <body className={pretendard.className}>{children}</body>
+      <body className={pretendard.className}>
+        <Navigation />
+        {children}
+      </body>
     </html>
   );
 }
