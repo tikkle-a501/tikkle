@@ -38,7 +38,7 @@ const Navigation = () => {
             </Link>
           </div>
         ) : (
-          <NavigationItem href="/ㅇㅇ">login</NavigationItem>
+          <NavigationItem href="/login">login</NavigationItem>
         )}
       </div>
     </nav>
