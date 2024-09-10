@@ -1,4 +1,5 @@
 import Button from "../button/Button";
+import PromiseInput from "../input/PromiseInput";
 
 const PromiseDropdown: React.FC = () => {
   return (
@@ -8,35 +9,19 @@ const PromiseDropdown: React.FC = () => {
 
       {/* 시간(재화) 입력 */}
       <div className="flex justify-end items-center gap-10 self-stretch px-0 py-10 min-w-0">
-        <input
-          className="flex-grow min-w-0 text-18 font-semibold placeholder-coolGray300 placeholder:text-18 placeholder:font-semibold text-right"
-          placeholder="0"
-          autoFocus
-        />
+        <PromiseInput autoFocus />
         <div className="whitespace-nowrap">시간</div>
       </div>
 
       {/* 날짜 입력 */}
-      <div className="flex justify-end items-center gap-8 self-stretch px-0 py-10">
-        <input
-          className="flex-grow min-w-0 text-18 font-semibold placeholder-coolGray300 placeholder:text-18 placeholder:font-semibold text-right"
-          placeholder="0"
-        />
+      <div className="appearance-none border-none outline-none flex justify-end items-center gap-8 self-stretch px-0 py-10">
+        <PromiseInput />
         <div>월</div>
-        <input
-          className="flex-grow min-w-0 text-18 font-semibold placeholder-coolGray300 placeholder:text-18 placeholder:font-semibold text-right"
-          placeholder="0"
-        />
+        <PromiseInput />
         <div>일</div>
-        <input
-          className="flex-grow min-w-0 text-18 font-semibold placeholder-coolGray300 placeholder:text-18 placeholder:font-semibold text-right"
-          placeholder="0"
-        />
+        <PromiseInput />
         <div>시</div>
-        <input
-          className="flex-grow min-w-0 text-18 font-semibold placeholder-coolGray300 placeholder:text-18 placeholder:font-semibold text-right"
-          placeholder="0"
-        />
+        <PromiseInput />
         <div>분</div>
       </div>
 
