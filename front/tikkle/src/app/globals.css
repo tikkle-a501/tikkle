@@ -39,24 +39,7 @@ canvas {
   background-size: cover;
 }
 
-input {
-  all: unset;
-  /* 모든 기본 스타일 제거 */
-  box-sizing: border-box;
-  /* 박스 크기 조정 */
-  font: inherit;
-  /* 부모 요소의 폰트 스타일 상속 */
-  width: 100%;
-  /* 가로 너비 100% 설정 */
-  outline: none;
-  /* 기본 아웃라인 제거 */
-}
-
-input::placeholder {
-  color: inherit;
-  /* 플레이스홀더 텍스트 색상 상속 */
-}
-
+input,
 button,
 textarea,
 select {
