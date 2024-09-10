@@ -40,7 +40,7 @@ public class Account extends AuditableEntity {
 	@OneToMany(mappedBy = "account")
 	private List<ExchangeLog> exchangeLogs;
 
-	@Column(name = "time_qnt", columnDefinition = "TINYINT UNSIGNED")
+	@Column(name = "time_qnt", columnDefinition = "INTEGER")
 	private Integer timeQnt;
 
 	@Column(name = "ranking_point", columnDefinition = "TINYINT UNSIGNED")
