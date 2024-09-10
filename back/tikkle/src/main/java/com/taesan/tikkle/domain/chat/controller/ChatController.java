@@ -11,6 +11,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.taesan.tikkle.domain.chat.entity.ChatMessage;
+
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
@@ -22,8 +24,8 @@ public class ChatController {
 
 	@MessageMapping("/sendMessage")
 	public void sendMessage(@Payload ChatMessage chatMessage){
+		// TODO : ChatMessage를 MongoDB 활용하여 NoSQL 데이터베이스에 저장하는 로직 필요
 		kafkaTemplate.send("chatroom-" + chatMessage.getChatRoomId().toString(),chatMessage.getContent());
-
 	}
 
 	@KafkaListener(topicPattern = "chatroom-*", groupId = "chat-group")

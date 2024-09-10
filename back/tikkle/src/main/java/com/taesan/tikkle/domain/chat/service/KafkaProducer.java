@@ -1,4 +1,4 @@
-package com.taesan.tikkle.domain.chat;
+package com.taesan.tikkle.domain.chat.service;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.taesan.tikkle.domain.chat.controller;
+package com.taesan.tikkle.domain.chat.entity;
 
 import java.util.UUID;
 
