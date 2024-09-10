@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,12 +27,14 @@ public class Rate extends BaseEntity {
 	private UUID id = UlidCreator.getMonotonicUlid().toUuid();
 
 	@Column(name = "time_to_rank")
-	private Double timeToRank;
-
-	@Column(name = "rank_to_time")
-	private Double rankToTime;
+	private Integer timeToRank;
 
 	@OneToMany(mappedBy = "rate")
 	private List<ExchangeLog> exchangeLogs;
+
+	@Builder
+	public Rate(int timeToRank) {
+		this.timeToRank = timeToRank;
+	}
 }
 
