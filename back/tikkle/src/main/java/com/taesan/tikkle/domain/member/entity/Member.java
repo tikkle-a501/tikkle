@@ -9,6 +9,7 @@ import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.chat.entity.Chatroom;
 import com.taesan.tikkle.domain.organization.entity.Organization;
 import com.taesan.tikkle.domain.review.entity.Review;
+import com.taesan.tikkle.global.entity.AuditableEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,10 +19,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "members")
-public class Member {
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Member extends AuditableEntity {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID id = UlidCreator.getMonotonicUlid().toUuid();
