@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
-
 interface ButtonProps {
   size: "l" | "m" | "s";
   variant: "primary" | "secondary" | "tertiary";
   design: "fill" | "outline";
   disabled?: boolean;
-  textAlign?: "left" | "center" | "right";
   onClick?: () => void;
-  children: React.ReactNode;
+  left?: string; // Left 텍스트 (옵셔널)
+  main: string; // Main 텍스트 (필수)
+  right?: string; // Right 텍스트 (옵셔널)
+  children?: React.ReactNode;
 }
 
 const colorClasses: Record<string, { fill: string; outline?: string }> = {
@@ -31,31 +31,34 @@ const Button: React.FC<ButtonProps> = ({
   variant,
   design,
   disabled = false, // 기본값으로 false
-  textAlign = "center", // 기본값으로 'center'
   onClick,
+  left,
+  main,
+  right,
   children,
 }) => {
   const sizeClasses = {
-    l: "flex p-16 text-17 items-center gap-8 rounded-12",
-    m: "flex p-16 text-16 items-center gap-8 rounded-10",
-    s: "flex p-16 text-15 items-center gap-8 rounded-8",
-  };
-
-  const textAlignClasses = {
-    left: "justify-start",
-    center: "justify-center",
-    right: "justify-end",
+    l: "flex justify-center items-center h-56 p-16 text-17 items-center gap-8 rounded-12",
+    m: "flex justify-center items-center h-48 p-16 text-16 items-center gap-8 rounded-10",
+    s: "flex justify-center items-center h-40 p-16 text-15 items-center gap-8 rounded-8",
   };
 
   const className = `${sizeClasses[size]} ${
     colorClasses[variant][design] || ""
-  } ${textAlignClasses[textAlign]} font-semibold ${
-    disabled ? "cursor-not-allowed" : "cursor-pointer"
-  }`;
+  } ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`;
 
   return (
     <button className={className} disabled={disabled} onClick={onClick}>
-      {children}
+      {/* Children(아이콘 사용 시) 을 왼쪽에 추가 */}
+      {children && (
+        <div className="flex justify-center items-center">{children}</div>
+      )}
+      {/* Left 텍스트 (옵셔널) */}
+      {left && <div className="font-normal">{left}</div>}
+      {/* Main 텍스트 (필수) */}
+      <div className="font-semibold">{main}</div>
+      {/* Right 텍스트 (옵셔널) */}
+      {right && <div className="font-normal">{right}</div>}
     </button>
   );
 };
