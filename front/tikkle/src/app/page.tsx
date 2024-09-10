@@ -1,6 +1,7 @@
 import Badge from "@/components/badge/Badge";
 import BoardCard from "@/components/card/BoardCard";
 import Button from "@/components/button/Button";
+import Dropbox from "@/components/drop-down/Dropbox";
 
 export default function Landing() {
   const testCards = [
@@ -110,6 +111,8 @@ export default function Landing() {
           context={card.context}
         />
       ))}
+
+      <Dropbox items={["Option 1", "Option 2", "Option 3"]} />
     </div>
   );
 }
