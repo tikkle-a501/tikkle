@@ -7,6 +7,7 @@ import com.github.f4b6a3.ulid.UlidCreator;
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.member.entity.Member;
+import com.taesan.tikkle.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chatrooms")
-public class Chatroom {
+public class Chatroom extends BaseEntity {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID id = UlidCreator.getMonotonicUlid().toUuid();

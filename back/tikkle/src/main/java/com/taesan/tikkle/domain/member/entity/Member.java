@@ -9,6 +9,7 @@ import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.chat.entity.Chatroom;
 import com.taesan.tikkle.domain.organization.entity.Organization;
 import com.taesan.tikkle.domain.review.entity.Review;
+import com.taesan.tikkle.global.entity.AuditableEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +22,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "members")
-public class Member {
+public class Member extends AuditableEntity {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID id = UlidCreator.getMonotonicUlid().toUuid();
