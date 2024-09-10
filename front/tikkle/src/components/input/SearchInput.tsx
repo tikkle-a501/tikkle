@@ -63,7 +63,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           placeholder={placeholder}
           value={inputValue}
           onChange={handleInputChange}
-          className="appearance-none flex-1 text-17 font-bold placeholder-warmGray300 focus:outline-none"
+          className="appearance-none flex-1 text-17` placeholder-warmGray300 focus:outline-none"
         />
 
         {/* 오른쪽 아이콘: 입력 값이 있을 때만 표시 */}
