@@ -2,6 +2,7 @@ import Badge from "@/components/badge/Badge";
 import BoardCard from "@/components/card/BoardCard";
 import Button from "@/components/button/Button";
 import Dropbox from "@/components/drop-down/Dropbox";
+import TitleInput from "@/components/input/TitleInput";
 
 export default function Landing() {
   const testCards = [
@@ -113,6 +114,10 @@ export default function Landing() {
       ))}
 
       <Dropbox items={["Option 1", "Option 2", "Option 3"]} />
+
+      <div>
+        <TitleInput width="300px" placeholder="제목을 입력하세요." />
+      </div>
     </div>
   );
 }
