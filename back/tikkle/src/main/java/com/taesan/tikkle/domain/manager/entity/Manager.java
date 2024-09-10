@@ -14,9 +14,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "managers")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Manager extends BaseEntity {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")

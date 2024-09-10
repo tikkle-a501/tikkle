@@ -15,9 +15,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "boards")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends AuditableEntity {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")

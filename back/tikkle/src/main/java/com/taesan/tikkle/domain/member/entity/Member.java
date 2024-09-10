@@ -19,9 +19,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "members")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends AuditableEntity {
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
