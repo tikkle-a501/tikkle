@@ -6,9 +6,9 @@ interface BadgeProps {
 
 const Badge: React.FC<BadgeProps> = ({ size, color, children }) => {
   const sizeClasses = {
-    l: "p-4 text-14 rounded-4",
-    m: "p-4 text-13 rounded-4",
-    s: "p-4 text-12 rounded-4",
+    l: "inline-flex justify-center items-center p-4 h-[27px] text-14 rounded-4",
+    m: "inline-flex justify-center items-center p-4 h-[22px] text-13 rounded-4",
+    s: "inline-flex justify-center items-center p-4 h-[20px] text-12 rounded-4",
   };
 
   const colorClasses = {
@@ -19,9 +19,9 @@ const Badge: React.FC<BadgeProps> = ({ size, color, children }) => {
   };
 
   return (
-    <span className={`${sizeClasses[size]} ${colorClasses[color]}`}>
+    <div className={`${sizeClasses[size]} ${colorClasses[color]}`}>
       {children}
-    </span>
+    </div>
   );
 };
 
