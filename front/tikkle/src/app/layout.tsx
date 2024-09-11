@@ -28,7 +28,9 @@ export default function RootLayout({
       </head>
       <body className={pretendard.className}>
         <Navigation />
-        {children}
+        <div className="flex flex-col pt-[28px] pr-[48px] pb-[40px] pl-[48px] gap-[10px]">
+          {children}
+        </div>
       </body>
     </html>
   );
