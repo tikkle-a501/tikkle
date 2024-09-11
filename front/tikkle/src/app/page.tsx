@@ -5,7 +5,7 @@ import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
 import ChatList from "@/components/chat/ChatList";
-import MessageList from "@/components/chat/MessageList";
+import MenuList from "@/components/list/MenuList";
 
 export default function Landing() {
   const testCards = [
