@@ -1,20 +1,17 @@
-import Badge from "@/components/badge/Badge";
+import Chips from "@/components/chips/Chips";
 
 export default function Landing() {
   return (
-    <div className="space-y-4 p-8">
-      <Badge size="l" color="teal">
-        Teal Large
-      </Badge>
-      <Badge size="m" color="red">
-        Red Medium
-      </Badge>
-      <Badge size="s" color="yellow">
-        Yellow Small
-      </Badge>
-      <Badge size="l" color="gray">
-        Gray Large
-      </Badge>
+    <div className="flex">
+      <Chips variant="primary" design="fill" size="m">
+        Chips
+      </Chips>
+      <Chips variant="primary" design="outline" size="m">
+        Chips
+      </Chips>
+      <Chips variant="secondary" design="fill" size="m">
+        Chips
+      </Chips>
     </div>
   );
 }

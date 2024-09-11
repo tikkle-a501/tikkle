@@ -2,7 +2,7 @@
 
 interface ChipsProps {
   size: "l" | "m" | "s";
-  variant: "primary" | "secondary" | "tertiary";
+  variant: "primary" | "secondary";
   design: "fill" | "outline";
   disabled?: boolean;
   onClick?: () => void;
@@ -11,15 +11,12 @@ interface ChipsProps {
 
 const colorClasses: Record<string, { fill: string; outline?: string }> = {
   primary: {
-    fill: "text-white bg-teal500 hover:bg-teal700 disabled:bg-coolGray300",
+    fill: "text-white bg-teal500 hover:bg-teal700 ",
     outline:
-      "text-teal500 bg-white border border-teal500 hover:text-teal700 hover:border-teal700 disabled:text-coolGray300 disabled:border-coolGray300",
+      "text-teal500 bg-white border border-teal500 hover:text-teal700 hover:border-teal700 ",
   },
   secondary: {
-    fill: "text-white bg-coolGray400 hover:bg-coolGray600 disabled:bg-coolGray300",
-  },
-  tertiary: {
-    fill: "text-teal500 bg-white disabled:text-coolGray300",
+    fill: "text-white bg-coolGray400 hover:bg-coolGray600",
   },
 };
 
@@ -39,7 +36,13 @@ const Chips: React.FC<ChipsProps> = ({
 
   const className = `${sizeClasses[size]} ${
     colorClasses[variant][design] || ""
-  } ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`;
+  } ${
+    disabled
+      ? design === "outline"
+        ? "border-coolGray300 text-coolGray300 hover:border-coolGray300 hover:text-coolGray300 cursor-not-allowed"
+        : "bg-coolGray300 text-baseWhite hover:bg-coolGray300 hover: text-baseWhite cursor-not-allowed"
+      : "cursor-pointer"
+  } ${disabled && design !== "outline" ? "bg-coolGray300" : ""}`;
 
   return (
     <div className={className} onClick={onClick}>
