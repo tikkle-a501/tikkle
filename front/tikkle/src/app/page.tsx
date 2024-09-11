@@ -5,7 +5,8 @@ import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
 import ChatList from "@/components/chat/ChatList";
-import MenuList from "@/components/list/MenuList";
+import MessageList from "@/components/chat/MessageList";
+import ReviewBadge from "@/components/badge/review/ReviewBadge";
 
 export default function Landing() {
   const testCards = [
@@ -155,6 +156,8 @@ export default function Landing() {
           writerId={chat.writerId}
         />
       ))}
+
+      <ReviewBadge type="time" />
     </div>
   );
 }
