@@ -4,7 +4,7 @@ type RankBadgeProps = {
 };
 
 const RankBadge: React.FC<RankBadgeProps> = ({ rank, children }) => {
-  const rankClasss = {
+  const rankClass = {
     first:
       "flex justify-center bg-yellow400 h-7 w-7 p-10 text-white text-14 font-600 leading-19 items-center rounded-round box-border",
     second:
