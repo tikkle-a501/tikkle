@@ -4,8 +4,8 @@ import Button from "@/components/button/Button";
 import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
-import ChatList from "@/components/chat/chatList";
-import Chat from "./chat/page";
+import ChatList from "@/components/chat/ChatList";
+import MessageList from "@/components/chat/MessageList";
 
 export default function Landing() {
   const testCards = [
