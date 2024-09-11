@@ -4,6 +4,9 @@ import Button from "@/components/button/Button";
 import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
+import ChatList from "@/components/chat/ChatList";
+import MessageList from "@/components/chat/MessageList";
+import ReviewBadge from "@/components/badge/review/ReviewBadge";
 
 export default function Landing() {
   const testCards = [
@@ -33,6 +36,20 @@ export default function Landing() {
       time: "11",
       context:
         "A new policy document has been drafted and is open for review. Please provide your feedback.",
+    },
+  ];
+
+  const testChats = [
+    {
+      content: "Hello, this is a test message from user12!",
+      createdAt: "2024-09-11T12:34:56Z",
+      writerId: "user12",
+    },
+    {
+      content:
+        "Hi, this is another message from a different user! Hi, this is another message from a different user! Hi, this is another message from a different user! Hi, this is another message from a different user!",
+      createdAt: "2024-09-11T13:45:30Z",
+      writerId: "user34",
     },
   ];
 
@@ -130,6 +147,17 @@ export default function Landing() {
           warningMessage="그건 아니지"
         />
       </div>
+
+      {testChats.map((chat, index) => (
+        <ChatList
+          key={index}
+          content={chat.content}
+          createdAt={chat.createdAt}
+          writerId={chat.writerId}
+        />
+      ))}
+
+      <ReviewBadge type="time" />
     </div>
   );
 }
