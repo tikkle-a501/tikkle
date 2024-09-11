@@ -2,7 +2,8 @@ import Badge from "@/components/badge/Badge";
 import BoardCard from "@/components/card/BoardCard";
 import Button from "@/components/button/Button";
 import Dropbox from "@/components/drop-down/Dropbox";
-import PromiseDropdown from "@/components/drop-down/PromiseDropdown";
+import TitleInput from "@/components/input/TitleInput";
+import SearchInput from "@/components/input/SearchInput";
 
 export default function Landing() {
   const testCards = [
@@ -115,7 +116,20 @@ export default function Landing() {
 
       <Dropbox items={["Option 1", "Option 2", "Option 3"]} />
 
-      <PromiseDropdown />
+      <div>
+        <TitleInput width="300px" placeholder="제목을 입력하세요." />
+      </div>
+
+      <div>
+        <SearchInput
+          width="500px"
+          placeholder="placeholder"
+          label="label"
+          leftIcon
+          rightIcon
+          warningMessage="그건 아니지"
+        />
+      </div>
     </div>
   );
 }
