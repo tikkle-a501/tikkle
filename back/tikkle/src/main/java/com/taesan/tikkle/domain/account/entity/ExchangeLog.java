@@ -42,8 +42,7 @@ public class ExchangeLog extends BaseEntity {
 	private Integer quantity;
 
 	@Builder
-	public ExchangeLog(UUID id, Rate rate, Account account, String type, Integer quantity) {
-		this.id = id;
+	public ExchangeLog(Rate rate, Account account, String type, Integer quantity) {
 		this.rate = rate;
 		this.account = account;
 		this.type = type;
