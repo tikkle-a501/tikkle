@@ -13,7 +13,7 @@ const NavigationItem: React.FC<CustomLinkProps> = ({ href, children }) => {
   const isActive = pathname.includes(href); // 현재 경로와 링크 경로가 일치하는지 확인
 
   return (
-    <Link href={href} className={`p-10  ${isActive ? "font-semibold" : ""}`}>
+    <Link href={href} className={`p-10 ${isActive ? "font-semibold" : ""}`}>
       {children}
     </Link>
   );

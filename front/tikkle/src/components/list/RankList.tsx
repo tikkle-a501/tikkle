@@ -29,8 +29,8 @@ const RankList: React.FC<RankListProps> = ({
     );
   } else if (size === "m") {
     return (
-      <div className="flex flex-row justify-between items-center p-10">
-        <div className="flex flex-row justify-center items-center gap-20">
+      <div className="flex flex-row items-center justify-between p-10">
+        <div className="flex flex-row items-center justify-center gap-20">
           <RankBadge rank={rank}>{rankNumber}</RankBadge>
           <span className="text-17 font-600 leading-22">{name}</span>
         </div>

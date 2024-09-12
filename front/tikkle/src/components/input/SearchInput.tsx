@@ -44,10 +44,10 @@ const SearchInput: React.FC<SearchInputProps> = ({
   return (
     <div className="inline-flex flex-col gap-4">
       {/* 라벨 */}
-      {label && <label className="text-warmGray500 text-14">{label}</label>}
+      {label && <label className="text-14 text-warmGray500">{label}</label>}
 
       <div
-        className="flex justify-center items-center h-42 p-10 gap-10 rounded-10 border border-coolGray400"
+        className="h-42 flex items-center justify-center gap-10 rounded-10 border border-coolGray400 p-10"
         style={{ width }} // 부모 div에 width 적용
       >
         {/* 왼쪽 아이콘 */}
@@ -63,13 +63,13 @@ const SearchInput: React.FC<SearchInputProps> = ({
           placeholder={placeholder}
           value={inputValue}
           onChange={handleInputChange}
-          className="appearance-none flex-1 text-17` placeholder-warmGray300 focus:outline-none"
+          className="text-17` flex-1 appearance-none placeholder-warmGray300 focus:outline-none"
         />
 
         {/* 오른쪽 아이콘: 입력 값이 있을 때만 표시 */}
         {rightIcon && inputValue && (
           <span
-            className="material-symbols-outlined text-warmGray300 pl-2 cursor-pointer"
+            className="material-symbols-outlined cursor-pointer pl-2 text-warmGray300"
             onClick={handleClearInput} // 아이콘 클릭 시 입력 필드 초기화
           >
             cancel
@@ -79,7 +79,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
 
       {/* warning */}
       {warning && (
-        <label className="text-rose-500 text-14">{warningMessage}</label>
+        <label className="text-14 text-rose-500">{warningMessage}</label>
       )}
     </div>
   );

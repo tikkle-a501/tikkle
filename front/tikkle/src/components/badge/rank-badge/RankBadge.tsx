@@ -15,7 +15,7 @@ const RankBadge: React.FC<RankBadgeProps> = ({ rank, children }) => {
       "flex justify-center bg-baseWhite h-7 w-7 p-10 color-baseWhite text-14 font-600 leading-19 items-center rounded-round box-border",
   };
 
-  return <div className={rankClasss[rank]}>{children}</div>;
+  return <div className={rankClass[rank]}>{children}</div>;
 };
 
 export default RankBadge;

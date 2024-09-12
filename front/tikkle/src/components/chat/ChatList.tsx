@@ -28,9 +28,9 @@ const ChatList: React.FC<ChatProps> = ({
     : "flex-start"; // Variant 2: 다른 사용자의 스타일
 
   return (
-    <div className={`flex flex-col ${sideStyle} px-14 py-[17px] gap-4`}>
+    <div className={`flex flex-col ${sideStyle} gap-4 px-14 py-[17px]`}>
       <div
-        className={`flex p-12 text-base text-15 ${bubbleStyle} max-w-[400px]`}
+        className={`flex p-12 text-15 text-base ${bubbleStyle} max-w-[400px]`}
       >
         {content}
       </div>

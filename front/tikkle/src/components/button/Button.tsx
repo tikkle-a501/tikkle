@@ -51,7 +51,7 @@ const Button: React.FC<ButtonProps> = ({
     <button className={className} disabled={disabled} onClick={onClick}>
       {/* Children(아이콘 사용 시) 을 왼쪽에 추가 */}
       {children && (
-        <div className="flex justify-center items-center">{children}</div>
+        <div className="flex items-center justify-center">{children}</div>
       )}
       {/* Left 텍스트 (옵셔널) */}
       {left && <div className="font-normal">{left}</div>}
