@@ -35,3 +35,4 @@ kafka:
   producer:
     key-serializer: org.apache.kafka.common.serialization.StringSerializer
     value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    linger.ms: 1 # 네트워크 과부하 시 해당 값을 올려 배치 처리량을 늘림

@@ -19,19 +19,9 @@ public class ChatController {
 	@Autowired
 	private KafkaTemplate<String,String> kafkaTemplate;
 
-	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
-
 	@MessageMapping("/sendMessage")
 	public void sendMessage(@Payload ChatMessage chatMessage) {
 		kafkaTemplate.send("chatroom." + chatMessage.getChatRoomId().toString(), chatMessage.getContent());
 		System.out.println("Received message from client: " + chatMessage.getContent());
 	}
-	//
-	// @KafkaListener(topicPattern = "chatroom.*", groupId = "my-group")
-	// public void listen(@Payload String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-	// 	System.out.println("메시지가 전달되었습니다 : " + message + "\n 목적지는 : " + topic);
-	// 	messagingTemplate.convertAndSend("/topic/" + topic, message);
-	// }
-
 }
