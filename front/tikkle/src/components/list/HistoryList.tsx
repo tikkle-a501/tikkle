@@ -25,25 +25,35 @@ const HistoryList: React.FC<HistoryListProps> = ({
   buttonText,
 }) => {
   return (
-    <Link href={`/board/${boardId}`} passHref>
-      <div className="inline-flex w-[1010px] h-[61px] justify-between items-center px-12 text-18 cursor-pointer">
-        <div className="flex p-10 items-center gap-10">
-          <Image
-            src={profileImg}
-            alt={`${nickname} profile`}
-            width={36}
-            height={36}
-            className="rounded-round"
-          />
-          <div>{nickname}</div>
-        </div>
+    <div className="inline-flex w-[1010px] h-[61px] items-center px-10 text-18">
+      <div className="flex w-[172px] p-10 items-center gap-10">
+        <Image
+          src={profileImg}
+          alt={`${nickname} profile`}
+          width={36}
+          height={36}
+          className="rounded-round"
+        />
+        <div>{nickname}</div>
+      </div>
+      <div className="flex w-[119px] justify-center items-center">
         <Badge size="l" color="red">
           {/* 추후 뱃지 컬러를 동적으로 받는 로직 작성 필요 */}
           {status}
         </Badge>
-        <div className="truncate">{title}</div>
-        <div>{appointmentTime}</div>
-        <div>{time}시간</div>
+      </div>
+      <Link href={`/board/${boardId}`} passHref>
+        <div className="flex w-[210px] justify-center items-center truncate cursor-pointer text-warmGray600">
+          {title}
+        </div>
+      </Link>
+      <div className="flex w-[255px] justify-center items-center text-warmGray600">
+        {appointmentTime}
+      </div>
+      <div className="flex w-[82px] justify-center items-center text-warmGray600">
+        {time}시간
+      </div>
+      <div className="flex w-[152px] justify-center items-center">
         <Button
           size="m"
           variant="primary"
@@ -51,7 +61,7 @@ const HistoryList: React.FC<HistoryListProps> = ({
           main={`${buttonText}`}
         ></Button>
       </div>
-    </Link>
+    </div>
   );
 };
 
