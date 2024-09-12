@@ -1,27 +1,28 @@
-import MenuList from "@/components/list/MenuList";
+import InfoBox from "@/components/box/InfoBox";
 
 export default function ChatLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // 더미 데이터
+  const testData = {
+    profileImg: "/profile.png", // 프로필 이미지 URL
+    name: "Jane Doe", // 이름
+    email: "jane.doe@example.com", // 이메일
+    rate: 4.2, // 평점
+  };
+
   return (
     <>
       <div className="text-40 text-teal900 font-bold">마이페이지</div>
       <div className="flex gap-36">
-        <div>
-          <div className="flex flex-col p-14 gap-14">
-            <MenuList href="activity" icon="edit">
-              나의 게시글
-            </MenuList>
-            <MenuList href="trade" icon="history_toggle_off">
-              나의 거래 내역
-            </MenuList>
-            <MenuList href="exchange" icon="swap_horiz">
-              나의 환전 내역
-            </MenuList>
-          </div>
-        </div>
+        <InfoBox
+          profileImg={testData.profileImg}
+          name={testData.name}
+          email={testData.email}
+          rate={testData.rate}
+        />
         <div>{children}</div>
       </div>
     </>
