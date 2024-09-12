@@ -47,7 +47,7 @@ const Chips: React.FC<ChipsProps> = ({
   return (
     <div className={className} onClick={onClick}>
       {children && (
-        <div className="flex justify-center items-center">{children}</div>
+        <div className="flex items-center justify-center">{children}</div>
       )}
     </div>
   );

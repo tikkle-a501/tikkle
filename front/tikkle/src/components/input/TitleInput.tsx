@@ -9,7 +9,7 @@ const TitleInput: React.FC<TitleInputProps> = ({ width, placeholder }) => {
       type="text"
       placeholder={placeholder}
       style={{ width }}
-      className="appearance-none inline-flex justify-center items-center pb-5 text-28 font-bold border-b border-warmGray200 placeholder-warmGray300 focus:outline-none"
+      className="inline-flex appearance-none items-center justify-center border-b border-warmGray200 pb-5 text-28 font-bold placeholder-warmGray300 focus:outline-none"
     />
   );
 };

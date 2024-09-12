@@ -29,9 +29,9 @@ export default function ChatLayout({
 
   return (
     <>
-      <div className="text-40 text-teal900 font-bold">채팅 목록</div>
-      <div className="flex px-40 py-20 gap-12">
-        <div className="flex flex-col w-[344px] min-h-[480px] p-14 gap-12 rounded-12 border border-warmGray200">
+      <div className="text-40 font-bold text-teal900">채팅 목록</div>
+      <div className="flex gap-12 px-40 py-20">
+        <div className="flex min-h-[480px] w-[344px] flex-col gap-12 rounded-12 border border-warmGray200 p-14">
           {messages.map((message, index) => (
             <MessageList
               key={index}
@@ -45,7 +45,7 @@ export default function ChatLayout({
             />
           ))}
         </div>
-        <div className="flex flex-grow min-h-[480px] items-center justify-center p-5 rounded-12 bg-coolGray100">
+        <div className="flex min-h-[480px] flex-grow items-center justify-center rounded-12 bg-coolGray100 p-5">
           {children}
         </div>
       </div>

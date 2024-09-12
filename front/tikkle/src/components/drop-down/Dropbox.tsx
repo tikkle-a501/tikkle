@@ -6,7 +6,7 @@ interface DropdownProps {
 
 const Dropbox: React.FC<DropdownProps> = ({ items }) => {
   return (
-    <div className="inline-flex flex-col p-6 gap-4 rounded-4 bg-white shadow-s">
+    <div className="inline-flex flex-col gap-4 rounded-4 bg-white p-6 shadow-s">
       {items.map((item, index) => (
         <DropboxBtn key={index}>{item}</DropboxBtn>
       ))}

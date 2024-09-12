@@ -28,7 +28,7 @@ const MessageList: React.FC<MessageItemProps> = ({
   return (
     <Link href={`/chat/${chatId}`} passHref>
       <div
-        className={`flex flex-grow items-center p-10 gap-10 rounded-10 cursor-pointer ${
+        className={`flex flex-grow cursor-pointer items-center gap-10 rounded-10 p-10 ${
           isSelected ? "bg-[rgba(20,184,166,0.31)]" : ""
         }`}
       >
@@ -36,22 +36,22 @@ const MessageList: React.FC<MessageItemProps> = ({
         <img
           src={profileImage}
           alt={`${nickname}'s profile`}
-          className="w-40 h-40 rounded-round"
+          className="h-40 w-40 rounded-round"
         />
 
         {/* 메시지 내용 */}
-        <div className="flex flex-col flex-grow min-w-0 gap-4">
+        <div className="flex min-w-0 flex-grow flex-col gap-4">
           <div className="flex items-center gap-10">
             {/* 상대방 닉네임 */}
             <span className="text-15 font-semibold text-black">{nickname}</span>
             {/* 읽음 여부 표시 */}
             {!isRead && (
-              <div className="w-10 h-10 rounded-round bg-rose500"></div>
+              <div className="h-10 w-10 rounded-round bg-rose500"></div>
             )}
           </div>
 
           {/* 최근 메시지 */}
-          <div className="text-14 truncate">{recentMessage}</div>
+          <div className="truncate text-14">{recentMessage}</div>
         </div>
       </div>
     </Link>
