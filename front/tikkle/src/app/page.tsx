@@ -5,8 +5,8 @@ import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
 import ChatList from "@/components/chat/ChatList";
-import MessageList from "@/components/chat/MessageList";
 import ReviewBadge from "@/components/badge/review/ReviewBadge";
+import TodoList from "@/components/list/TodoList";
 
 export default function Landing() {
   const testCards = [
@@ -158,6 +158,30 @@ export default function Landing() {
       ))}
 
       <ReviewBadge type="time" />
+
+      <div className="flex flex-col p-4">
+        <TodoList
+          status="완료"
+          appointmentTime="2024-09-11T12:00:00Z"
+          nickname="John Doe"
+          title="회의 준비"
+          chatId="123"
+        />
+        <TodoList
+          status="대기 중"
+          appointmentTime="2024-09-12T15:30:00Z"
+          nickname="Jane Smith"
+          title="보고서 제출"
+          chatId="456"
+        />
+        <TodoList
+          status="취소됨"
+          appointmentTime="2024-09-13T18:00:00Z"
+          nickname="Alice Brown"
+          title="프로젝트 검토"
+          chatId="789"
+        />
+      </div>
     </div>
   );
 }
