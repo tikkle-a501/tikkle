@@ -1,5 +1,6 @@
 package com.taesan.tikkle.domain.account.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,4 +16,7 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
 	@Query("SELECT e FROM ExchangeLog e")
 	List<ExchangeLog> findAllExchange();
+
+	@Query("SELECT e FROM ExchangeLog e WHERE e.createdAt BETWEEN :startTime AND :endTime AND e.type = :type")
+	List<ExchangeLog> findExchangeLogsBetweenAndByType(LocalDateTime startTime, LocalDateTime endTime, String type);
 }
