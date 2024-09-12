@@ -27,14 +27,14 @@ const TodoList: React.FC<TodoListProps> = ({
 
   return (
     <Link href={`/chat/${chatId}`} passHref>
-      <div className="inline-flex items-center p-6 gap-6 text-15 cursor-pointer">
+      <div className="inline-flex cursor-pointer items-center gap-6 p-6 text-15">
         <Badge size="l" color="teal">
           {/* 추후 뱃지 컬러를 동적으로 받는 로직 작성 필요 */}
           {status}
         </Badge>
         <div>{formattedTime}까지</div>
         <div>{nickname}님과의 약속</div>
-        <div className="text-warmGray500 truncate">{title}</div>
+        <div className="truncate text-warmGray500">{title}</div>
       </div>
     </Link>
   );

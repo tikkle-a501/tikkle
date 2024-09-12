@@ -7,6 +7,7 @@ import SearchInput from "@/components/input/SearchInput";
 import ChatList from "@/components/chat/ChatList";
 import ReviewBadge from "@/components/badge/review/ReviewBadge";
 import TodoList from "@/components/list/TodoList";
+import HistoryList from "@/components/list/HistoryList";
 
 export default function Landing() {
   const testCards = [
@@ -44,14 +45,27 @@ export default function Landing() {
       content: "Hello, this is a test message from user12!",
       createdAt: "2024-09-11T12:34:56Z",
       writerId: "user12",
+      isMine: true,
     },
     {
       content:
         "Hi, this is another message from a different user! Hi, this is another message from a different user! Hi, this is another message from a different user! Hi, this is another message from a different user!",
       createdAt: "2024-09-11T13:45:30Z",
       writerId: "user34",
+      isMine: false,
     },
   ];
+
+  const testHistoryList = {
+    profileImg: "/profile.png",
+    nickname: "JohnDoe",
+    status: "진행전",
+    title: "미팅 일정",
+    appointmentTime: "2024-09-15 14:00",
+    boardId: "1234",
+    time: 2,
+    buttonText: "거래 완료하기",
+  };
 
   return (
     <div className="space-y-4 p-8">
@@ -154,6 +168,7 @@ export default function Landing() {
           content={chat.content}
           createdAt={chat.createdAt}
           writerId={chat.writerId}
+          isMine={chat.isMine}
         />
       ))}
 
@@ -182,6 +197,8 @@ export default function Landing() {
           chatId="789"
         />
       </div>
+
+      <HistoryList {...testHistoryList} />
     </div>
   );
 }

@@ -16,13 +16,13 @@ const renderStars = (rate: number) => {
       stars.push(
         <span key={i} className="material-symbols-outlined">
           star
-        </span>
+        </span>,
       ); // 꽉 찬 별 구현 어떻게?
     } else {
       stars.push(
         <span key={i} className="material-symbols-outlined">
           star
-        </span>
+        </span>,
       ); // 빈 별
     }
   }
@@ -31,7 +31,7 @@ const renderStars = (rate: number) => {
 
 const InfoBox: React.FC<InfoBoxProps> = ({ profileImg, name, email, rate }) => {
   return (
-    <div className="flex w-[298px] h-[793px] flex-col items-center px-20 py-40 gap-10 text-20 border border-warmGray200 rounded-12">
+    <div className="flex h-[793px] w-[298px] flex-col items-center gap-10 rounded-12 border border-warmGray200 px-20 py-40 text-20">
       <div className="flex-shrink-0">
         <Image
           src={profileImg}
@@ -42,17 +42,17 @@ const InfoBox: React.FC<InfoBoxProps> = ({ profileImg, name, email, rate }) => {
         />
       </div>
 
-      <div className="flex flex-col py-10 gap-10 justify-center text-center">
+      <div className="flex flex-col justify-center gap-10 py-10 text-center">
         <div className="font-semibold">{name}</div>
         <div className="text-warmGray500">{email}</div>
       </div>
-      <div className="flex p-10 justify-center items-center gap-10">
+      <div className="flex items-center justify-center gap-10 p-10">
         {renderStars(rate)}
       </div>
 
-      <div className="flex w-full border-t border-warmGray-200"></div>
+      <div className="border-warmGray-200 flex w-full border-t"></div>
 
-      <div className="flex w-full flex-col p-14 gap-14 items-start">
+      <div className="flex w-full flex-col items-start gap-14 p-14">
         <MenuList href="activity" icon="edit">
           나의 게시글
         </MenuList>
@@ -64,7 +64,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ profileImg, name, email, rate }) => {
         </MenuList>
       </div>
 
-      <div className="flex flex-col justify-end items-center flex-[1_0_0] text-15 text-warmGray300 self-stretch">
+      <div className="flex flex-[1_0_0] flex-col items-center justify-end self-stretch text-15 text-warmGray300">
         <button className="cursor-pointer">로그아웃</button>
       </div>
     </div>

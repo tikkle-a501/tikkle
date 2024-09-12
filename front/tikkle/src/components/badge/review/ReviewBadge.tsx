@@ -35,7 +35,7 @@ const ReviewBadge: React.FC<ReviewBadgeProps> = ({ type }) => {
   }
 
   return (
-    <div className="inline-flex items-center bg-baseWhite border border-coolGray200 rounded-round px-6 py-4 m-2 text-12 font-medium text-gray-700">
+    <div className="bg-baseWhite m-2 inline-flex items-center rounded-round border border-coolGray200 px-6 py-4 text-12 font-medium text-gray-700">
       <span>{emoji}</span>
       <span className="ml-2">{text}</span>
     </div>
