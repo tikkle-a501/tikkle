@@ -1,0 +1,15 @@
+package com.taesan.tikkle.domain.chat.repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.taesan.tikkle.domain.chat.entity.Chat;
+
+public interface ChatRepository extends MongoRepository<Chat,String> {
+	// roomId에 해당하는 최신 Chat을 timestamp 기준으로 가져오기
+	Chat findTopByChatroomIdOrderByTimestampDesc(UUID chatroomId);
+
+	Optional<Chat> findByChatroomId(UUID chatroomId);
+}

@@ -13,6 +13,7 @@ import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.chat.dto.request.CreateChatroomRequest;
 import com.taesan.tikkle.domain.chat.dto.reseponse.CreateChatroomResponse;
+import com.taesan.tikkle.domain.chat.dto.reseponse.EnterChatroomResponse;
 import com.taesan.tikkle.domain.chat.dto.response.DetailChatroomResponse;
 import com.taesan.tikkle.domain.chat.entity.Chat;
 import com.taesan.tikkle.domain.chat.entity.Chatroom;
@@ -61,7 +62,7 @@ public class ChatroomService {
 		List<DetailChatroomResponse> responses = new ArrayList<>();
 		// TODO : 서비스단 메서드 하나 생성하여 리팩토링 필요
 		for (Chatroom chatroom : writerRooms) {
-			Chat lastChat = chatRepository.findTopByRoomIdOrderByTimestampDesc(chatroom.getId());
+			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId());
 			if (lastChat != null) {
 				Member lastSender = memberRepository.findById(lastChat.getSenderId())
 					.orElseThrow(EntityNotFoundException::new);
@@ -73,7 +74,7 @@ public class ChatroomService {
 			}
 		}
 		for (Chatroom chatroom : performerRooms) {
-			Chat lastChat = chatRepository.findTopByRoomIdOrderByTimestampDesc(chatroom.getId());
+			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId());
 			if (lastChat != null) {
 				Member lastSender = memberRepository.findById(lastChat.getSenderId())
 					.orElseThrow(EntityNotFoundException::new);
@@ -85,5 +86,11 @@ public class ChatroomService {
 			}
 		}
 		return responses;
+	}
+
+
+	public EnterChatroomResponse enterChatroom(UUID roomId) {
+		// TODO : MongoDB를 활용하여 이전 메시지를 가져오는 기능
+		return new EnterChatroomResponse();
 	}
 }

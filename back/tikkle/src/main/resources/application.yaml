@@ -20,7 +20,7 @@ spring:
       database: mymongodb
       username: mongoadmin
       password: secret
-
+      uri: mongodb://mongoadmin:secret@localhost:27017/mymongodb?authSource=admin
   redis:
     host: localhost
     port: 6379
