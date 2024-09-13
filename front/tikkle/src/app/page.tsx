@@ -1,6 +1,8 @@
 import Badge from "@/components/badge/Badge";
 import BoardCard from "@/components/card/BoardCard";
 import Button from "@/components/button/Button";
+import LoginButton from "@/components/button/LoginButton";
+
 import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
@@ -81,6 +83,8 @@ export default function Landing() {
       <Badge size="l" color="gray">
         Gray Large
       </Badge>
+      <LoginButton title="Mattermost"></LoginButton>
+      <LoginButton title="Slack"></LoginButton>
 
       <Button
         size="l"
