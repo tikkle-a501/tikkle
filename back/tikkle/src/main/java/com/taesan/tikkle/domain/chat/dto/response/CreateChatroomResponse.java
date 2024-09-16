@@ -1,4 +1,4 @@
-package com.taesan.tikkle.domain.chat.dto.reseponse;
+package com.taesan.tikkle.domain.chat.dto.response;
 
 import java.util.UUID;
 
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EnterChatroomResponse {
-	private UUID roomId;
+public class CreateChatroomResponse {
+	private UUID chatRoomId;
 }
