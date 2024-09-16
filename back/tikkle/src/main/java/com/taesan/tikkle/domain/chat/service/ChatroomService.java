@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,12 +101,15 @@ public class ChatroomService {
 		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(EntityNotFoundException::new);
 		// TODO : 세션에 들어온 아이디 찾아야댐...
 		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
-		return new EnterChatroomResponse(chats, getPartnerName(chatroom, memberId), chatroom.getBoard().getStatus(), chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
+		return new EnterChatroomResponse(chats, getPartnerName(chatroom, memberId), chatroom.getBoard().getStatus(),
+			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
 	}
 
 	private String getPartnerName(Chatroom chatroom, UUID memberId) {
 		String writer = chatroom.getWriter().getNickname();
 		String performer = chatroom.getPerformer().getNickname();
+		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId()))
+			throw new AccessDeniedException("채팅방 접근 권한이 없습니다.");
 		return chatroom.getWriter().getId() == memberId ? performer : writer;
 	}
 }
