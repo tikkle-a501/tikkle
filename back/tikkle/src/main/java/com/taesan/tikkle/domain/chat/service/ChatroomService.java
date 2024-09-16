@@ -6,9 +6,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.github.f4b6a3.ulid.UlidCreator;
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -93,14 +94,18 @@ public class ChatroomService {
 
 	@Transactional
 	public EnterChatroomResponse enterChatroom(UUID roomId) {
+		// TODO : 세션에 들어온 아이디 찾아야댐...
+		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
 		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId)
 			.stream()
 			.map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());
 		// 프론트 단에서 현재 세션의 아이디와 chat의 아이디 비교후 보낸 사람 처리 필요
 		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(EntityNotFoundException::new);
-		// TODO : 세션에 들어온 아이디 찾아야댐...
-		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
+		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId())) {
+			// 권한이 없으면 403 Forbidden 상태로 응답
+
+		}
 		return new EnterChatroomResponse(chats, getPartnerName(chatroom, memberId), chatroom.getBoard().getStatus(),
 			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
 	}
@@ -109,7 +114,7 @@ public class ChatroomService {
 		String writer = chatroom.getWriter().getNickname();
 		String performer = chatroom.getPerformer().getNickname();
 		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId()))
-			throw new AccessDeniedException("채팅방 접근 권한이 없습니다.");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "채팅방에 접근할 권한이 없습니다.");
 		return chatroom.getWriter().getId() == memberId ? performer : writer;
 	}
 }
