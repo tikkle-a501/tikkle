@@ -12,6 +12,7 @@ import com.taesan.tikkle.domain.appointment.dto.request.UpdateAppointmentRequest
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
+import com.taesan.tikkle.domain.chat.entity.Chatroom;
 import com.taesan.tikkle.domain.chat.repository.ChatroomRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -31,20 +32,20 @@ public class AppointmentService {
 
 	@Transactional
 	public void createAppointment(CreateAppointmentRequest request) {
-		appointmentRepository.save(
-			new Appointment(chatroomRepository.findById(request.getRoomId()).orElseThrow(EntityNotFoundException::new),
-				request.getAppTime(), request.getTimeQnt()));
-		boardRepository.findById(
-				chatroomRepository.findById(request.getRoomId()).orElseThrow(EntityNotFoundException::new)
-					.getBoard().getId())
+		Chatroom chatroom = chatroomRepository.findById(request.getRoomId()).orElseThrow(EntityNotFoundException::new);
+		Appointment appointment = new Appointment(chatroom, request.getAppTime(), request.getTimeQnt());
+		appointmentRepository.save(appointment);
+		boardRepository.findById(chatroom.getBoard().getId())
 			.orElseThrow(EntityNotFoundException::new)
 			.setStatusActive();
+		chatroom.getAppointments().add(appointment);
 	}
 
 	@Transactional
 	public void updateAppointment(UpdateAppointmentRequest request) {
 		appointmentRepository.findById(request.getAppId())
-			.orElseThrow(EntityNotFoundException::new).updateTime(request.getAppTime(), request.getTimeQnt());
+			.orElseThrow(EntityNotFoundException::new)
+			.updateTime(request.getAppTime(), request.getTimeQnt());
 	}
 
 	@Transactional
