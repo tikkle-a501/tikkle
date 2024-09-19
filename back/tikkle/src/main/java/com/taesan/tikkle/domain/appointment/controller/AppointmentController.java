@@ -1,7 +1,10 @@
 package com.taesan.tikkle.domain.appointment.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +30,12 @@ public class AppointmentController {
 	@PutMapping("")
 	public ResponseEntity<Void> updateAppointment(@RequestBody UpdateAppointmentRequest request){
 		appointmentService.updateAppointment(request);
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("")
+	public ResponseEntity<Void> deleteAppointment(@RequestBody UUID appointmentId){
+		appointmentService.deleteAppointment(appointmentId);
 		return ResponseEntity.ok().build();
 	}
 }
