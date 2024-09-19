@@ -3,11 +3,14 @@ package com.taesan.tikkle.domain.account.entity;
 import java.util.UUID;
 
 import com.github.f4b6a3.ulid.UlidCreator;
+import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.rate.entity.Rate;
 import com.taesan.tikkle.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -35,17 +38,18 @@ public class ExchangeLog extends BaseEntity {
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
-	@Column(length = 8)
-	private String type;
+	@Column(name = "type", columnDefinition = "varchar(8)")
+	@Enumerated(EnumType.STRING)
+	private ExchangeType exchangeType;
 
 	@Column(name = "quantity", columnDefinition = "TINYINT UNSIGNED")
 	private Integer quantity;
 
 	@Builder
-	public ExchangeLog(Rate rate, Account account, String type, Integer quantity) {
+	public ExchangeLog(Rate rate, Account account, ExchangeType exchangeType, Integer quantity) {
 		this.rate = rate;
 		this.account = account;
-		this.type = type;
+		this.exchangeType = exchangeType;
 		this.quantity = quantity;
 	}
 }
