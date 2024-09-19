@@ -40,22 +40,6 @@ export default function Landing() {
     },
   ];
 
-  const testChats = [
-    {
-      content: "Hello, this is a test message from user12!",
-      createdAt: "2024-09-11T12:34:56Z",
-      writerId: "user12",
-      isMine: true,
-    },
-    {
-      content:
-        "Hi, this is another message from a different user! Hi, this is another message from a different user! Hi, this is another message from a different user! Hi, this is another message from a different user!",
-      createdAt: "2024-09-11T13:45:30Z",
-      writerId: "user34",
-      isMine: false,
-    },
-  ];
-
   const testHistoryList = {
     profileImg: "/profile.png",
     nickname: "JohnDoe",
@@ -161,16 +145,6 @@ export default function Landing() {
           warningMessage="그건 아니지"
         />
       </div>
-
-      {testChats.map((chat, index) => (
-        <ChatList
-          key={index}
-          content={chat.content}
-          createdAt={chat.createdAt}
-          writerId={chat.writerId}
-          isMine={chat.isMine}
-        />
-      ))}
 
       <ReviewBadge type="time" />
 
