@@ -52,5 +52,10 @@ public class Board extends AuditableEntity {
 
 	@Column(name = "view_count")
 	private Integer viewCount;
+	
+	// 임시로 ACTIVE 상태로 설정
+	public void setStatusActive() {
+		this.status = "ACTIVE";
+	}
 }
 

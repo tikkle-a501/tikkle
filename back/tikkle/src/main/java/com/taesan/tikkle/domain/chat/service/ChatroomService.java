@@ -57,6 +57,7 @@ public class ChatroomService {
 		return new CreateChatroomResponse(chatroom.getId());
 	}
 
+	// TODO : 최신 메시지에 따른 채팅방 정렬 필요
 	@Transactional(readOnly = true)
 	public List<DetailChatroomResponse> getChatrooms() {
 		// TODO : 세션 로그인 아이디 가져오기, 현재는 가상 memberId
@@ -102,10 +103,6 @@ public class ChatroomService {
 			.collect(Collectors.toList());
 		// 프론트 단에서 현재 세션의 아이디와 chat의 아이디 비교후 보낸 사람 처리 필요
 		Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(EntityNotFoundException::new);
-		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId())) {
-			// 권한이 없으면 403 Forbidden 상태로 응답
-
-		}
 		return new EnterChatroomResponse(chats, getPartnerName(chatroom, memberId), chatroom.getBoard().getStatus(),
 			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
 	}

@@ -35,5 +35,16 @@ public class Appointment extends SoftDeletableEntity {
 
 	@Column(name = "time_qnt", columnDefinition = "TINYINT UNSIGNED")
 	private Integer timeQnt;
+
+	public Appointment(Chatroom room, Timestamp apptTime, Integer timeQnt) {
+		this.room = room;
+		this.apptTime = apptTime;
+		this.timeQnt = timeQnt;
+	}
+
+	public void updateTime(Timestamp appTime, Integer timeQnt) {
+		this.apptTime = appTime;
+		this.timeQnt = timeQnt;
+	}
 }
 

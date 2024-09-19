@@ -28,6 +28,7 @@ public class ChatroomController {
 	public ResponseEntity<CreateChatroomResponse> createChatRoom(@RequestBody CreateChatroomRequest request){
 		return ResponseEntity.ok(chatroomService.createChatroom(request));
 	}
+	// 	어쩌라구
 
 	// TODO : 새 채팅에 대한 알림 처리
 	@GetMapping("")
