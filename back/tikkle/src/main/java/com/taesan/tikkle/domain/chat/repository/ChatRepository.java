@@ -13,4 +13,6 @@ public interface ChatRepository extends MongoRepository<Chat,String> {
 
 	// ChatRoom id에 따른 Chat 반환
 	List<Chat> findByChatroomIdOrderByTimestampAsc(UUID roomId);
+
+	Chat findByChatroomId(UUID chatroomId);
 }
