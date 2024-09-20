@@ -17,6 +17,7 @@ public class AccountService {
 
 	public Integer getTotalQuantityByExchangeTypeAndPeriod(LocalDateTime startTime, LocalDateTime endTime,
 		ExchangeType exchangeType) {
-		return accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType);
+		Integer total = accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType);
+		return total != null ? total : 0;
 	}
 }
