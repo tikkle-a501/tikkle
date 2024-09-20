@@ -19,6 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RateService {
 
+	private final static int INITIAL_TIME_TO_RANK_POINT = 1000;
+	private final static double RATE_ADJUSTMENT_FACTOR = 1.0;
+
 	private final AccountService accountService;
 	private final RateRepository rateRepository;
 
@@ -31,12 +34,15 @@ public class RateService {
 		LocalDateTime startTime = oneHourAgo.withMinute(0).withSecond(0);
 		LocalDateTime endTime = oneHourAgo.withMinute(59).withSecond(59);
 
+		int previousRate = getPreviousRate();
+		log.info("이전 환율: {}", previousRate);
+
 		int totalTtoRAmount = accountService.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime,
 			ExchangeType.TTOR);
 		int totalRtoTAmount = accountService.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime,
 			ExchangeType.RTOT);
 
-		int newRate = calculateRate(totalTtoRAmount, totalRtoTAmount);
+		int newRate = calculateRate(totalTtoRAmount, totalRtoTAmount, previousRate);
 
 		rateRepository.save(Rate.builder().timeToRank(newRate).build());
 	}
@@ -48,10 +54,47 @@ public class RateService {
 		return oneHourAgo;
 	}
 
+	private int getPreviousRate() {
+		return rateRepository.findTopByOrderByCreatedAtDesc()
+			.map(Rate::getTimeToRank)
+			.orElse(INITIAL_TIME_TO_RANK_POINT);
+	}
+
 	// 환율 계산 로직
-	private int calculateRate(int totalTtoRAmount, int totalRtoTAmount) {
-		// 기본적으로 totalTtoRAmount (시간 -> 포인트)와 totalRtoTAmount (포인트 -> 시간)의 비율을 기준으로 환율을 조정
-		int initialCoinToStarRate = 1000;
-		return initialCoinToStarRate;
+	public int calculateRate(int totalTtoRAmount, int totalRtoTAmount, int previousRate) {
+		int totalTransactionVolume = totalTtoRAmount + totalRtoTAmount;
+
+		//거래량이 모두 0인 경우 이전 환율 유지
+		if (totalTransactionVolume == 0) {
+			return previousRate;
+		}
+
+		// 변동폭 완화 상수 적용
+		double volatilityReductionFactor = 0.1; // 변동폭 완화를 위해 10%로 조정 (alpha)
+
+		// 환율 변동폭 가중치: 거래량이 많을수록 변동폭이 커짐 (로그 함수 사용하여 급격한 변화 방지)
+		double transactionWeightFactor = 1 + Math.log(1 + totalTransactionVolume);
+
+		// 비율 계산: TtoR / RtoT 비율에 따라 변동폭 결정
+		double rateChangeFactor;
+
+		if (totalTtoRAmount > totalRtoTAmount) {
+			// TtoR > RtoT: 환율 상승
+			rateChangeFactor = (double)totalTtoRAmount / totalRtoTAmount;
+		} else if (totalTtoRAmount < totalRtoTAmount) {
+			// TtoR < RtoT: 환율 하락
+			rateChangeFactor = (double)totalRtoTAmount / totalTtoRAmount;
+		} else {
+			// TtoR == RtoT: 변동폭이 작음
+			rateChangeFactor = 1;
+		}
+
+		// 최종 변동폭 계산: 이전 환율 * (1 + 변동폭 * 가중치 * 완화 상수)
+		double rateChange = (rateChangeFactor - 1) * transactionWeightFactor * volatilityReductionFactor;
+
+		// 새로운 환율을 계산 (이전 환율에 변동폭을 더함)
+		int newRate = (int)(previousRate * (1 + rateChange));
+
+		return newRate;
 	}
 }
