@@ -1,4 +1,5 @@
 import Button from "@/components/button/Button";
+import Chart from "@/components/chart/Chart";
 
 export default function Exchange() {
   return (
@@ -20,6 +21,7 @@ export default function Exchange() {
             <div className="text-34 text-teal900">티끌</div>
           </div>
         </div>
+
         {/* 환전 인풋 */}
         <div className="flex h-[228px] gap-10 p-10">
           {/* 시간 -> 티끌 */}
@@ -45,6 +47,7 @@ export default function Exchange() {
               </div>
             </div>
           </div>
+
           {/* 티끌 -> 시간 */}
           <div className="flex flex-1 flex-col gap-10 rounded-12 border border-warmGray200 px-40 py-[30px]">
             <div className="flex items-center justify-between self-stretch pb-10">
@@ -71,7 +74,9 @@ export default function Exchange() {
         </div>
 
         {/* 환율 그래프 */}
-        <div className="flex flex-1 items-center justify-center rounded-10 border border-warmGray200 p-28"></div>
+        <div className="flex flex-1 flex-col items-center justify-center gap-10 rounded-10 border border-warmGray200 p-28">
+          <Chart />
+        </div>
       </div>
     </>
   );
