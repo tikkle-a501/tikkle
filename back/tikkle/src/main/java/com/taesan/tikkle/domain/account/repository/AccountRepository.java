@@ -15,8 +15,8 @@ import com.taesan.tikkle.domain.account.entity.ExchangeLog;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
-	@Query("SELECT e FROM ExchangeLog e")
-	List<ExchangeLog> findAllExchange();
+	@Query("SELECT e FROM ExchangeLog e WHERE e.createdAt BETWEEN :startTime AND :endTime")
+	List<ExchangeLog> findAllExchangeLogs(LocalDateTime startTime, LocalDateTime endTime);
 
 	@Query("SELECT e FROM ExchangeLog e WHERE e.createdAt BETWEEN :startTime AND :endTime AND e.exchangeType = :exchangeType")
 	List<ExchangeLog> findExchangeLogsBetweenAndByType(LocalDateTime startTime, LocalDateTime endTime,
