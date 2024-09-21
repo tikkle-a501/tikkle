@@ -1,6 +1,7 @@
 package com.taesan.tikkle.domain.appointment.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,22 +70,20 @@ public class AppointmentService {
 	public List<DetailAppointmentResponse> getAppointments() {
 		// TODO : refresh 토큰을 활용한 세선 로그인 UUID 가져오기
 		UUID memberId = UUID.randomUUID();
-		List<Chatroom> performerChatrooms = chatroomRepository.findByPerformerId(memberId);
-		List<Chatroom> writerChatrooms = chatroomRepository.findByWriterId(memberId);
 		List<DetailAppointmentResponse> responses = new ArrayList<>();
-		extractAppointmentFromChatroom(performerChatrooms, responses);
-		extractAppointmentFromChatroom(writerChatrooms, responses);
-		// TODO : 약속 생성 최신순 정렬
+		extractAppointmentFromChatroom(chatroomRepository.findByPerformerId(memberId), responses);
+		extractAppointmentFromChatroom(chatroomRepository.findByWriterId(memberId), responses);
+		responses.sort(Comparator.comparing(DetailAppointmentResponse::getCreatedAt).reversed());
 		return responses;
 	}
 
-	private void extractAppointmentFromChatroom(List<Chatroom> performerChatrooms,
+	private void extractAppointmentFromChatroom(List<Chatroom> chatrooms,
 		List<DetailAppointmentResponse> responses) {
-		for (Chatroom performerChatroom : performerChatrooms) {
-			Appointment appointment = performerChatroom.getAppointments()
-				.get(performerChatroom.getAppointments().size() - 1);
+		for (Chatroom chatroom : chatrooms) {
+			Appointment appointment = chatroom.getAppointments()
+				.get(chatroom.getAppointments().size() - 1);
 			if(appointment.getDeletedAt() == null) continue;
-			responses.add(new DetailAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt(),performerChatroom.getBoard().getTitle()));
+			responses.add(new DetailAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt(),appointment.getCreatedAt(),chatroom.getBoard().getTitle()));
 		}
 	}
 }
