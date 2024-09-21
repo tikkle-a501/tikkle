@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-warmGray300 rounded-[10px] border-[7px] border-white min-h-[50px];
+  }
+
+}
+
 *,
 *::before,
 *::after {
@@ -38,6 +49,7 @@ canvas {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
 
 input,
 button,

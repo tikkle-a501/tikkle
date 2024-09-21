@@ -1,7 +1,15 @@
 import Badge from "@/components/badge/Badge";
 import BoardCard from "@/components/card/BoardCard";
 import Button from "@/components/button/Button";
+import LoginButton from "@/components/button/LoginButton";
+
 import Dropbox from "@/components/drop-down/Dropbox";
+import TitleInput from "@/components/input/TitleInput";
+import SearchInput from "@/components/input/SearchInput";
+import ChatList from "@/components/chat/ChatList";
+import ReviewBadge from "@/components/badge/review/ReviewBadge";
+import TodoList from "@/components/list/TodoList";
+import HistoryList from "@/components/list/HistoryList";
 
 export default function Landing() {
   const testCards = [
@@ -34,6 +42,17 @@ export default function Landing() {
     },
   ];
 
+  const testHistoryList = {
+    profileImg: "/profile.png",
+    nickname: "JohnDoe",
+    status: "진행전",
+    title: "미팅 일정",
+    appointmentTime: "2024-09-15 14:00",
+    boardId: "1234",
+    time: 2,
+    buttonText: "거래 완료하기",
+  };
+
   return (
     <div className="space-y-4 p-8">
       <Badge size="l" color="teal">
@@ -48,6 +67,8 @@ export default function Landing() {
       <Badge size="l" color="gray">
         Gray Large
       </Badge>
+      <LoginButton title="Mattermost"></LoginButton>
+      <LoginButton title="Slack"></LoginButton>
 
       <Button
         size="l"
@@ -113,6 +134,49 @@ export default function Landing() {
       ))}
 
       <Dropbox items={["Option 1", "Option 2", "Option 3"]} />
+
+      <div>
+        <TitleInput width="300px" placeholder="제목을 입력하세요." />
+      </div>
+
+      <div>
+        <SearchInput
+          width="500px"
+          placeholder="placeholder"
+          label="label"
+          leftIcon
+          rightIcon
+          warningMessage="그건 아니지"
+        />
+      </div>
+
+      <ReviewBadge type="time" />
+
+      <div className="flex flex-col p-4">
+        <TodoList
+          status="완료"
+          appointmentTime="2024-09-11T12:00:00Z"
+          nickname="John Doe"
+          title="회의 준비"
+          chatId="123"
+        />
+        <TodoList
+          status="대기 중"
+          appointmentTime="2024-09-12T15:30:00Z"
+          nickname="Jane Smith"
+          title="보고서 제출"
+          chatId="456"
+        />
+        <TodoList
+          status="취소됨"
+          appointmentTime="2024-09-13T18:00:00Z"
+          nickname="Alice Brown"
+          title="프로젝트 검토"
+          chatId="789"
+        />
+      </div>
+
+      <HistoryList {...testHistoryList} />
     </div>
   );
 }
