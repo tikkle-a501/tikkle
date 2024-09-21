@@ -72,17 +72,19 @@ public class AppointmentService {
 		List<Chatroom> performerChatrooms = chatroomRepository.findByPerformerId(memberId);
 		List<Chatroom> writerChatrooms = chatroomRepository.findByWriterId(memberId);
 		List<DetailAppointmentResponse> responses = new ArrayList<>();
+		extractAppointmentFromChatroom(performerChatrooms, responses);
+		extractAppointmentFromChatroom(writerChatrooms, responses);
+		// TODO : 약속 생성 최신순 정렬
+		return responses;
+	}
+
+	private void extractAppointmentFromChatroom(List<Chatroom> performerChatrooms,
+		List<DetailAppointmentResponse> responses) {
 		for (Chatroom performerChatroom : performerChatrooms) {
 			Appointment appointment = performerChatroom.getAppointments()
 				.get(performerChatroom.getAppointments().size() - 1);
+			if(appointment.getDeletedAt() == null) continue;
 			responses.add(new DetailAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt(),performerChatroom.getBoard().getTitle()));
 		}
-		for (Chatroom writerChatroom : writerChatrooms) {
-			Appointment appointment = writerChatroom.getAppointments()
-				.get(writerChatroom.getAppointments().size() - 1);
-			responses.add(new DetailAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt(),writerChatroom.getBoard().getTitle()));
-		}
-		// TODO : 약속 생성 최신순 정렬
-		return responses;
 	}
 }
