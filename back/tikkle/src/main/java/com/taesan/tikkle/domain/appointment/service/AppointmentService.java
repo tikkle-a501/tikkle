@@ -1,5 +1,7 @@
 package com.taesan.tikkle.domain.appointment.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.taesan.tikkle.domain.appointment.dto.request.CreateAppointmentRequest;
 import com.taesan.tikkle.domain.appointment.dto.request.UpdateAppointmentRequest;
+import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentResponse;
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
@@ -60,5 +63,26 @@ public class AppointmentService {
 		} else {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자가 아닙니다.");
 		}
+	}
+
+	@Transactional
+	public List<DetailAppointmentResponse> getAppointments() {
+		// TODO : refresh 토큰을 활용한 세선 로그인 UUID 가져오기
+		UUID memberId = UUID.randomUUID();
+		List<Chatroom> performerChatrooms = chatroomRepository.findByPerformerId(memberId);
+		List<Chatroom> writerChatrooms = chatroomRepository.findByWriterId(memberId);
+		List<DetailAppointmentResponse> responses = new ArrayList<>();
+		for (Chatroom performerChatroom : performerChatrooms) {
+			Appointment appointment = performerChatroom.getAppointments()
+				.get(performerChatroom.getAppointments().size() - 1);
+			responses.add(new DetailAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt(),performerChatroom.getBoard().getTitle()));
+		}
+		for (Chatroom writerChatroom : writerChatrooms) {
+			Appointment appointment = writerChatroom.getAppointments()
+				.get(writerChatroom.getAppointments().size() - 1);
+			responses.add(new DetailAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt(),writerChatroom.getBoard().getTitle()));
+		}
+		// TODO : 약속 생성 최신순 정렬
+		return responses;
 	}
 }

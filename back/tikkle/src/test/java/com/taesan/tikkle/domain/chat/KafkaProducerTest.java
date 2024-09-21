@@ -2,6 +2,8 @@ package com.taesan.tikkle.domain.chat;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import com.taesan.tikkle.domain.chat.repository.ChatRepository;
 import com.taesan.tikkle.domain.chat.service.KafkaProducer;
 
 @SpringBootTest
-@EmbeddedKafka(partitions = 1, topics = { "chatroom.test" })  // 임베디드 Kafka 사용
+@EmbeddedKafka(partitions = 1, topics = {"chatroom.test"})  // 임베디드 Kafka 사용
 public class KafkaProducerTest {
 
 	@Autowired
@@ -30,7 +32,7 @@ public class KafkaProducerTest {
 		// Given
 		UUID chatroomId = UUID.randomUUID();
 		UUID senderId = UUID.randomUUID();
-		String content = "Hello, this is a test message.";
+		String content = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		ChatMessage chatMessage = new ChatMessage(chatroomId, senderId, content);
 
@@ -41,6 +43,9 @@ public class KafkaProducerTest {
 		var savedChat = chatRepository.findByChatroomId(chatroomId);
 		assertThat(savedChat).isNotNull();
 		assertThat(savedChat.getContent()).isEqualTo(content);
+
+		// log
+		System.out.println(chatroomId + " : "  + savedChat.getContent());
 	}
 }
 
