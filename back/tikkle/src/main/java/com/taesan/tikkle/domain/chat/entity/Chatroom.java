@@ -43,6 +43,12 @@ public class Chatroom extends BaseEntity {
 
 	@OneToMany(mappedBy = "room")
 	private List<Appointment> appointments;
+
+	public Chatroom(Board board, Member performer, Member writer){
+		this.board = board;
+		this.performer = performer;
+		this.writer = writer;
+	}
 }
 
 
