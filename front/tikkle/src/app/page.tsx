@@ -123,6 +123,7 @@ export default function Landing() {
       {testCards.map((card, index) => (
         <BoardCard
           key={index}
+          boardId={"1"}
           title={card.title}
           status={card.status}
           writer={card.writer}
