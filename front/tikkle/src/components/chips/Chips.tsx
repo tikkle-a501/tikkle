@@ -29,9 +29,9 @@ const Chips: React.FC<ChipsProps> = ({
   children,
 }) => {
   const sizeClasses = {
-    l: "flex justify-center items-center h-30 p-10 text-15 leading-20 items-center rounded-round",
-    m: "flex justify-center items-center h-28 p-10 text-14 items-center rounded-round",
-    s: "flex justify-center items-center h-20 p-10 text-12 items-center rounded-round",
+    l: "flex justify-center items-center h-[1.875rem] w-[3.75rem] p-10 text-15 leading-20 items-center rounded-round whitespace-nowrap",
+    m: "flex justify-center items-center h-[1.75rem] w-[3.5rem] p-10 text-14 items-center rounded-round whitespace-nowrap",
+    s: "flex justify-center items-center h-[1.25rem] w-[2.875rem] p-10 text-12 items-center rounded-round whitespace-nowrap",
   };
 
   const className = `${sizeClasses[size]} ${

@@ -23,7 +23,7 @@ export default function ChatLayout({
           email={testData.email}
           rate={testData.rate}
         />
-        <div>{children}</div>
+        <div className="flex w-full justify-between gap-10">{children}</div>
       </div>
     </>
   );
