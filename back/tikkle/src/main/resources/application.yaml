@@ -15,7 +15,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://mongoadmin:secret@host.docker.internal:27017/mymongodb?authSource=admin
+      uri: mongodb://mongoadmin:secret@localhost:27017/mymongodb?authSource=admin
       #      host: localhost
       #      port: 27017
       #      database: mymongodb
