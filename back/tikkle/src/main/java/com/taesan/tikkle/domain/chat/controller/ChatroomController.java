@@ -22,7 +22,7 @@ import com.taesan.tikkle.domain.chat.service.ChatroomService;
 @RequestMapping("/chatroom")
 public class ChatroomController {
 	@Autowired
-	private static ChatroomService chatroomService;
+	private ChatroomService chatroomService;
 
 	@PostMapping("")
 	public ResponseEntity<CreateChatroomResponse> createChatRoom(@RequestBody CreateChatroomRequest request){
