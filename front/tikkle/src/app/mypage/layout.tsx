@@ -16,7 +16,7 @@ export default function ChatLayout({
   return (
     <>
       <div className="text-40 font-bold text-teal900">마이페이지</div>
-      <div className="flex gap-36">
+      <div className="flex gap-56">
         <InfoBox
           profileImg={testData.profileImg}
           name={testData.name}
