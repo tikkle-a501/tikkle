@@ -1,0 +1,10 @@
+/* Swiper Scrollbar 스타일링 */
+.swiper-scrollbar {
+  background-color: #e0e0e0; /* 스크롤바 배경색 */
+  height: 8px; /* 스크롤바 높이 */
+}
+
+.swiper-scrollbar-drag {
+  background-color: #0d9488; /* 스크롤바의 드래그 핸들 색상 */
+  border-radius: 10px; /* 모서리를 둥글게 */
+}
