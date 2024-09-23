@@ -25,7 +25,7 @@ const HistoryList: React.FC<HistoryListProps> = ({
   buttonText,
 }) => {
   return (
-    <div className="inline-flex h-[61px] w-[1010px] items-center px-10 text-18">
+    <div className="inline-flex h-[61px] w-full items-center px-10 text-18">
       <div className="flex w-[172px] items-center gap-10 p-10">
         <Image
           src={profileImg}

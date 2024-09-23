@@ -17,14 +17,12 @@ export default function ChatLayout({
     <>
       <div className="text-40 font-bold text-teal900">마이페이지</div>
       <div className="flex gap-36">
-        <div className="flex">
-          <InfoBox
-            profileImg={testData.profileImg}
-            name={testData.name}
-            email={testData.email}
-            rate={testData.rate}
-          />
-        </div>
+        <InfoBox
+          profileImg={testData.profileImg}
+          name={testData.name}
+          email={testData.email}
+          rate={testData.rate}
+        />
         <div className="flex w-full justify-between gap-10">{children}</div>
       </div>
     </>
