@@ -8,9 +8,18 @@
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb {
-    @apply bg-warmGray300 rounded-[10px] border-[7px] border-white min-h-[50px];
+    @apply min-h-[50px] rounded-[10px] border-[7px] border-white bg-warmGray300;
   }
 
+  .scrollbar-hidden {
+    -ms-overflow-style: none; /* Internet Explorer and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    /* Chrome, Safari, and Edge (WebKit) */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 *,
@@ -49,7 +58,6 @@ canvas {
   background-repeat: no-repeat;
   background-size: cover;
 }
-
 
 input,
 button,
