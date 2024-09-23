@@ -60,7 +60,6 @@ public class RateService {
 			.orElse(INITIAL_TIME_TO_RANK_POINT);
 	}
 
-	// 환율 계산 로직
 	public int calculateRate(int totalTtoRAmount, int totalRtoTAmount, int previousRate) {
 		int totalTransactionVolume = totalTtoRAmount + totalRtoTAmount;
 
@@ -69,23 +68,27 @@ public class RateService {
 		}
 
 		double maxRateChange = previousRate * RATE_ADJUSTMENT_FACTOR;
-		int rateChangePercentage;
 		int newRate;
+		int weight;
 
 		if (totalTtoRAmount > totalRtoTAmount) {
 			//거래량 비율계산
-			double supplyDemandRatio = (double)totalRtoTAmount / (double)totalTtoRAmount;
+			double ratio = (double)totalRtoTAmount / (double)totalTtoRAmount;
 			//거래량 불균형 계산 -> 1에 가까울수록 수요와 공급이 균형을 이룸 (0~1 사이 값)
 			//최대 변동 값 사이에서만
-			rateChangePercentage = (int)Math.round((1 - supplyDemandRatio) * maxRateChange);
-			newRate = previousRate - rateChangePercentage;
+			weight = getWeight(ratio, maxRateChange);
+			newRate = previousRate - weight;
 		} else if (totalRtoTAmount > totalTtoRAmount) {
-			double demandSupplyRatio = (double)totalTtoRAmount / (double)totalRtoTAmount;
-			rateChangePercentage = (int)Math.round((1 - demandSupplyRatio) * maxRateChange);
-			newRate = previousRate + rateChangePercentage;
+			double ratio = (double)totalTtoRAmount / (double)totalRtoTAmount;
+			weight = getWeight(ratio, maxRateChange);
+			newRate = previousRate + weight;
 		} else {
 			newRate = previousRate;
 		}
 		return newRate;
+	}
+
+	private int getWeight(double ratio, double maxRateChange) {
+		return (int)Math.round((1 - ratio) * maxRateChange);
 	}
 }
