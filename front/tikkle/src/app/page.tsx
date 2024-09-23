@@ -6,7 +6,6 @@ import LoginButton from "@/components/button/LoginButton";
 import Dropbox from "@/components/drop-down/Dropbox";
 import TitleInput from "@/components/input/TitleInput";
 import SearchInput from "@/components/input/SearchInput";
-import ChatList from "@/components/chat/ChatList";
 import ReviewBadge from "@/components/badge/review/ReviewBadge";
 import TodoList from "@/components/list/TodoList";
 import HistoryList from "@/components/list/HistoryList";
@@ -136,7 +135,7 @@ export default function Landing() {
       <Dropbox items={["Option 1", "Option 2", "Option 3"]} />
 
       <div>
-        <TitleInput width="300px" placeholder="제목을 입력하세요." />
+        <TitleInput placeholder="제목을 입력하세요." />
       </div>
 
       <div>
