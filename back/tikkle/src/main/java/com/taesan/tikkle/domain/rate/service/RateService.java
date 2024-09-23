@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RateService {
 
 	private final static int INITIAL_TIME_TO_RANK_POINT = 1000;
-	private final static double RATE_ADJUSTMENT_FACTOR = 1.0;
+	private final static double RATE_ADJUSTMENT_FACTOR = 0.1;
 
 	private final AccountService accountService;
 	private final RateRepository rateRepository;
@@ -64,37 +64,28 @@ public class RateService {
 	public int calculateRate(int totalTtoRAmount, int totalRtoTAmount, int previousRate) {
 		int totalTransactionVolume = totalTtoRAmount + totalRtoTAmount;
 
-		//거래량이 모두 0인 경우 이전 환율 유지
 		if (totalTransactionVolume == 0) {
 			return previousRate;
 		}
 
-		// 변동폭 완화 상수 적용
-		double volatilityReductionFactor = 0.1; // 변동폭 완화를 위해 10%로 조정 (alpha)
-
-		// 환율 변동폭 가중치: 거래량이 많을수록 변동폭이 커짐 (로그 함수 사용하여 급격한 변화 방지)
-		double transactionWeightFactor = 1 + Math.log(1 + totalTransactionVolume);
-
-		// 비율 계산: TtoR / RtoT 비율에 따라 변동폭 결정
-		double rateChangeFactor;
+		double maxRateChange = previousRate * RATE_ADJUSTMENT_FACTOR;
+		int rateChangePercentage;
+		int newRate;
 
 		if (totalTtoRAmount > totalRtoTAmount) {
-			// TtoR > RtoT: 환율 상승
-			rateChangeFactor = (double)totalTtoRAmount / totalRtoTAmount;
-		} else if (totalTtoRAmount < totalRtoTAmount) {
-			// TtoR < RtoT: 환율 하락
-			rateChangeFactor = (double)totalRtoTAmount / totalTtoRAmount;
+			//거래량 비율계산
+			double supplyDemandRatio = (double)totalRtoTAmount / (double)totalTtoRAmount;
+			//거래량 불균형 계산 -> 1에 가까울수록 수요와 공급이 균형을 이룸 (0~1 사이 값)
+			//최대 변동 값 사이에서만
+			rateChangePercentage = (int)Math.round((1 - supplyDemandRatio) * maxRateChange);
+			newRate = previousRate - rateChangePercentage;
+		} else if (totalRtoTAmount > totalTtoRAmount) {
+			double demandSupplyRatio = (double)totalTtoRAmount / (double)totalRtoTAmount;
+			rateChangePercentage = (int)Math.round((1 - demandSupplyRatio) * maxRateChange);
+			newRate = previousRate + rateChangePercentage;
 		} else {
-			// TtoR == RtoT: 변동폭이 작음
-			rateChangeFactor = 1;
+			newRate = previousRate;
 		}
-
-		// 최종 변동폭 계산: 이전 환율 * (1 + 변동폭 * 가중치 * 완화 상수)
-		double rateChange = (rateChangeFactor - 1) * transactionWeightFactor * volatilityReductionFactor;
-
-		// 새로운 환율을 계산 (이전 환율에 변동폭을 더함)
-		int newRate = (int)(previousRate * (1 + rateChange));
-
 		return newRate;
 	}
 }
