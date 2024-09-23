@@ -10,6 +10,16 @@
   .scrollbar-custom::-webkit-scrollbar-thumb {
     @apply min-h-[50px] rounded-[10px] border-[7px] border-white bg-warmGray300;
   }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none; /* Internet Explorer and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    /* Chrome, Safari, and Edge (WebKit) */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 *,
