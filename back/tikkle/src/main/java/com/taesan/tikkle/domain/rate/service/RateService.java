@@ -63,32 +63,39 @@ public class RateService {
 	public int calculateRate(int totalTtoRAmount, int totalRtoTAmount, int previousRate) {
 		int totalTransactionVolume = totalTtoRAmount + totalRtoTAmount;
 
+		//거래량이 0이였다면 이전 환율 적용
 		if (totalTransactionVolume == 0) {
 			return previousRate;
 		}
 
-		double maxRateChange = previousRate * RATE_ADJUSTMENT_FACTOR;
+		//직전 환율의 10%만 변화
+		double rateChangeLimit = previousRate * RATE_ADJUSTMENT_FACTOR;
 		int newRate;
-		int weight;
+		int rateAdjustment;
 
+		//포인트 환전에 사용된 시간이 더 많다 -> 포인트의 수요 증가 -> 1시간 당 바꿀 수 있는 포인트 감소
 		if (totalTtoRAmount > totalRtoTAmount) {
-			//거래량 비율계산
-			double ratio = (double)totalRtoTAmount / (double)totalTtoRAmount;
-			//거래량 불균형 계산 -> 1에 가까울수록 수요와 공급이 균형을 이룸 (0~1 사이 값)
-			//최대 변동 값 사이에서만
-			weight = getWeight(ratio, maxRateChange);
-			newRate = previousRate - weight;
+			//거래량 비율 계산 -> 환전에 사용된 시간이 분모
+			rateAdjustment = getWeight(totalRtoTAmount, totalTtoRAmount, rateChangeLimit);
+			newRate = previousRate - rateAdjustment;
 		} else if (totalRtoTAmount > totalTtoRAmount) {
-			double ratio = (double)totalTtoRAmount / (double)totalRtoTAmount;
-			weight = getWeight(ratio, maxRateChange);
-			newRate = previousRate + weight;
+			//거래량 비율 계산 -> 환전으로 생성된 시간이 분모
+			rateAdjustment = getWeight(totalTtoRAmount, totalRtoTAmount, rateChangeLimit);
+			newRate = previousRate + rateAdjustment;
 		} else {
 			newRate = previousRate;
 		}
+
+		log.info("시간 -> 포인트: {}, 포인트 -> 시간: {}, 새로운 환율: {}", totalTtoRAmount, totalRtoTAmount, newRate);
 		return newRate;
 	}
 
-	private int getWeight(double ratio, double maxRateChange) {
-		return (int)Math.round((1 - ratio) * maxRateChange);
+	private int getWeight(int numerator, int denominator, double rateChangeLimit) {
+		//거래량 비율 -> 분자와 분모의 차이가 커질 수록 한 쪽으로의 수요가 커지기 때문에 1을 빼서 반전
+		double demandDiscrepancyRatio = 1 - ((double)numerator / (double)denominator);
+		//거래량에 따른 가중치 값
+		double transactionVolumeImpact = Math.log(numerator + denominator);
+
+		return (int)Math.round(rateChangeLimit * demandDiscrepancyRatio + transactionVolumeImpact);
 	}
 }
