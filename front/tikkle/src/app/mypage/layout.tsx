@@ -25,7 +25,7 @@ export default function ChatLayout({
             rate={testData.rate}
           />
         </div>
-        <div className="flex w-full justify-between">{children}</div>
+        <div className="flex w-full justify-between gap-10">{children}</div>
       </div>
     </>
   );
