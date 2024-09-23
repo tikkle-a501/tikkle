@@ -38,7 +38,7 @@ export default function Trade() {
   ];
 
   return (
-    <div className="flexflex-col gap-10">
+    <div className="flex flex-col gap-10">
       <span className="py-6 text-28 font-bold leading-34 text-teal-900">
         나의 거래 내역
       </span>
