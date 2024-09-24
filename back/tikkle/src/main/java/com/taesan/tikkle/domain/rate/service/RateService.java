@@ -32,10 +32,10 @@ public class RateService {
 		LocalDateTime oneHourAgo = now.minusHours(1);
 		log.info("{}, {}", now, oneHourAgo);
 
-		List<ExchangeLog> logs = accountService.findExchangeLogsBetween(oneHourAgo.withMinute(0).withSecond(0),
-			oneHourAgo.withMinute(59).withSecond(59), );
+//		List<ExchangeLog> logs = accountService.findExchangeLogsBetween(oneHourAgo.withMinute(0).withSecond(0),
+//			oneHourAgo.withMinute(59).withSecond(59), );
 
-		logs.forEach(log -> {
-		});
+//		logs.forEach(log -> {
+//		});
 	}
 }

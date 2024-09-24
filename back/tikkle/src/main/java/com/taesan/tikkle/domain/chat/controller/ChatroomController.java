@@ -31,7 +31,7 @@ public class ChatroomController {
 	// 	어쩌라구
 
 	// TODO : 새 채팅에 대한 알림 처리
-	@GetMapping("")
+	@GetMapping("/")
 	public ResponseEntity<List<DetailChatroomResponse>> getChatrooms(){
 		return ResponseEntity.ok(chatroomService.getChatrooms());
 	}

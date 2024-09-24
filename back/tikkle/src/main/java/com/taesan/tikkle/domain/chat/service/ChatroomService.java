@@ -61,7 +61,7 @@ public class ChatroomService {
 	@Transactional(readOnly = true)
 	public List<DetailChatroomResponse> getChatrooms() {
 		// TODO : 세션 로그인 아이디 가져오기, 현재는 가상 memberId
-		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
+		UUID memberId = UUID.fromString("74657374-3200-0000-0000-000000000000");
 		List<Chatroom> writerRooms = chatroomRepository.findByWriterId(memberId);
 		List<Chatroom> performerRooms = chatroomRepository.findByPerformerId(memberId);
 		List<DetailChatroomResponse> responses = new ArrayList<>();
