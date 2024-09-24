@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -21,7 +22,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 
 		final String[] allowedOrigins = {"http://localhost:5500", "http://localhost:3000",
-			"http://127.0.0.1:5500", "http://127.0.0.1:3000", "https://j11a501.p.ssafy.io"};
+			"http://127.0.0.1:5500", "http://127.0.0.1:3000", "https://j11a501.p.ssafy.io", "http://localhost:9092", "http://127.0.0.1:9092"};
 
 		final String[] allowedMethods = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
 
@@ -47,13 +48,14 @@ public class SecurityConfig {
 
 		// TODO: 개발 환경을 위한 패턴이므로 추후 작성 필요
 		String[] requestMatcherPatterns = new String[] {
-			"/api/v1/**","/ws/**"
+			"/api/v1/**","/ws/**",
 		};
 
 		http
 			.authorizeHttpRequests((auth) -> auth
 				.requestMatchers(requestMatcherPatterns).permitAll()
-				.requestMatchers("/api/v1/manager").hasRole("MANAGER").anyRequest().authenticated());
+//				.requestMatchers("/api/v1/manager").hasRole("MANAGER")
+				.anyRequest().authenticated());
 
 		http
 			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
