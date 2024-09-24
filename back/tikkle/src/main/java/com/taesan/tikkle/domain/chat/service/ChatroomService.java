@@ -32,16 +32,16 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class ChatroomService {
 	@Autowired
-	private static ChatroomRepository chatroomRepository;
+	private ChatroomRepository chatroomRepository;
 
 	@Autowired
-	private static ChatRepository chatRepository;
+	private ChatRepository chatRepository;
 
 	@Autowired
-	private static BoardRepository boardRepository;
+	private BoardRepository boardRepository;
 
 	@Autowired
-	private static MemberRepository memberRepository;
+	private MemberRepository memberRepository;
 
 	@Transactional
 	public CreateChatroomResponse createChatroom(CreateChatroomRequest request) {
@@ -61,7 +61,7 @@ public class ChatroomService {
 	@Transactional(readOnly = true)
 	public List<DetailChatroomResponse> getChatrooms() {
 		// TODO : 세션 로그인 아이디 가져오기, 현재는 가상 memberId
-		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
+		UUID memberId = UUID.fromString("74657374-3200-0000-0000-000000000000");
 		List<Chatroom> writerRooms = chatroomRepository.findByWriterId(memberId);
 		List<Chatroom> performerRooms = chatroomRepository.findByPerformerId(memberId);
 		List<DetailChatroomResponse> responses = new ArrayList<>();

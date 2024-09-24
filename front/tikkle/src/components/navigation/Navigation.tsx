@@ -12,7 +12,7 @@ const Navigation = () => {
     <nav className="sticky top-0 z-50 flex h-[85px] items-center justify-between border-b border-warmGray300 bg-warmGray50 px-40">
       {/* 로고 영역 */}
       <Link href="/">
-        <Image src="/logo.png" alt="Logo" width={92} height={28} />
+        <Image src="/logo.png" alt="Logo" width={92} height={28} priority />
       </Link>
 
       {/* 메뉴 영역 */}

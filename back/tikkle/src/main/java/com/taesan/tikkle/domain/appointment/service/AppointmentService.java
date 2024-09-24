@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.taesan.tikkle.domain.appointment.dto.request.CreateAppointmentRequest;
 import com.taesan.tikkle.domain.appointment.dto.request.UpdateAppointmentRequest;
-import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentResponse;
+//import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentResponse;
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;

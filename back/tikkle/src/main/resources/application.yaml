@@ -39,5 +39,8 @@ spring:
 logging:
   level:
     root: INFO
+    com:
+      taesan:
+        tikkle: DEBUG
     org.apache.kafka: ERROR
     kafka.server.KafkaConfig: ERROR

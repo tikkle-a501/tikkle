@@ -19,7 +19,7 @@ import com.taesan.tikkle.domain.chat.dto.response.DetailChatroomResponse;
 import com.taesan.tikkle.domain.chat.service.ChatroomService;
 
 @RestController
-@RequestMapping("/chatroom")
+@RequestMapping("/api/v1/chatroom")
 public class ChatroomController {
 	@Autowired
 	private ChatroomService chatroomService;
@@ -33,6 +33,7 @@ public class ChatroomController {
 	// TODO : 새 채팅에 대한 알림 처리
 	@GetMapping("")
 	public ResponseEntity<List<DetailChatroomResponse>> getChatrooms(){
+		System.out.println(chatroomService.getChatrooms());
 		return ResponseEntity.ok(chatroomService.getChatrooms());
 	}
 
