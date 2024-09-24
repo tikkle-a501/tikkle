@@ -3,10 +3,10 @@ package com.taesan.tikkle.domain.chat.dto.response;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateChatroomResponse {
