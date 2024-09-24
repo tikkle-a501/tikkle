@@ -3,6 +3,7 @@
 import MessageList from "@/components/chat/MessageList";
 import Loading from "@/components/loading/Loading";
 import { useFetchChatroomsByUserId } from "@/hooks/chat/useFetchChatroomsByUserId";
+import { Chatroom } from "@/types/chatroom/index.j";
 
 export default function ChatLayout({
   children,
@@ -13,7 +14,7 @@ export default function ChatLayout({
   const memberId = "74657374-3200-0000-0000-000000000000";
 
   // useFetchChatroomsByUserId 훅을 사용하여 채팅 목록을 가져옴
-  const { data, error, isLoading } = useFetchChatroomsByUserId(memberId);
+  const { data, error, isLoading } = useFetchChatroomsByUserId();
 
   // 로딩 중일 때 표시할 내용
   if (isLoading) {
@@ -38,18 +39,21 @@ export default function ChatLayout({
       <div className="text-40 font-bold text-teal900">채팅 목록</div>
       <div className="flex gap-12 px-40 py-20">
         <div className="scrollbar-custom flex h-[767px] w-[344px] flex-col gap-12 overflow-y-auto rounded-12 border border-warmGray200 p-14">
-          {data?.chatrooms.map((message, index) => (
-            <MessageList
-              key={index}
-              chatId={message.id}
-              memberId={message.performerId}
-              profileImage={message.profileImage}
-              nickname={message.nickname}
-              recentMessage={message.recentMessage}
-              recentCreatedAt={message.createdAt}
-              isRead={message.isRead}
-            />
-          ))}
+          {data?.length ? (
+            data.map((chatroom: Chatroom, index: number) => (
+              <MessageList
+                key={index}
+                roomId={chatroom.roomId}
+                profileImage="/profile.png" // 기본 이미지 경로
+                partner={chatroom.partner}
+                lastMsg={chatroom.lastMsg}
+                recentCreatedAt=""
+                isRead={true} // 임의로 읽음 처리
+              />
+            ))
+          ) : (
+            <p>채팅방이 없습니다.</p>
+          )}
         </div>
         <div className="flex h-[767px] flex-grow flex-col items-center justify-center rounded-12 bg-coolGray100 p-20">
           {children}

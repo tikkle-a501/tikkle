@@ -1,23 +1,15 @@
 export interface Chatroom {
-  id: string;
-  createdAt: string;
-  boardId: string;
-  performerId: string;
-  writerId: string;
-
-  profileImage: string;
-  nickname: string;
-  recentMessage: string;
-  isRead: boolean;
+  roomId: string;
+  partner: string;
+  lastSender: string;
+  lastMsg: string;
 }
 
 export interface ChatroomResponse {
   chatroom: Chatroom;
 }
 
-export interface ChatroomResponses {
-  chatrooms: Chatroom[];
-}
+export type ChatroomResponses = Chatroom[];
 
 export interface Response<T> {
   success: boolean;

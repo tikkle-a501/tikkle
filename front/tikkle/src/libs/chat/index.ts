@@ -1,11 +1,12 @@
-import {
-  Chatroom,
-  ChatroomResponse,
-  ChatroomResponses,
-} from "@/types/chatroom/index.j";
-import { handleApiRequest } from "../client";
+import api from "../client";
 
 // 특정 유저의 채팅 목록 조회 API
 export const fetchChatroomsByUserId = async () => {
-  return handleApiRequest<ChatroomResponses, "get">(`/chatroom`, "get");
+  try {
+    const response = await api.get(`/chatroom`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching chatrooms:", error);
+    throw new Error("Failed to fetch chatrooms");
+  }
 };
