@@ -1,3 +1,5 @@
+import { Chat } from "../chat/index.j";
+
 export interface Chatroom {
   roomId: string;
   partner: string;
@@ -5,8 +7,16 @@ export interface Chatroom {
   lastMsg: string;
 }
 
+export interface ChatroomData {
+  boardId: string;
+  boardTitle: string;
+  chats: Chat[];
+  partnerName: string;
+  status: string;
+}
+
 export interface ChatroomResponse {
-  chatroom: Chatroom;
+  chatroom: ChatroomData;
 }
 
 export type ChatroomResponses = Chatroom[];

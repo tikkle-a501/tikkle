@@ -96,7 +96,7 @@ public class ChatroomService {
 	@Transactional
 	public EnterChatroomResponse enterChatroom(UUID roomId) {
 		// TODO : 세션에 들어온 아이디 찾아야댐...
-		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
+		UUID memberId = UUID.fromString("74657374-3200-0000-0000-000000000000");
 		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId)
 			.stream()
 			.map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))

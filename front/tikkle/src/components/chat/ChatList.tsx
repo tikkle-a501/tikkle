@@ -4,15 +4,15 @@ import { useState, useEffect } from "react";
 
 interface ChatProps {
   content: string;
-  createdAt: string;
-  writerId: string;
+  createdAt: Date;
+  senderId: string;
   isMine: boolean;
 }
 
 const ChatList: React.FC<ChatProps> = ({
   content,
   createdAt,
-  writerId,
+  senderId,
   isMine,
 }) => {
   const sideStyle = isMine
