@@ -19,7 +19,7 @@ import com.taesan.tikkle.domain.chat.dto.response.DetailChatroomResponse;
 import com.taesan.tikkle.domain.chat.service.ChatroomService;
 
 @RestController
-@RequestMapping("/chatroom")
+@RequestMapping("/api/v1/chatroom")
 public class ChatroomController {
 	@Autowired
 	private ChatroomService chatroomService;

@@ -32,16 +32,16 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class ChatroomService {
 	@Autowired
-	private static ChatroomRepository chatroomRepository;
+	private ChatroomRepository chatroomRepository;
 
 	@Autowired
-	private static ChatRepository chatRepository;
+	private ChatRepository chatRepository;
 
 	@Autowired
-	private static BoardRepository boardRepository;
+	private BoardRepository boardRepository;
 
 	@Autowired
-	private static MemberRepository memberRepository;
+	private MemberRepository memberRepository;
 
 	@Transactional
 	public CreateChatroomResponse createChatroom(CreateChatroomRequest request) {
@@ -73,7 +73,7 @@ public class ChatroomService {
 					.orElseThrow(EntityNotFoundException::new);
 				responses.add(
 					new DetailChatroomResponse(chatroom.getId(), chatroom.getPerformer().getNickname(),
-						lastSender.getNickname(), lastChat.getContent()));
+						lastSender.getNickname(), lastChat.getContent(),lastChat.getTimestamp()));
 			} else {
 				responses.add(new DetailChatroomResponse(chatroom.getId(), chatroom.getPerformer().getNickname()));
 			}
@@ -85,7 +85,7 @@ public class ChatroomService {
 					.orElseThrow(EntityNotFoundException::new);
 				responses.add(
 					new DetailChatroomResponse(chatroom.getId(), chatroom.getWriter().getNickname(),
-						lastSender.getNickname(), lastChat.getContent()));
+						lastSender.getNickname(), lastChat.getContent(),lastChat.getTimestamp()));
 			} else {
 				responses.add(new DetailChatroomResponse(chatroom.getId(), chatroom.getWriter().getNickname()));
 			}
