@@ -114,4 +114,5 @@ public class ChatroomService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "채팅방에 접근할 권한이 없습니다.");
 		return chatroom.getWriter().getId() == memberId ? performer : writer;
 	}
+
 }
