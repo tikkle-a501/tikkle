@@ -1,6 +1,8 @@
 package com.taesan.tikkle.domain.rate.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.service.AccountService;
+import com.taesan.tikkle.domain.rate.dto.response.RateFindAllResponse;
 import com.taesan.tikkle.domain.rate.entity.Rate;
 import com.taesan.tikkle.domain.rate.repository.RateRepository;
 
@@ -45,6 +48,12 @@ public class RateService {
 		int newRate = calculateRate(totalTtoRAmount, totalRtoTAmount, previousRate);
 
 		rateRepository.save(Rate.builder().timeToRank(newRate).build());
+	}
+
+	public List<RateFindAllResponse> findAll() {
+		return rateRepository.findAll().stream()
+			.map(RateFindAllResponse::from)
+			.collect(Collectors.toList());
 	}
 
 	private LocalDateTime getOneHourAgo() {
