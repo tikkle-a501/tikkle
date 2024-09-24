@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,9 +45,20 @@ public class Member extends AuditableEntity {
 	@Column(length = 64)
 	private String nickname;
 
-	@Column
-	private String provider;
-
 	@Column(length = 128)
 	private String email;
+
+	@Builder
+	public Member(Organization organization,
+		Account account,
+		String name,
+		String nickname,
+		String email) {
+
+		this.organization = organization;
+		this.account = account;
+		this.name = name;
+		this.nickname = nickname;
+		this.email = email;
+	}
 }
