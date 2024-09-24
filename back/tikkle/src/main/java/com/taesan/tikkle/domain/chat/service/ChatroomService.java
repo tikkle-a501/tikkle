@@ -32,16 +32,16 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class ChatroomService {
 	@Autowired
-	private static ChatroomRepository chatroomRepository;
+	private ChatroomRepository chatroomRepository;
 
 	@Autowired
-	private static ChatRepository chatRepository;
+	private ChatRepository chatRepository;
 
 	@Autowired
-	private static BoardRepository boardRepository;
+	private BoardRepository boardRepository;
 
 	@Autowired
-	private static MemberRepository memberRepository;
+	private MemberRepository memberRepository;
 
 	@Transactional
 	public CreateChatroomResponse createChatroom(CreateChatroomRequest request) {

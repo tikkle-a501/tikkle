@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -47,7 +48,7 @@ public class SecurityConfig {
 
 		// TODO: 개발 환경을 위한 패턴이므로 추후 작성 필요
 		String[] requestMatcherPatterns = new String[] {
-			"/api/v1/chatroom/**","/ws/**", "/api/v1/chatroom", "/api/v1/chatroom/"
+			"/api/v1/**","/ws/**",
 		};
 
 		http
