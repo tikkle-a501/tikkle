@@ -2,6 +2,8 @@ package com.taesan.tikkle.domain.rate.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,6 +56,11 @@ public class RateService {
 		return rateRepository.findAll().stream()
 			.map(RateFindAllResponse::from)
 			.collect(Collectors.toList());
+	}
+
+	public Rate findById(UUID rateId){
+		//TODO: 예외 정의하기
+		return rateRepository.findById(rateId).orElseThrow(NoSuchElementException::new);
 	}
 
 	private LocalDateTime getOneHourAgo() {
