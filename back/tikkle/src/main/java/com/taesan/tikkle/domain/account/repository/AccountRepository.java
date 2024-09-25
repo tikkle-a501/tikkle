@@ -1,6 +1,7 @@
 package com.taesan.tikkle.domain.account.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.entity.Account;
+import com.taesan.tikkle.domain.account.entity.ExchangeLog;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
@@ -18,4 +20,10 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 	Integer getTotalQuantityByExchangeTypeAndPeriod(@Param("startTime") LocalDateTime startTime,
 		@Param("endTime") LocalDateTime endTime,
 		@Param("exchangeType") ExchangeType exchangeType);
+
+	@Query("SELECT el FROM ExchangeLog el " +
+		"JOIN FETCH el.account a " +
+		"JOIN FETCH el.rate r " +
+		"WHERE a.member.id = :memberId")
+	List<ExchangeLog> findExchangeLogsByMemberId(@Param("memberId") UUID memberId);
 }

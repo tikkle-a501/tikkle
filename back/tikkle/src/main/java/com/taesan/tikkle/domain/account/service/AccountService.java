@@ -1,10 +1,14 @@
 package com.taesan.tikkle.domain.account.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
+import com.taesan.tikkle.domain.account.dto.response.ExchangeLogFindAllResponse;
 import com.taesan.tikkle.domain.account.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,5 +26,12 @@ public class AccountService {
 		Integer total = accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType);
 		log.info("총 total : {}", total);
 		return total != null ? total : 0;
+	}
+
+	public List<ExchangeLogFindAllResponse> findExchangeLogsByMemberId(UUID memberId) {
+		return accountRepository.findExchangeLogsByMemberId(memberId)
+			.stream()
+			.map(ExchangeLogFindAllResponse::from)
+			.collect(Collectors.toList());
 	}
 }
