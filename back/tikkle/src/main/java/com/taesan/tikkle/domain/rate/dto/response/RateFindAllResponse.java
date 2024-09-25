@@ -20,7 +20,7 @@ public class RateFindAllResponse {
 	private Integer timeToRank;
 
 	@Builder
-	public RateFindAllResponse(UUID id, LocalDateTime createdAt, Integer timeToRank) {
+	private RateFindAllResponse(UUID id, LocalDateTime createdAt, Integer timeToRank) {
 		this.id = id;
 		this.createdAt = createdAt;
 		this.timeToRank = timeToRank;
