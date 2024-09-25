@@ -3,9 +3,9 @@ package com.taesan.tikkle.domain.chat.entity;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class ChatMessage {
 	private UUID chatroomId;

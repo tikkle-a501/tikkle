@@ -73,7 +73,7 @@ public class ChatroomService {
 					.orElseThrow(EntityNotFoundException::new);
 				responses.add(
 					new DetailChatroomResponse(chatroom.getId(), chatroom.getPerformer().getNickname(),
-						lastSender.getNickname(), lastChat.getContent()));
+						lastSender.getNickname(), lastChat.getContent(),lastChat.getTimestamp()));
 			} else {
 				responses.add(new DetailChatroomResponse(chatroom.getId(), chatroom.getPerformer().getNickname()));
 			}
@@ -85,7 +85,7 @@ public class ChatroomService {
 					.orElseThrow(EntityNotFoundException::new);
 				responses.add(
 					new DetailChatroomResponse(chatroom.getId(), chatroom.getWriter().getNickname(),
-						lastSender.getNickname(), lastChat.getContent()));
+						lastSender.getNickname(), lastChat.getContent(),lastChat.getTimestamp()));
 			} else {
 				responses.add(new DetailChatroomResponse(chatroom.getId(), chatroom.getWriter().getNickname()));
 			}
@@ -114,4 +114,5 @@ public class ChatroomService {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "채팅방에 접근할 권한이 없습니다.");
 		return chatroom.getWriter().getId() == memberId ? performer : writer;
 	}
+
 }
