@@ -23,9 +23,9 @@ public class AccountService {
 
 	public Integer getTotalQuantityByExchangeTypeAndPeriod(LocalDateTime startTime, LocalDateTime endTime,
 		ExchangeType exchangeType) {
-		Integer total = accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType);
+		Integer total = accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType).orElse(0);
 		log.info("총 total : {}", total);
-		return total != null ? total : 0;
+		return total;
 	}
 
 	public List<ExchangeLogFindAllResponse> findExchangeLogsByMemberId(UUID memberId) {
