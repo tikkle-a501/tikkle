@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.f4b6a3.ulid.UlidCreator;
 import com.taesan.tikkle.domain.account.dto.response.ExchangeLogFindAllResponse;
 import com.taesan.tikkle.domain.account.service.ExchangeService;
 
@@ -25,8 +24,9 @@ public class ExchangeController {
 
 	@GetMapping
 	public ResponseEntity<List<ExchangeLogFindAllResponse>> getExchangeLogs(Authentication authentication) {
-		UUID memberId = UlidCreator.getMonotonicUlid().toUuid();
+		//TODO: 추후 사용자 인증 처리 로직 결정 되면 수정해야합니다.
+		UUID memberId = UUID.fromString("01920dd1-423e-f86b-a4dd-28a20d81fab0");
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(exchangeService.getExchangeLogs(UUID.fromString("01920dd1-423e-f86b-a4dd-28a20d81fab0")));
+			.body(exchangeService.getExchangeLogs(memberId));
 	}
 }
