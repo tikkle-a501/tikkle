@@ -1,16 +1,17 @@
 "use client";
 
 import { useFetchChatroomById } from "@/hooks/chat/usefetchChatroomById";
-import { useEffect, useState } from "react";
-
-import { ChatroomData } from "@/types/chatroom/index.j";
-
+import Loading from "@/components/loading/Loading";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Button from "@/components/button/Button";
 import Badge from "@/components/badge/Badge";
 import Link from "next/link";
 import ChatList from "@/components/chat/ChatList";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import { Chat } from "@/types/chat/index.j";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -22,20 +23,88 @@ export default function ChatId() {
   const memberId = "74657374-3200-0000-0000-000000000000";
   const { data, error, isLoading } = useFetchChatroomById(roomId!);
 
-  const [inputValue, setInputValue] = useState(""); // 입력 값 상태 관리
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
+  const [inputValue, setInputValue] = useState(""); // 메시지 입력 값
+  const [messages, setMessages] = useState<Chat[]>([]); // 메시지를 Chat[] 형식으로 관리
+  const stompClientRef = useRef<Client | null>(null);
+
+  useEffect(() => {
+    const socket = new SockJS("http://localhost:8080/ws");
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+    });
+
+    // WebSocket 연결이 성공했을 때
+    stompClient.onConnect = () => {
+      console.log("WebSocket 연결됨");
+
+      stompClient.subscribe(`/topic/chatroom.${roomId}`, (message) => {
+        const receivedMessage = JSON.parse(message.body);
+        const newChat = {
+          content: receivedMessage.content,
+          timestamp: receivedMessage.timestamp,
+          senderId: receivedMessage.senderId,
+        };
+
+        setMessages((prevMessages) => [...prevMessages, newChat]);
+        console.log("수신된 메시지:", newChat); // 수신된 메시지 로그
+      });
+    };
+
+    // WebSocket 연결이 종료되었을 때
+    stompClient.onDisconnect = () => {
+      console.log("WebSocket 연결이 종료됨");
+    };
+
+    stompClient.activate();
+    stompClientRef.current = stompClient;
+
+    return () => {
+      stompClient.deactivate();
+    };
+  }, [roomId]);
+
+  const handleSendMessage = () => {
+    if (stompClientRef.current && inputValue.trim() !== "") {
+      const chatMessage = {
+        roomId: roomId,
+        senderId: memberId,
+        content: inputValue,
+      };
+
+      const sendMessage = {
+        destination: "/app/sendMessage",
+        body: JSON.stringify(chatMessage),
+      };
+
+      stompClientRef.current.publish(sendMessage);
+      console.log("메시지 전송:", sendMessage); // 전송한 메시지 로그
+      setInputValue("");
+    }
+  };
+
+  const combinedMessages = [...(data?.chats || []), ...messages];
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <>
+        <Loading />
+      </>
+    );
   }
 
   if (error) {
     return <p>Error: {error.message}</p>;
   }
-
-  // 입력 값 변경 핸들러
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value); // 입력 값 업데이트
-  };
 
   return (
     <>
@@ -58,7 +127,6 @@ export default function ChatId() {
         </div>
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
-        {/* todo: 뱃지 색상을 status에 따라 동적으로 받는 로직 필요 */}
         <Badge size="l" color="yellow">
           {data?.status}
         </Badge>
@@ -69,14 +137,14 @@ export default function ChatId() {
 
       {/* 채팅 내용 */}
       <div className="scrollbar-custom flex flex-1 flex-col self-stretch overflow-y-auto">
-        {data!.chats.length > 0 ? (
-          data?.chats.map((chat, index) => (
+        {combinedMessages.length > 0 ? (
+          combinedMessages.map((chat, index) => (
             <ChatList
               key={index}
               content={chat.content}
               createdAt={chat.timestamp}
               senderId={chat.senderId}
-              isMine={chat.senderId === memberId} // senderId와 memberId가 일치하면 true로 설정
+              isMine={chat.senderId === memberId}
             />
           ))
         ) : (
@@ -95,6 +163,7 @@ export default function ChatId() {
           placeholder="내용을 입력하세요."
           value={inputValue}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           className="flex-1 appearance-none bg-coolGray100 text-17 placeholder-warmGray300 focus:outline-none"
         />
       </div>
