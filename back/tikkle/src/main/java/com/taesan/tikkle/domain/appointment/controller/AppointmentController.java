@@ -19,7 +19,7 @@ import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentRespon
 import com.taesan.tikkle.domain.appointment.service.AppointmentService;
 
 @RestController
-@RequestMapping("/appointment")
+@RequestMapping("/api/v1/appointment")
 public class AppointmentController {
 	@Autowired
 	private static AppointmentService appointmentService;
