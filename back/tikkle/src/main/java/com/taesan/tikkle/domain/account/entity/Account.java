@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,25 +35,32 @@ public class Account extends AuditableEntity {
 	@Column(name = "time_qnt", columnDefinition = "INTEGER")
 	private Integer timeQnt;
 
-	@Column(name = "ranking_point", columnDefinition = "TINYINT UNSIGNED")
+	@Column(name = "ranking_point", columnDefinition = "INTEGER")
 	private Integer rankingPoint;
 
-	public void updateAccount(ExchangeType exchangeType, Integer rate, Integer quantity){
-		if (exchangeType.equals(ExchangeType.TTOR)){
+	@Builder
+	private Account(Member member, Integer timeQnt) {
+		this.member = member;
+		this.timeQnt = timeQnt;
+		this.rankingPoint = 0;
+	}
+
+	public void updateAccount(ExchangeType exchangeType, Integer rate, Integer quantity) {
+		if (exchangeType.equals(ExchangeType.TTOR)) {
 			this.timeQnt -= quantity;
 			this.rankingPoint += rate * quantity;
 			validTimeQntAndRankingPoint(timeQnt, rankingPoint);
-		}
-		else if (exchangeType.equals(ExchangeType.RTOT)){
+		} else if (exchangeType.equals(ExchangeType.RTOT)) {
 			this.timeQnt += quantity;
 			this.rankingPoint -= rate * quantity;
 			validTimeQntAndRankingPoint(timeQnt, rankingPoint);
 		}
 	}
 
-	private void validTimeQntAndRankingPoint(Integer timeQnt, Integer rankingPoint){
+	private void validTimeQntAndRankingPoint(Integer timeQnt, Integer rankingPoint) {
 		//TODO: 예외 정의 하기
-		if(timeQnt < 0 || rankingPoint < 0) throw new IllegalArgumentException("보유 잔고가 부족합니다.");
+		if (timeQnt < 0 || rankingPoint < 0)
+			throw new IllegalArgumentException("보유 잔고가 부족합니다.");
 	}
 }
 
