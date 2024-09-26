@@ -1,4 +1,4 @@
-import { Chat } from "../chat/index.j";
+import { Chat } from "../chat";
 
 export interface Chatroom {
   roomId: string;

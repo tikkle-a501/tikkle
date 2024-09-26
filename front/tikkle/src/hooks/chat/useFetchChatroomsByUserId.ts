@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchChatroomsByUserId } from "@/libs/chat";
-import { ChatroomResponses } from "@/types/chatroom/index.j";
+import { fetchChatroomsByUserId } from "@/libs/api/chat";
+import { ChatroomResponses } from "@/types/chatroom";
 
 // 특정 유저의 채팅 목록을 조회하는 훅
 export const useFetchChatroomsByUserId = () => {
