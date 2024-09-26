@@ -1,8 +1,12 @@
 package com.taesan.tikkle.domain.member.service;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -15,21 +19,25 @@ import org.springframework.stereotype.Service;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.domain.organization.entity.Organization;
+import com.taesan.tikkle.domain.organization.repository.OrganizationRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
+	private static final Logger logger = LoggerFactory.getLogger(CustomOAuth2UserService.class);
 	private final MemberRepository memberRepository;
-
-	public CustomOAuth2UserService(MemberRepository memberRepository) {
-		this.memberRepository = memberRepository;
-	}
+	private final OrganizationRepository organizationRepository;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		// 기본 OAuth2UserService 사용하여 사용자 정보를 가져옴
 		OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
 		OAuth2User oAuth2User = delegate.loadUser(userRequest);
+
+		logger.debug("CustomOAuth2UserService 도달");
 
 		// Mattermost로부터 가져온 사용자 정보
 		String email = oAuth2User.getAttribute("email");
@@ -39,11 +47,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		// 사용자를 조회하거나 생성
 		Member member = saveOrUpdateMember(email, name, nickname);
 
+		Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
+		attributes.put("memberId", member.getId());
 		// OAuth2User 객체를 반환
 		return new DefaultOAuth2User(
 			Collections.singleton(new OAuth2UserAuthority(oAuth2User.getAttributes())),
-			oAuth2User.getAttributes(),
-			"email"  // 기본 사용자 이름 속성
+			attributes,
+			"memberId" // 기본 사용자 이름 속성
 		);
 	}
 
@@ -77,8 +87,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		return existingMember;
 	}
 
+	/*
+		TODO: 내부 Mattermost 서버 이용 코드이므로, 추후 여러 서버 기반으로 변경 필요
+	 */
 	private Organization getDefaultOrganization() {
-
-		return new Organization("FREE", "j11a501.p.ssafy.io", 1, null, "DEFAULT");
+		return organizationRepository.findByName("DEFAULT").orElse(organizationRepository.save(
+			new Organization("FREE",
+				"j11a501.p.ssafy.io",
+				1,
+				null,
+				"DEFAULT")));
 	}
 }
