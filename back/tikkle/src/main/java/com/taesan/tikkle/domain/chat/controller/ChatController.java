@@ -13,10 +13,10 @@ import com.taesan.tikkle.domain.chat.service.KafkaProducer;
 public class ChatController {
 
 	@Autowired
-	private static KafkaProducer kafkaProducer;
+	private KafkaProducer kafkaProducer;
 
 	@Autowired
-	private static KafkaConsumer kafkaConsumer;
+	private KafkaConsumer kafkaConsumer;
 
 	@MessageMapping("/sendMessage")
 	public void sendMessage(@Payload ChatMessage chatMessage) {
