@@ -34,6 +34,7 @@ public class ReviewService {
 		Member receiver = (senderId.equals(performer.getId()) ? writer : performer);
 		Member sender = memberRepository.findById(senderId).orElseThrow(EntityNotFoundException::new);
 		Review review = new Review(sender,receiver,request.getType());
+		reviewRepository.save(review);
 		return review.getId();
 	}
 }
