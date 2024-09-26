@@ -58,7 +58,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			return memberRepository.save(existingMember);
 		} else {
 			// 존재하지 않으면 새로 생성
-			Organization defaultOrganization = getDefaultOrganization();  // 예시: 기본 조직 가져오기
+			Organization defaultOrganization = getDefaultOrganization();
 			Member newMember = Member.builder()
 				.organization(defaultOrganization)
 				.name(name)
@@ -72,8 +72,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	// 기존 Member를 업데이트하는 메서드
 	private Member updateExistingMember(Member existingMember, String name, String nickname) {
 		// 필요한 정보 업데이트
-		existingMember.setName(name);
-		existingMember.setNickname(nickname);
+		existingMember.changeName(name);
+		existingMember.changeNickname(nickname);
 		return existingMember;
 	}
 
