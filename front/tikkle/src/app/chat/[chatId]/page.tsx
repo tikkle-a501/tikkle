@@ -12,7 +12,7 @@ import ChatList from "@/components/chat/ChatList";
 import PromiseDropdown from "@/components/drop-down/PromiseDropdown";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
-import { Chat } from "@/types/chat/index.j";
+import { Chat } from "@/types/chat";
 
 export default function ChatId() {
   const pathname = usePathname();

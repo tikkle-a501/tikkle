@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchChatroomById } from "@/libs/chat";
-import { ChatroomData } from "@/types/chatroom/index.j";
+import { fetchChatroomById } from "@/libs/api/chat";
+import { ChatroomData } from "@/types/chatroom";
 
 // 특정 채팅방 조회하는 React Query 훅
 export const useFetchChatroomById = (roomId: string) => {
