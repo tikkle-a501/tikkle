@@ -2,6 +2,7 @@ package com.taesan.tikkle.domain.account.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,8 +17,10 @@ import com.taesan.tikkle.domain.account.entity.ExchangeLog;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
+	Optional<Account> findByMember_Id(UUID memberId);
+
 	@Query("SELECT SUM(e.quantity) FROM ExchangeLog e WHERE e.createdAt BETWEEN :startTime AND :endTime AND e.exchangeType = :exchangeType")
-	Integer getTotalQuantityByExchangeTypeAndPeriod(@Param("startTime") LocalDateTime startTime,
+	Optional<Integer> getTotalQuantityByExchangeTypeAndPeriod(@Param("startTime") LocalDateTime startTime,
 		@Param("endTime") LocalDateTime endTime,
 		@Param("exchangeType") ExchangeType exchangeType);
 
