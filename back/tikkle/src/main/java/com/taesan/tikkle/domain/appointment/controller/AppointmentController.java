@@ -24,7 +24,7 @@ import com.taesan.tikkle.domain.appointment.service.AppointmentService;
 @RequestMapping("/api/v1/appointment")
 public class AppointmentController {
 	@Autowired
-	private static AppointmentService appointmentService;
+	private AppointmentService appointmentService;
 
 	@PostMapping("")
 	public ResponseEntity<Void> createAppointment(@RequestBody CreateAppointmentRequest request){

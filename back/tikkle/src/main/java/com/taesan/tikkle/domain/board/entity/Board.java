@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -57,5 +58,39 @@ public class Board extends AuditableEntity {
 	public void setStatusActive() {
 		this.status = "ACTIVE";
 	}
+
+	@Builder
+	private Board(Member member, List<Chatroom> chatrooms, String title, String content, Integer time, String status, String category, Integer viewCount) {
+		this.member = member;
+		this.chatrooms = chatrooms;
+		this.title = title;
+		this.content = content;
+		this.time = time;
+		this.status = status;
+		this.category = category;
+		this.viewCount = viewCount;
+	}
+
+	public void changeTitle(String title) {
+		this.title = title;
+	}
+
+	public void changeContent(String content) {
+		this.content = content;
+	}
+
+	public void changeTime(Integer time) {
+		this.time = time;
+	}
+
+	public void changeStatus(String status) {
+		this.status = status;
+	}
+
+	public void changeCategory(String category) {
+		this.category = category;
+	}
+
+
 }
 
