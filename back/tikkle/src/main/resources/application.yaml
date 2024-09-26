@@ -18,9 +18,9 @@ spring:
       client:
         registration:
           mattermost:
-            client-id: ${MM_CLIENT_ID}
-            client-secret: ${MM_CLIENT_SECRET}
-            scope: openid,profile,email
+            client-id: ${ MM_CLIENT_ID }
+            client-secret: ${ MM_CLIENT_ID }
+            scope: profile,email
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:8080/login/oauth2/code/mattermost"
             client-name: Mattermost
@@ -30,7 +30,7 @@ spring:
             authorization-uri: http://localhost:8065/oauth/authorize
             token-uri: http://localhost:8065/oauth/access_token
             user-info-uri: http://localhost:8065/api/v4/users/me
-            user-name-attribute: username
+            user-name-attribute: id
 
 
   data:
