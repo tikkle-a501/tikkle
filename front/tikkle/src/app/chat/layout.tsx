@@ -3,7 +3,7 @@
 import MessageList from "@/components/chat/MessageList";
 import Loading from "@/components/loading/Loading";
 import { useFetchChatroomsByUserId } from "@/hooks/chat/useFetchChatroomsByUserId";
-import { Chatroom } from "@/types/chatroom/index.j";
+import { Chatroom } from "@/types/chatroom";
 
 export default function ChatLayout({
   children,
@@ -49,6 +49,7 @@ export default function ChatLayout({
                 lastMsg={chatroom.lastMsg}
                 recentCreatedAt=""
                 isRead={true} // 임의로 읽음 처리
+                // TODO: 읽음 처리에 대한 로직
               />
             ))
           ) : (

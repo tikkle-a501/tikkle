@@ -15,6 +15,22 @@ services:
     networks:
       - tikkle-backend
 
+  mm-db:
+    image: mariadb:10.5
+    container_name: mm-db
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: mattermost
+      MARIADB_USER: mmuser
+      MARIADB_PASSWORD: mmuser_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mm_db_data:/var/lib/mysql
+    networks:
+      - tikkle-backend
+
   mongodb:
     image: mongo:4.4
     container_name: mongodb
@@ -65,6 +81,32 @@ services:
     networks:
       - tikkle-backend
 
+  mattermost:
+    image: mattermost/mattermost-team-edition:latest
+    restart: unless-stopped
+    container_name: mattermost
+    ports:
+      - "8065:8065"
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME=mysql
+      - MM_SQLSETTINGS_DATASOURCE=mmuser:mmuser_password@tcp(mm-db:3306)/mattermost?charset=utf8mb4&readTimeout=30s&writeTimeout=30s
+      - MM_SERVICESETTINGS_SITEURL=http://localhost:8065
+      - MM_SERVICESETTINGS_ENABLEOUTGOINGWEBHOOKS=true
+      - MM_SERVICESETTINGS_ENABLEINCOMINGWEBHOOKS=true
+      - MM_SERVICESETTINGS_ENABLESIGNUPWITHEMAIL=true
+      - MM_SERVICESETTINGS_ENABLEAPIv4=true
+      - MM_SERVICESETTINGS_ENABLECUSTOMEMOJI=true
+      - MM_SERVICESETTINGS_ENABLEPOSTUSERNAMEOVERRIDE=true
+      - MM_SERVICESETTINGS_ENABLEPOSTICONOVERRIDE=true
+      - MM_PLUGINSETTINGS_ENABLE=true
+      - MM_PLUGINSETTINGS_ENABLEUPLOADS=true
+    volumes:
+      - mattermost-volume:/mattermost/data
+    depends_on:
+      - mm-db
+    networks:
+      - tikkle-backend
+
 networks:
   tikkle-backend:
     name: tikkle-backend
@@ -72,4 +114,7 @@ networks:
 
 volumes:
   mariadb_data:
+  mm_db_data:
   mongodb_data:
+  mattermost-volume:
+

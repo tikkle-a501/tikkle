@@ -2,6 +2,7 @@ package com.taesan.tikkle.domain.rate.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,6 +55,11 @@ public class RateService {
 		return rateRepository.findAll().stream()
 			.map(RateFindAllResponse::from)
 			.collect(Collectors.toList());
+	}
+
+	public Rate findById(UUID rateId){
+		//TODO: 예외 정의하기
+		return rateRepository.findById(rateId).orElseThrow(() -> new IllegalArgumentException("정의 되지 않은 환율입니다."));
 	}
 
 	private LocalDateTime getOneHourAgo() {

@@ -61,4 +61,17 @@ public class Member extends AuditableEntity {
 		this.nickname = nickname;
 		this.email = email;
 	}
+
+	public void changeName(String name) {
+		this.name = name;
+	}
+
+	public void changeNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void changeEmail(String email) {
+		this.email = email;
+	}
+
 }

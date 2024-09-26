@@ -46,11 +46,20 @@ public class ExchangeLog extends BaseEntity {
 	private Integer quantity;
 
 	@Builder
-	public ExchangeLog(Rate rate, Account account, ExchangeType exchangeType, Integer quantity) {
+	private ExchangeLog(Rate rate, Account account, ExchangeType exchangeType, Integer quantity) {
 		this.rate = rate;
 		this.account = account;
 		this.exchangeType = exchangeType;
 		this.quantity = quantity;
+	}
+
+	public static ExchangeLog of(Rate rate, Account account, ExchangeType exchangeType, Integer quantity){
+		return ExchangeLog.builder()
+			.rate(rate)
+			.account(account)
+			.exchangeType(exchangeType)
+			.quantity(quantity)
+			.build();
 	}
 }
 

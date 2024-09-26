@@ -9,20 +9,22 @@ import Button from "@/components/button/Button";
 import Badge from "@/components/badge/Badge";
 import Link from "next/link";
 import ChatList from "@/components/chat/ChatList";
+import PromiseDropdown from "@/components/drop-down/PromiseDropdown";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
-import { Chat } from "@/types/chat/index.j";
+import { Chat } from "@/types/chat";
 
 export default function ChatId() {
   const pathname = usePathname();
 
   // URL에서 roomId 추출 (예: '/chat/31000000-0000-0000-0000-000000000000')
-  const roomId = pathname.split("/").pop(); // 경로의 마지막 부분이 roomId
+  const roomId = pathname.split("/").pop()!; // 경로의 마지막 부분이 roomId, Non-null assertion 사용
 
   // 특정 유저 ID 설정
   const memberId = "74657374-3200-0000-0000-000000000000";
   const { data, error, isLoading } = useFetchChatroomById(roomId!);
 
+  /////////////////// 채팅 로직
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
@@ -39,8 +41,17 @@ export default function ChatId() {
 
   useEffect(() => {
     const socket = new SockJS("http://localhost:8080/ws");
+
     const stompClient = new Client({
       webSocketFactory: () => socket,
+      reconnectDelay: 5000, // 5초 후에 재연결 시도
+      onConnect: () => {
+        console.log("WebSocket 연결 성공 및 STOMP 연결 확립");
+        stompClientRef.current = stompClient;
+      },
+      onStompError: (frame) => {
+        console.error("STOMP 에러:", frame.headers["message"]);
+      },
     });
 
     // WebSocket 연결이 성공했을 때
@@ -94,6 +105,14 @@ export default function ChatId() {
 
   const combinedMessages = [...(data?.chats || []), ...messages];
 
+  ////////////////// 약속잡기 로직
+  const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
+  // "약속잡기" 버튼 클릭 시 상태 변경
+  const handleTogglePromiseDropdown = () => {
+    setShowPromiseDropdown((prevState) => !prevState);
+  };
+
+  // 로딩 중일 때 보여줄 내용
   if (isLoading) {
     return (
       <>
@@ -102,6 +121,7 @@ export default function ChatId() {
     );
   }
 
+  // 에러 시 보여줄 내용
   if (error) {
     return <p>Error: {error.message}</p>;
   }
@@ -122,8 +142,22 @@ export default function ChatId() {
             {data?.partnerName}님과의 대화
           </div>
         </div>
-        <div>
-          <Button size="m" variant="primary" design="fill" main="약속잡기" />
+        <div className="relative">
+          {/* 버튼 */}
+          <Button
+            size="m"
+            variant="primary"
+            design="fill"
+            main="약속잡기"
+            onClick={handleTogglePromiseDropdown}
+          />
+
+          {/* PromiseDropdown 버튼 아래 표시 */}
+          {showPromiseDropdown && (
+            <div className="mt-2">
+              <PromiseDropdown roomId={roomId} />
+            </div>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
