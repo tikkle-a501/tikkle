@@ -9,6 +9,7 @@ import Button from "@/components/button/Button";
 import Badge from "@/components/badge/Badge";
 import Link from "next/link";
 import ChatList from "@/components/chat/ChatList";
+import PromiseDropdown from "@/components/drop-down/PromiseDropdown";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { Chat } from "@/types/chat/index.j";
@@ -23,6 +24,7 @@ export default function ChatId() {
   const memberId = "74657374-3200-0000-0000-000000000000";
   const { data, error, isLoading } = useFetchChatroomById(roomId!);
 
+  /////////////////// 채팅 로직
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
@@ -103,6 +105,14 @@ export default function ChatId() {
 
   const combinedMessages = [...(data?.chats || []), ...messages];
 
+  ////////////////// 약속잡기 로직
+  const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
+  // "약속잡기" 버튼 클릭 시 상태 변경
+  const handleTogglePromiseDropdown = () => {
+    setShowPromiseDropdown((prevState) => !prevState);
+  };
+
+  // 로딩 중일 때 보여줄 내용
   if (isLoading) {
     return (
       <>
@@ -111,6 +121,7 @@ export default function ChatId() {
     );
   }
 
+  // 에러 시 보여줄 내용
   if (error) {
     return <p>Error: {error.message}</p>;
   }
@@ -131,8 +142,22 @@ export default function ChatId() {
             {data?.partnerName}님과의 대화
           </div>
         </div>
-        <div>
-          <Button size="m" variant="primary" design="fill" main="약속잡기" />
+        <div className="relative">
+          {/* 버튼 */}
+          <Button
+            size="m"
+            variant="primary"
+            design="fill"
+            main="약속잡기"
+            onClick={handleTogglePromiseDropdown}
+          />
+
+          {/* PromiseDropdown 버튼 아래 표시 */}
+          {showPromiseDropdown && (
+            <div className="mt-2">
+              <PromiseDropdown />
+            </div>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
