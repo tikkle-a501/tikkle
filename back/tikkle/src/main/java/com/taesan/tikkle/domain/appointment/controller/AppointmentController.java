@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.taesan.tikkle.domain.appointment.dto.request.CreateAppointmentRequest;
 import com.taesan.tikkle.domain.appointment.dto.request.UpdateAppointmentRequest;
+import com.taesan.tikkle.domain.appointment.dto.response.BriefAppointmentResponse;
 import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentResponse;
 import com.taesan.tikkle.domain.appointment.service.AppointmentService;
 
@@ -45,5 +47,10 @@ public class AppointmentController {
 	@GetMapping("")
 	public ResponseEntity<List<DetailAppointmentResponse>> getAppointments(){
 		return ResponseEntity.ok(appointmentService.getAppointments());
+	}
+
+	@GetMapping("/{roomId}")
+	public ResponseEntity<BriefAppointmentResponse> getAppointment(@PathVariable UUID roomId){
+		return ResponseEntity.ok(appointmentService.getAppointment(roomId));
 	}
 }
