@@ -12,13 +12,30 @@
   }
 
   .scrollbar-hidden {
-    -ms-overflow-style: none; /* Internet Explorer and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* Internet Explorer and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 
     /* Chrome, Safari, and Edge (WebKit) */
     &::-webkit-scrollbar {
       display: none;
     }
+  }
+}
+
+@layer utilities {
+  input[type="number"]::-webkit-inner-spin-button {
+    @apply appearance-none;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button {
+    @apply appearance-none;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    /* Firefox에서 스핀 버튼 제거 */
   }
 }
 

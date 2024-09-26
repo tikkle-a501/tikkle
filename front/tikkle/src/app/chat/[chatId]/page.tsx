@@ -18,7 +18,7 @@ export default function ChatId() {
   const pathname = usePathname();
 
   // URL에서 roomId 추출 (예: '/chat/31000000-0000-0000-0000-000000000000')
-  const roomId = pathname.split("/").pop(); // 경로의 마지막 부분이 roomId
+  const roomId = pathname.split("/").pop()!; // 경로의 마지막 부분이 roomId, Non-null assertion 사용
 
   // 특정 유저 ID 설정
   const memberId = "74657374-3200-0000-0000-000000000000";
@@ -155,7 +155,7 @@ export default function ChatId() {
           {/* PromiseDropdown 버튼 아래 표시 */}
           {showPromiseDropdown && (
             <div className="mt-2">
-              <PromiseDropdown />
+              <PromiseDropdown roomId={roomId} />
             </div>
           )}
         </div>
