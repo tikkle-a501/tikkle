@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +41,13 @@ public class Organization extends AuditableEntity {
 
 	@Column(length = 32)
 	private String name;
+
+	@Builder
+	public Organization(String paymentPolicy, String domainAddr, Integer provider, Manager manager, String name) {
+		this.paymentPolicy = paymentPolicy;
+		this.domainAddr = domainAddr;
+		this.provider = provider;
+		this.manager = manager;
+		this.name = name;
+	}
 }

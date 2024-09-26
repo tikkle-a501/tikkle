@@ -11,4 +11,6 @@ import com.taesan.tikkle.domain.member.entity.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, UUID> {
 	<T> Optional<T> findById(UUID id, Class<T> type);
+
+	Optional<Member> findByEmail(String email);
 }

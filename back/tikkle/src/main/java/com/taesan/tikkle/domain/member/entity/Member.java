@@ -18,10 +18,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "members")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 /*
 TODO: Mattermost OAuth 관련 정보 추가 필요
