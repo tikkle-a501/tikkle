@@ -17,6 +17,8 @@ import com.taesan.tikkle.domain.account.entity.ExchangeLog;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
+	Optional<Account> findByMember_Id(UUID memberId);
+
 	@Query("SELECT SUM(e.quantity) FROM ExchangeLog e WHERE e.createdAt BETWEEN :startTime AND :endTime AND e.exchangeType = :exchangeType")
 	Optional<Integer> getTotalQuantityByExchangeTypeAndPeriod(@Param("startTime") LocalDateTime startTime,
 		@Param("endTime") LocalDateTime endTime,

@@ -25,7 +25,8 @@ public class AccountService {
 
 	public Integer getTotalQuantityByExchangeTypeAndPeriod(LocalDateTime startTime, LocalDateTime endTime,
 		ExchangeType exchangeType) {
-		Integer total = accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType).orElse(0);
+		Integer total = accountRepository.getTotalQuantityByExchangeTypeAndPeriod(startTime, endTime, exchangeType)
+			.orElse(0);
 		log.info("총 total : {}", total);
 		return total;
 	}
@@ -37,10 +38,10 @@ public class AccountService {
 			.collect(Collectors.toList());
 	}
 
-	public Account updateAccount(UUID accountId, ExchangeType exchangeType, Integer rate, Integer quantity) {
+	public Account updateAccount(UUID memberId, ExchangeType exchangeType, Integer rate, Integer quantity) {
 		//TODO: 추후 예외 정의 하기
-		Account account = accountRepository.findById(accountId)
-			.orElseThrow(()-> new NoSuchElementException("계좌가 없습니다."));
+		Account account = accountRepository.findByMember_Id(memberId)
+			.orElseThrow(() -> new NoSuchElementException("계좌가 없습니다."));
 		account.updateAccount(exchangeType, rate, quantity);
 		return account;
 	}
