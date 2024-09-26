@@ -34,10 +34,10 @@ public class ExchangeController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> exchange(@RequestBody ExchangeRequest exchangeRequest){
+	public ResponseEntity<?> exchange(@RequestBody ExchangeRequest exchangeRequest) {
 		//TODO: 추후 사용자 인증 처리 로직 결정 되면 수정해야합니다.
 		UUID memberId = UUID.fromString("01920dd1-423e-f86b-a4dd-28a20d81fab0");
 		exchangeService.exchange(memberId, exchangeRequest);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
