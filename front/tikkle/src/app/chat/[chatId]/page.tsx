@@ -39,8 +39,17 @@ export default function ChatId() {
 
   useEffect(() => {
     const socket = new SockJS("http://localhost:8080/ws");
+
     const stompClient = new Client({
       webSocketFactory: () => socket,
+      reconnectDelay: 5000, // 5초 후에 재연결 시도
+      onConnect: () => {
+        console.log("WebSocket 연결 성공 및 STOMP 연결 확립");
+        stompClientRef.current = stompClient;
+      },
+      onStompError: (frame) => {
+        console.error("STOMP 에러:", frame.headers["message"]);
+      },
     });
 
     // WebSocket 연결이 성공했을 때
