@@ -3,7 +3,7 @@ import PromiseInput from "../input/PromiseInput";
 
 const PromiseDropdown: React.FC = () => {
   return (
-    <div className="flex h-[260px] w-[230px] flex-col justify-center gap-10 rounded-12 bg-white p-20 text-15 text-teal900 shadow-s">
+    <div className="absolute right-0 flex h-[260px] w-[230px] flex-col justify-center gap-10 rounded-12 bg-white p-20 text-15 text-teal900 shadow-s">
       {/* 타이틀 */}
       <div className="flex text-24 font-bold text-teal900">약속 잡기</div>
 
