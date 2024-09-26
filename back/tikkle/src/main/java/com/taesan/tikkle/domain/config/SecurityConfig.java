@@ -6,11 +6,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.taesan.tikkle.domain.config.security.JwtAuthenticationFailureHandler;
+import com.taesan.tikkle.domain.config.security.JwtAuthenticationFilter;
+import com.taesan.tikkle.domain.config.security.JwtOAuth2SuccessHandler;
 import com.taesan.tikkle.domain.member.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +30,20 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final JwtOAuth2SuccessHandler jwtOAuth2SuccessHandler;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler;
+
+	/*
+		NOTE: 내부 Thymeleaf 테스트를 위한 코드
+	 */
+	// @Bean
+	// public WebSecurityCustomizer webSecurityCustomizer() {
+	// 	return web -> {
+	// 		web.ignoring()
+	// 			.requestMatchers("/index", "/error"); // 필터를 타면 안되는 경로
+	// 	};
+	// }
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
@@ -57,7 +78,7 @@ public class SecurityConfig {
 
 		// TODO: 개발 환경을 위한 패턴이므로 추후 작성 필요
 		String[] requestMatcherPatterns = new String[] {
-			"/api/v1/**", "/ws/**", "/oauth2/**", "/login", "/"
+			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**"
 		};
 
 		http
@@ -67,9 +88,14 @@ public class SecurityConfig {
 				.anyRequest().authenticated())
 			.oauth2Login(oauth2 ->
 				oauth2
-					.loginPage("/api/v1/login")
+					// .loginPage("/api/v1/login")
+					.successHandler(jwtOAuth2SuccessHandler)
+					.failureHandler(jwtAuthenticationFailureHandler)
+					.authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
 					.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-					.defaultSuccessUrl("/", true)  // 로그인 성공 시 이동할 URL
+					.tokenEndpoint(tokenEndpoint -> tokenEndpoint
+						.accessTokenResponseClient(accessTokenResponseClient())  // JWT 서명 검증 비활성화
+					)
 			)
 			.cors((cors) -> cors.configurationSource(corsConfigurationSource))
 			.csrf((csrf) -> csrf.disable())
@@ -79,7 +105,17 @@ public class SecurityConfig {
 		http
 			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+		http
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
+	}
+
+	/*
+		NOTE: Mattermost에서 JWK이 지원되지 않아 기본 검증 사용 (OIDC ID 대비)
+	 */
+	private OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+		return new DefaultAuthorizationCodeTokenResponseClient();  // 기본 검증 사용
 	}
 
 }
