@@ -22,7 +22,7 @@ import com.taesan.tikkle.domain.appointment.service.AppointmentService;
 @RequestMapping("/appointment")
 public class AppointmentController {
 	@Autowired
-	private static AppointmentService appointmentService;
+	private AppointmentService appointmentService;
 
 	@PostMapping("")
 	public ResponseEntity<Void> createAppointment(@RequestBody CreateAppointmentRequest request){

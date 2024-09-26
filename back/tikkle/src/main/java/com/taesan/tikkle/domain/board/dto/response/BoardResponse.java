@@ -10,7 +10,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardListResponse {
+public class BoardResponse {
     private UUID boardId;
     private UUID memberId;
     private String title;
