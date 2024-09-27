@@ -39,7 +39,7 @@ public class MemberServiceTest {
 			.thenReturn(Optional.of(memberResponse));
 
 		// When
-		MemberResponse response = memberService.getMember(id);
+		MemberResponse response = memberService.getMemberResponse(id);
 
 		// Then
 		verify(memberRepository).findById(id, MemberResponse.class);
