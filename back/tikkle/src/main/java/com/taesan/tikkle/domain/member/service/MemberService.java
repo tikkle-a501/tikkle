@@ -1,9 +1,11 @@
 package com.taesan.tikkle.domain.member.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
@@ -34,4 +36,7 @@ public class MemberService {
 		return MemberResponse.from(member);
 	}
 
+	public List<MemberRankResponse> findMemberRankings() {
+		return memberRepository.findMemberRankings();
+	}
 }
