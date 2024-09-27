@@ -15,7 +15,7 @@ export interface TradeMemberGetResponse {
   name: string;
 }
 
-export interface TradeGetResponse {
+export interface TradeGetResponses {
   member: TradeMemberGetResponse;
   title: string;
   content: string;

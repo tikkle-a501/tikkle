@@ -24,3 +24,14 @@ export const fetchAppointmentByRoomId = async (roomId: string) => {
     throw new Error("Failed to fetch appointments");
   }
 };
+
+// appointmentId로 약속 삭제
+export const deleteAppointmentById = async (appointmentId: string) => {
+  try {
+    const response = await api.delete(`/appointment/${appointmentId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting appointment:", error);
+    throw new Error("Failed to delete appointment");
+  }
+};
