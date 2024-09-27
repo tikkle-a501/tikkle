@@ -41,4 +41,5 @@ public class ChatroomController {
 	public ResponseEntity<EnterChatroomResponse> enterChatroom(@PathVariable UUID roomId) {
 		return ResponseEntity.ok(chatroomService.enterChatroom(roomId));
 	}
+
 }
