@@ -1,7 +1,7 @@
 import {
   AccountGetResponses,
-  TradeMemberGetResponse,
   TradeSearchResponses,
+  TradeGetResponses,
 } from "@/types";
 import { handleApiRequest } from "../client";
 
@@ -12,7 +12,7 @@ export const fetchAccount = async () => {
 
 // 거래내역 조회
 export const fetchTrade = async () => {
-  return handleApiRequest<TradeMemberGetResponse, "get">("/trade", "get");
+  return handleApiRequest<TradeGetResponses, "get">("/trade", "get");
 };
 
 // 거래내역 검색
