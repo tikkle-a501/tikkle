@@ -93,6 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				userDetails, "", userDetails.getAuthorities());
 
 			// SecurityContext에 인증 정보 설정
+			logger.debug("auth username: {}", ((CustomUserDetails)authentication.getPrincipal()).getMemberId());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 
