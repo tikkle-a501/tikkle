@@ -35,7 +35,8 @@ public class BoardService {
                     board.getTime(),
                     board.getStatus(),
                     board.getCategory(),
-                    board.getViewCount()
+                    board.getViewCount(),
+                    board.getCreatedAt()
             );
             responses.add(response);
         }
@@ -53,7 +54,8 @@ public class BoardService {
                 board.getTime(),
                 board.getStatus(),
                 board.getCategory(),
-                board.getViewCount());
+                board.getViewCount(),
+                board.getCreatedAt());
     }
 
     public void createBoard(BoardRequest request, UUID memberId) {
