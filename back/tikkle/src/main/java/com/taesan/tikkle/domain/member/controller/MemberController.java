@@ -26,7 +26,7 @@ public class MemberController {
 	@GetMapping("")
 	public ResponseEntity<MemberResponse> getMemberResponse(@AuthedUsername UUID username) {
 		try {
-			logger.debug("memberId: ", username);
+			logger.debug("memberId: {}", username.toString());
 			MemberResponse memberResponse = memberService.getMemberResponse(username);
 			logger.debug("memberResponse: {}", memberResponse);
 			return ResponseEntity.ok(memberResponse);

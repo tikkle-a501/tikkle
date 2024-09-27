@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
@@ -15,35 +17,53 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taesan.tikkle.domain.config.security.JwtAuthenticationFailureHandler;
 import com.taesan.tikkle.domain.config.security.JwtAuthenticationFilter;
 import com.taesan.tikkle.domain.config.security.JwtOAuth2SuccessHandler;
 import com.taesan.tikkle.domain.member.service.CustomOAuth2UserService;
-
-import lombok.RequiredArgsConstructor;
+import com.taesan.tikkle.domain.member.service.CustomUserDetailsService;
+import com.taesan.tikkle.domain.member.service.RedisTokenService;
+import com.taesan.tikkle.global.utils.JwtUtil;
 
 /**
  * TODO: 클라이언트-서버 API 연동 시 사후적 수정 필요
  */
 @Configuration
-@RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final JwtOAuth2SuccessHandler jwtOAuth2SuccessHandler;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtUtil jwtUtil;
+	private final CustomUserDetailsService customUserDetailsService;
+	private final RedisTokenService redisTokenService;
+	private final ObjectMapper objectMapper;
 	private final JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler;
+
+	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
+		JwtOAuth2SuccessHandler jwtOAuth2SuccessHandler,
+		JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService, RedisTokenService redisTokenService,
+		ObjectMapper objectMapper, JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler) {
+		this.customOAuth2UserService = customOAuth2UserService;
+		this.jwtOAuth2SuccessHandler = jwtOAuth2SuccessHandler;
+		this.jwtUtil = jwtUtil;
+		this.customUserDetailsService = customUserDetailsService;
+		this.redisTokenService = redisTokenService;
+		this.objectMapper = objectMapper;
+		this.jwtAuthenticationFailureHandler = jwtAuthenticationFailureHandler;
+	}
 
 	/*
 		NOTE: 내부 Thymeleaf 테스트를 위한 코드
 	 */
-	// @Bean
-	// public WebSecurityCustomizer webSecurityCustomizer() {
-	// 	return web -> {
-	// 		web.ignoring()
-	// 			.requestMatchers("/index", "/error"); // 필터를 타면 안되는 경로
-	// 	};
-	// }
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return web -> {
+			web.ignoring()
+				.requestMatchers("/favicon.ico", "/error"); // 필터를 타면 안되는 경로
+		};
+	}
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
@@ -78,7 +98,7 @@ public class SecurityConfig {
 
 		// TODO: 개발 환경을 위한 패턴이므로 추후 작성 필요
 		String[] requestMatcherPatterns = new String[] {
-			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**", "/error"
+			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**", "/home"
 		};
 
 		http
@@ -98,15 +118,15 @@ public class SecurityConfig {
 					)
 			)
 			.cors((cors) -> cors.configurationSource(corsConfigurationSource))
-			.csrf((csrf) -> csrf.disable())
-			.sessionManagement((session) -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			);
+			.csrf((csrf) -> csrf.disable());
+
 		http
 			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil,
+					customOAuth2UserService, customUserDetailsService, redisTokenService, objectMapper),
+				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

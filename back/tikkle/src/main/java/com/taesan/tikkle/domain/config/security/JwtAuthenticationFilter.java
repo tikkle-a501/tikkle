@@ -10,7 +10,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +24,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 
-@Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
@@ -38,12 +34,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final ObjectMapper objectMapper;
 	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
+	public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomOAuth2UserService customOAuth2UserService,
+		CustomUserDetailsService customUserDetailsService, RedisTokenService redisTokenService,
+		ObjectMapper objectMapper) {
+		this.jwtUtil = jwtUtil;
+		this.customOAuth2UserService = customOAuth2UserService;
+		this.customUserDetailsService = customUserDetailsService;
+		this.redisTokenService = redisTokenService;
+		this.objectMapper = objectMapper;
+	}
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
 		logger.debug("cookies: {}", request.getCookies());
-
+		logger.debug("JwtAuthenticationFilter is executing - Request URI: {}", request.getRequestURI());
 		String accessCookieValue = null;
 		String refreshCookieValue = null;
 
@@ -59,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		// 둘 중 하나라도 없으면 OAuth 인증 필요
-		if (accessCookieValue == null || refreshCookieValue == null) {
+		if (accessCookieValue == null) {
 			filterChain.doFilter(request, response);
 			logger.debug("jwt token null!");
 			return;
@@ -96,7 +102,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		if (username == null || !username.equals(jwtUtil.extractUsername(refreshToken))) {
+		if (username == null) {
 			ApiResponse<Object> errorResponse = ApiResponse.error(1711, "올바르지 않은 JWT 토큰 형식입니다.");
 			String jsonResponse = objectMapper.writeValueAsString(errorResponse);
 
@@ -134,6 +140,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			logger.debug("passed!");
 			filterChain.doFilter(request, response);
+			return;
+		}
+
+		if (refreshToken == null) {
+			logger.debug("refreshToken null");
+			ApiResponse<Object> errorResponse = ApiResponse.error(1710, "올바르지 않은 RefreshToken 입니다");
+			String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(jsonResponse);
 			return;
 		}
 
@@ -197,6 +215,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response); // 요청 처리 계속
+		return;
 	}
 
 }
