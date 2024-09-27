@@ -6,16 +6,28 @@ import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
+import jakarta.annotation.PreDestroy;
+
 @Configuration
 @EnableScheduling
 public class SchedulerConfiguration implements SchedulingConfigurer {
+
+	private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-		ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-		threadPoolTaskScheduler.setPoolSize(1);
-		threadPoolTaskScheduler.setThreadNamePrefix("exchange-rate-scheduler-");
+		threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+		threadPoolTaskScheduler.setPoolSize(5);
+		threadPoolTaskScheduler.setThreadNamePrefix("scheduler-");
 		threadPoolTaskScheduler.initialize();
 
 		taskRegistrar.setTaskScheduler(threadPoolTaskScheduler);
+	}
+
+	@PreDestroy
+	public void preDestroy() {
+		if (threadPoolTaskScheduler != null) {
+			threadPoolTaskScheduler.shutdown();
+		}
 	}
 }
