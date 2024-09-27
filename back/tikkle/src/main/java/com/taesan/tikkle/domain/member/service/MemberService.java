@@ -9,6 +9,8 @@ import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
+import com.taesan.tikkle.global.errors.ErrorCode;
+import com.taesan.tikkle.global.exceptions.CustomException;
 
 @Service
 public class MemberService {
@@ -24,7 +26,7 @@ public class MemberService {
 	 */
 	public Member getMember(UUID id) {
 		Member member = memberRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다"));
+			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
 		return member;
 	}
@@ -32,7 +34,7 @@ public class MemberService {
 	public MemberResponse getMemberResponse(UUID id) {
 		Member member =
 			memberRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 		return MemberResponse.from(member);
 	}
 
