@@ -18,7 +18,6 @@ public class MemberService {
 	}
 
 	/*
-		FIXME: 추후 id를 직접 받지 않고 Spring Security 이용하는 방식으로 발전 필요
 		TODO: 에러 코드 정리 필요
 	 */
 	public Member getMember(UUID id) {

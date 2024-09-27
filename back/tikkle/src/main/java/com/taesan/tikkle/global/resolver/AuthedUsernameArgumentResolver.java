@@ -13,6 +13,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.taesan.tikkle.domain.config.security.CustomUserDetails;
 import com.taesan.tikkle.global.annotations.AuthedUsername;
 
+/**
+ * AuthedUsernameArgumentResolver
+ *
+ * Spring Security에서 인증된 사용자의 UUID Username 이용 목적.
+ * Authentication의 Principal이 CustomUserDetails인 경우 동작
+ *
+ * {@code CustomUserDetails.CLASS}
+ */
 @Component
 public class AuthedUsernameArgumentResolver implements HandlerMethodArgumentResolver {
 
