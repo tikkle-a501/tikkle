@@ -78,7 +78,7 @@ public class SecurityConfig {
 
 		// TODO: 개발 환경을 위한 패턴이므로 추후 작성 필요
 		String[] requestMatcherPatterns = new String[] {
-			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**"
+			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**", "/error"
 		};
 
 		http
