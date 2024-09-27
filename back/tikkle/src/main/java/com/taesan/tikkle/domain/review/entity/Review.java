@@ -36,7 +36,13 @@ public class Review extends BaseEntity {
 	@Column(length = 16)
 	private String type;
 
-	@Column(length = 16)
-	private String content;
+	public Review(Member sender, Member receiver, String type) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.type = type;
+	}
+	// 일단 필요한 지 모르겠어서 주석 처리
+	// @Column(length = 16)
+	// private String content;
 }
 
