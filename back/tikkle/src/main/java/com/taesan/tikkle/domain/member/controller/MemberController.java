@@ -5,14 +5,13 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.taesan.tikkle.domain.config.security.CustomUserDetails;
 import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.service.MemberService;
+import com.taesan.tikkle.global.annotations.AuthedUsername;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,10 +24,10 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@GetMapping("")
-	public ResponseEntity<MemberResponse> getMemberResponse(@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<MemberResponse> getMemberResponse(@AuthedUsername UUID username) {
 		try {
-			logger.debug("memberId: ", userDetails.getUsername());
-			MemberResponse memberResponse = memberService.getMemberResponse(UUID.fromString(userDetails.getUsername()));
+			logger.debug("memberId: ", username);
+			MemberResponse memberResponse = memberService.getMemberResponse(username);
 			logger.debug("memberResponse: {}", memberResponse);
 			return ResponseEntity.ok(memberResponse);
 		} catch (IllegalStateException e) {
