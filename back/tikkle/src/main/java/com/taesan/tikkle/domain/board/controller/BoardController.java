@@ -3,6 +3,7 @@ package com.taesan.tikkle.domain.board.controller;
 import com.taesan.tikkle.domain.board.dto.request.BoardRequest;
 import com.taesan.tikkle.domain.board.dto.response.BoardResponse;
 import com.taesan.tikkle.domain.board.service.BoardService;
+import com.taesan.tikkle.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,8 @@ public class BoardController {
 
     //전체 보드 조회
     @GetMapping("")
-    public ResponseEntity<List<BoardResponse>> getBoards() {
-        return ResponseEntity.ok(boardService.getBoards());
+    public ResponseEntity<ApiResponse> getBoards() {
+        return ResponseEntity.ok(ApiResponse.success("공고 받아오기 성공",boardService.getBoards()));
     }
 
     //보드 상세정보 조회
