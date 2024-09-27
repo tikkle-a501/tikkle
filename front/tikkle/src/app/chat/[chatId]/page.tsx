@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchChatroomById } from "@/hooks/chat/usefetchChatroomById";
+import { useFetchChatroomById } from "@/hooks/chat/useFetchChatroomById";
 import Loading from "@/components/loading/Loading";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
@@ -13,6 +13,7 @@ import PromiseDropdown from "@/components/drop-down/PromiseDropdown";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { Chat } from "@/types/chat";
+import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppointmentByRoomId";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -21,8 +22,13 @@ export default function ChatId() {
   const roomId = pathname.split("/").pop()!; // 경로의 마지막 부분이 roomId, Non-null assertion 사용
 
   // 특정 유저 ID 설정
+  // TODO: 하드코딩된 유저ID를 로그인된 유저ID 받아오는 로직
   const memberId = "74657374-3200-0000-0000-000000000000";
-  const { data, error, isLoading } = useFetchChatroomById(roomId!);
+  const {
+    data: chatroomData,
+    error: chatroomError,
+    isLoading: isChatroomLoading,
+  } = useFetchChatroomById(roomId!);
 
   /////////////////// 채팅 로직
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +109,7 @@ export default function ChatId() {
     }
   };
 
-  const combinedMessages = [...(data?.chats || []), ...messages];
+  const combinedMessages = [...(chatroomData?.chats || []), ...messages];
 
   ////////////////// 약속잡기 로직
   const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
@@ -112,8 +118,21 @@ export default function ChatId() {
     setShowPromiseDropdown((prevState) => !prevState);
   };
 
+  ////////////////// 약속조회 로직
+  const {
+    data: appointmentData,
+    error: appointmentError,
+    isLoading: isAppointmentLoading,
+  } = useFetchAppointmentByRoomId(roomId);
+
+  console.log(appointmentData);
+
+  ////////////////// TODO : 약속삭제 로직
+
+  ////////// 아래부터 컴포넌트
+
   // 로딩 중일 때 보여줄 내용
-  if (isLoading) {
+  if (isChatroomLoading) {
     return (
       <>
         <Loading />
@@ -122,8 +141,8 @@ export default function ChatId() {
   }
 
   // 에러 시 보여줄 내용
-  if (error) {
-    return <p>Error: {error.message}</p>;
+  if (chatroomError) {
+    return <p>Error: {chatroomError.message}</p>;
   }
 
   return (
@@ -133,39 +152,80 @@ export default function ChatId() {
         <div className="flex items-center gap-10">
           <Image
             src="/profile.png"
-            alt={`${data?.partnerName} profile`}
+            alt={`${chatroomData?.partnerName} profile`}
             width={41}
             height={41}
             className="rounded-round"
           />
           <div className="flex py-10 text-28 font-bold text-teal-900">
-            {data?.partnerName}님과의 대화
+            {chatroomData?.partnerName}님과의 대화
           </div>
         </div>
-        <div className="relative">
-          {/* 버튼 */}
-          <Button
-            size="m"
-            variant="primary"
-            design="fill"
-            main="약속잡기"
-            onClick={handleTogglePromiseDropdown}
-          />
+        <div className="relative flex h-full items-center justify-center">
+          {/* 약속 관련 로직 */}
+          {isAppointmentLoading ? (
+            // 로딩 중일 때
+            <div className="flex h-full w-full items-center justify-center">
+              <Loading />
+            </div>
+          ) : appointmentError ? (
+            // 에러가 있을 때
+            <p>Error: {appointmentError.message}</p>
+          ) : appointmentData ? (
+            // 약속이 있을 때
+            <div className="flex items-center justify-end gap-6 self-stretch p-10">
+              <div>
+                {new Date(appointmentData?.appointmentTime).toLocaleString(
+                  "ko-KR",
+                  {
+                    month: "long", // 월을 '9월'과 같이 표시
+                    day: "numeric", // 일을 숫자로 표시
+                    hour: "2-digit", // 시간을 두 자리로 표시
+                    minute: "2-digit", // 분을 두 자리로 표시
+                    hour12: false, // 24시간 형식을 사용
+                  },
+                )}
+                에
+              </div>
+              <div className="font-bold text-teal700">
+                {appointmentData?.timeQnt}시간
+              </div>
+              <div>약속</div>
+              <Button
+                size="s"
+                variant="primary"
+                design="fill"
+                main="약속취소"
+              />
 
-          {/* PromiseDropdown 버튼 아래 표시 */}
-          {showPromiseDropdown && (
-            <div className="mt-2">
-              <PromiseDropdown roomId={roomId} />
+              {/* TODO: 약속취소 onclick (appointmentId를 매개변수로)*/}
+            </div>
+          ) : (
+            // 약속이 없을 때 '약속잡기' 버튼 표시
+            <div>
+              <Button
+                size="m"
+                variant="primary"
+                design="fill"
+                main="약속잡기"
+                onClick={handleTogglePromiseDropdown}
+              />
+              {/* PromiseDropdown 버튼 아래 표시 */}
+              {showPromiseDropdown && (
+                <div className="mt-12">
+                  <PromiseDropdown roomId={roomId} />
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
         <Badge size="l" color="yellow">
-          {data?.status}
+          {chatroomData?.status}
         </Badge>
-        <Link href={`/board/${data?.boardId}`}>
-          <div className="text-15">{data?.boardTitle}</div>
+        <Link href={`/board/${chatroomData?.boardId}`}>
+          <div className="text-15">{chatroomData?.boardTitle}</div>
         </Link>
       </div>
 
