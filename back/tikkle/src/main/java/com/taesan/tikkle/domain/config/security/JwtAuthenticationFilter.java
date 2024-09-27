@@ -134,6 +134,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			logger.debug("passed!");
 			filterChain.doFilter(request, response);
+			return;
 		}
 
 		if (!refreshToken.equals(redisTokenService.getRefreshToken(userDetails.getUsername()))) {
