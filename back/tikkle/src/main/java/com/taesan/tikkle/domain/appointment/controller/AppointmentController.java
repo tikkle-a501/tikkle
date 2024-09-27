@@ -38,8 +38,8 @@ public class AppointmentController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("")
-	public ResponseEntity<Void> deleteAppointment(@RequestBody UUID appointmentId){
+	@DeleteMapping("{appointmentId}")
+	public ResponseEntity<Void> deleteAppointment(@PathVariable UUID appointmentId){
 		appointmentService.deleteAppointment(appointmentId);
 		return ResponseEntity.ok().build();
 	}

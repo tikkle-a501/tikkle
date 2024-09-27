@@ -90,6 +90,6 @@ public class AppointmentService {
 
 	public BriefAppointmentResponse getAppointment(UUID roomId) {
 		Appointment appointment = appointmentRepository.findByRoomId(roomId).orElseThrow(EntityNotFoundException::new);
-		return new BriefAppointmentResponse(appointment.getApptTime(),appointment.getTimeQnt());
+		return new BriefAppointmentResponse(appointment.getId(),appointment.getApptTime(),appointment.getTimeQnt());
 	}
 }
