@@ -14,6 +14,7 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { Chat } from "@/types/chat";
 import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppointmentByRoomId";
+import { useDeleteAppointmentById } from "@/hooks/appointment/useDeleteAppointmentById";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -112,6 +113,7 @@ export default function ChatId() {
   const combinedMessages = [...(chatroomData?.chats || []), ...messages];
 
   ////////////////// 약속잡기 로직
+  // TODO: 게시글 작성자만 약속을 잡을 수 있도록 하는 로직
   const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
   // "약속잡기" 버튼 클릭 시 상태 변경
   const handleTogglePromiseDropdown = () => {
@@ -127,7 +129,22 @@ export default function ChatId() {
 
   console.log(appointmentData);
 
-  ////////////////// TODO : 약속삭제 로직
+  ////////////////// 약속삭제 로직
+  const deleteAppointmentMutation = useDeleteAppointmentById();
+
+  const handleDeleteAppointment = (appointmentId: string) => {
+    if (window.confirm("정말로 약속을 취소하시겠습니까?")) {
+      deleteAppointmentMutation.mutate(appointmentId, {
+        onSuccess: () => {
+          alert("약속이 성공적으로 취소되었습니다.");
+        },
+        onError: (error) => {
+          alert(error.response.data.message);
+          console.error("Error deleting appointment:", error);
+        },
+      });
+    }
+  };
 
   ////////// 아래부터 컴포넌트
 
@@ -196,6 +213,9 @@ export default function ChatId() {
                 variant="primary"
                 design="fill"
                 main="약속취소"
+                onClick={() =>
+                  handleDeleteAppointment(appointmentData.appointmentId)
+                }
               />
 
               {/* TODO: 약속취소 onclick (appointmentId를 매개변수로)*/}
