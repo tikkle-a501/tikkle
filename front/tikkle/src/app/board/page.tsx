@@ -1,9 +1,11 @@
 "use client";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Button from "@/components/button/Button";
 import BoardCard from "@/components/card/BoardCard";
 import SearchInput from "@/components/input/SearchInput";
 import { useRouter } from "next/navigation";
+import { useFetchBoardList } from "@/hooks/board/useFetchBoardList";
+
 export default function Board() {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const cardsPerPage = 8; // 한 페이지에 8개의 카드(두 줄)
@@ -374,6 +376,9 @@ export default function Board() {
   // 총 페이지 수
   const totalPages = Math.ceil(testCards.length / cardsPerPage);
 
+  const { data, isLoading, error } = useFetchBoardList();
+  console.log(data);
+  console.log(error);
   return (
     <div className="bg- flex flex-shrink-0 flex-col items-start gap-10">
       <div className="text-40 font-bold text-teal900">SSAFY의 티끌</div>
