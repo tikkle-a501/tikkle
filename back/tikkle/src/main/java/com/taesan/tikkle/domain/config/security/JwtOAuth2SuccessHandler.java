@@ -7,27 +7,28 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.taesan.tikkle.domain.member.service.RedisTokenService;
 import com.taesan.tikkle.global.utils.JwtUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(JwtOAuth2SuccessHandler.class);
 	private final JwtUtil jwtUtil;
-
-	public JwtOAuth2SuccessHandler(JwtUtil jwtUtil) {
-		this.jwtUtil = jwtUtil;
-	}
+	private final RedisTokenService redisTokenService;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request,
@@ -41,8 +42,7 @@ public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Map<String, Object> claims = new HashMap<>();
 
 		String jwt = jwtUtil.generateToken(claims, memberId.toString());
-
-
+		String refreshToken = jwtUtil.generateRefreshToken(claims, memberId.toString());
 		/*
 			FIXME: 배포 환경에서는 setSecure를 true로 바꿔줘야 함.
 		 */
@@ -54,7 +54,19 @@ public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			.secure(false)
 			.build();
 
-		response.addHeader("Set-Cookie", jwtCookie.toString());
+		ResponseCookie refreshTokenCookie
+			= ResponseCookie.from("refresh_token", refreshToken)
+			.maxAge(60 * 60 * 24)
+			.path("/")
+			.httpOnly(false)
+			.secure(false)
+			.build();
+
+		response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+		response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+		redisTokenService.storeRefreshToken(memberId, refreshToken, 1000 * 60 * 60 * 24);
+
 		response.sendRedirect("http://localhost:3000/home");
 	}
 
