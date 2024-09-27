@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateAppointmentRequest {
-	private UUID appId;
+	private UUID appointmentId;
 	private Timestamp appTime;
 	private Integer timeQnt;
 }
