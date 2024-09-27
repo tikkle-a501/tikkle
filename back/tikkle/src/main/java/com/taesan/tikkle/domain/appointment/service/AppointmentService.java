@@ -56,7 +56,7 @@ public class AppointmentService {
 	@Transactional
 	public void deleteAppointment(UUID appointmentId) {
 		//  TODO : 세션에 저장된 아이디와 같은 지 확인 필요
-		UUID curMember = UUID.randomUUID();
+		UUID curMember = UUID.fromString("74657374-0000-0000-0000-000000000000");
 		Appointment appointment = appointmentRepository.findById(appointmentId)
 			.orElseThrow(EntityNotFoundException::new);
 		// TODO : 검증이 필요한지 고민
