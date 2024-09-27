@@ -7,6 +7,7 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -30,6 +31,16 @@ public class JwtUtil {
 			.setSubject(username)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+			.signWith(SignatureAlgorithm.HS256, JWT_KEY)
+			.compact();
+	}
+
+	public String generateRefreshToken(Map<String, Object> claims, String username) {
+		return Jwts.builder()
+			.setClaims(claims)
+			.setSubject(username)
+			.setIssuedAt(new Date(System.currentTimeMillis()))
+			.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 			.signWith(SignatureAlgorithm.HS256, JWT_KEY)
 			.compact();
 	}
@@ -59,5 +70,28 @@ public class JwtUtil {
 
 	private boolean isTokenExpired(String token) {
 		return extractAllClaims(token).getExpiration().before(new Date());
+	}
+
+	public boolean isHalfLifePassed(String refreshToken) {
+		try {
+			// JWT 토큰을 파싱하여 클레임을 가져옴
+			Claims claims = Jwts.parser()
+				.setSigningKey(JWT_KEY)
+				.parseClaimsJws(refreshToken)
+				.getBody();
+
+			// 만료 시간(exp)과 발급 시간(iat)을 가져옴
+			Date expiration = claims.getExpiration();  // 만료 시간
+			Date issuedAt = claims.getIssuedAt();      // 발급 시간
+
+			// 만료 시간과 발급 시간 사이의 절반 시점을 계산
+			long halfLifeTime = issuedAt.getTime() + ((expiration.getTime() - issuedAt.getTime()) / 2);
+
+			// 현재 시각이 유효기간의 절반을 넘었는지 확인
+			return new Date().getTime() > halfLifeTime;
+
+		} catch (JwtException | IllegalArgumentException e) {
+			return false;
+		}
 	}
 }

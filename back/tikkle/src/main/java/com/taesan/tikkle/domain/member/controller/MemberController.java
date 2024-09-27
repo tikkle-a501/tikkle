@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.service.MemberService;
 import com.taesan.tikkle.global.annotations.AuthedUsername;
+import com.taesan.tikkle.global.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,14 +25,11 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@GetMapping("")
-	public ResponseEntity<MemberResponse> getMemberResponse(@AuthedUsername UUID username) {
-		try {
-			logger.debug("memberId: ", username);
-			MemberResponse memberResponse = memberService.getMemberResponse(username);
-			logger.debug("memberResponse: {}", memberResponse);
-			return ResponseEntity.ok(memberResponse);
-		} catch (IllegalStateException e) {
-			return ResponseEntity.notFound().build();
-		}
+	public ResponseEntity<ApiResponse<MemberResponse>> getMemberResponse(@AuthedUsername UUID username) {
+		logger.debug("memberId: {}", username.toString());
+		MemberResponse memberResponse = memberService.getMemberResponse(username);
+		ApiResponse<MemberResponse> response = ApiResponse.success("회원 정보 불러오기에 성공했습니다.", memberResponse);
+		logger.debug("memberResponse: {}", memberResponse);
+		return ResponseEntity.ok(response);
 	}
 }
