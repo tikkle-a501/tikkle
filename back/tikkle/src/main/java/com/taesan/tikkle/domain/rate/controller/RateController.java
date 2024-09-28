@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.taesan.tikkle.domain.rate.dto.response.RateFindAllResponse;
 import com.taesan.tikkle.domain.rate.service.RateService;
+import com.taesan.tikkle.global.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +27,8 @@ public class RateController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<RateFindAllResponse>> findAll() {
-		return ResponseEntity.status(HttpStatus.OK).body(rateService.findAll());
+	public ResponseEntity<ApiResponse<List<RateFindAllResponse>>> findAll() {
+		ApiResponse<List<RateFindAllResponse>> response = ApiResponse.success("환율 조회를 성공했습니다.", rateService.findAll());
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
