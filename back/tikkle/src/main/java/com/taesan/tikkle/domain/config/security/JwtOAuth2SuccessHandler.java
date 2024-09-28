@@ -14,7 +14,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.service.RedisTokenService;
+import com.taesan.tikkle.global.response.ApiResponse;
 import com.taesan.tikkle.global.utils.JwtUtil;
 
 import jakarta.servlet.ServletException;
@@ -29,6 +32,7 @@ public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private static final Logger logger = LoggerFactory.getLogger(JwtOAuth2SuccessHandler.class);
 	private final JwtUtil jwtUtil;
 	private final RedisTokenService redisTokenService;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request,
@@ -67,7 +71,27 @@ public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		redisTokenService.storeRefreshToken(memberId, refreshToken, 1000 * 60 * 60 * 24);
 
-		response.sendRedirect("http://localhost:3000/home");
+		MemberResponse memberResponse = new MemberResponse(
+			oAuth2User.getAttribute("memberId"),
+			oAuth2User.getAttribute("username"),
+			oAuth2User.getAttribute("nickname"),
+			oAuth2User.getAttribute("email")
+		);
+
+		// ApiResponse 객체 생성
+		ApiResponse<MemberResponse> apiResponse
+			= new ApiResponse<>(200, "회원 정보 불러오기에 성공했습니다.", memberResponse);
+
+		// 응답 헤더 설정
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.setStatus(HttpServletResponse.SC_OK);
+
+		// ObjectMapper를 사용해 ApiResponse 객체를 JSON으로 변환하여 응답으로 전송
+		objectMapper.writeValue(response.getWriter(), apiResponse);
+
+		// redirect 처리는 frontend에서 처리하도록 수정
+		// response.sendRedirect("http://localhost:3000/home");
 	}
 
 }
