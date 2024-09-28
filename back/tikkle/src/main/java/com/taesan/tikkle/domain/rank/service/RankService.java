@@ -3,8 +3,7 @@ package com.taesan.tikkle.domain.rank.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -37,25 +36,47 @@ public class RankService {
 		if (isNotCache(existingCount)) {
 			existingCount = updateCache(stringObjectZSetOperations);
 		}
+		return makeRankList(username, stringObjectZSetOperations, existingCount);
+	}
 
-		AtomicReference<MemberRankResponse> myRankRef = new AtomicReference<>();
-		AtomicInteger rankCounter = new AtomicInteger(1);
-
+	private RankResponse makeRankList(UUID username, ZSetOperations<String, Object> stringObjectZSetOperations, Long existingCount){
 		List<MemberRankResponse> rankList = Objects.requireNonNull(
-				stringObjectZSetOperations.reverseRange(RANKING_KEY, 1, existingCount + 1))
+				stringObjectZSetOperations.reverseRange(RANKING_KEY, 0, existingCount + 1))
 			.stream()
 			.map(this::convertToMemberRankResponse)
-			.peek(memberRank -> {
-				memberRank.grantOrder(rankCounter.getAndIncrement());
-				if (memberRank.getMemberId().equals(username)) {
-					myRankRef.set(memberRank);
+			.sorted((firstMember, secondMember) -> {
+				int compareByPoint = Long.compare(secondMember.getRankingPoint(), firstMember.getRankingPoint());
+				if (compareByPoint == 0) {
+					return Long.compare(secondMember.getTradeCount(), firstMember.getTradeCount());
 				}
+				return compareByPoint;
 			})
-			.toList();
+			.collect(Collectors.toList());
 
-		MemberRankResponse myRank = myRankRef.get();
+		MemberRankResponse myRank = null;
+		int rankCounter = 1;
+
+		for (int i = 0; i < rankList.size(); i++) {
+			MemberRankResponse currentMember = rankList.get(i);
+
+			if (i == 0 || !isTie(rankList.get(i - 1), currentMember)) {
+				rankCounter = i + 1;
+				currentMember.grantOrder(rankCounter);
+			} else {
+				currentMember.grantOrder(rankList.get(i - 1).getOrder());
+			}
+			if (currentMember.getMemberId().equals(username)) {
+				myRank = currentMember;
+			}
+		}
 
 		return RankResponse.of(rankList, myRank);
+	}
+
+
+	private boolean isTie(MemberRankResponse previousMember, MemberRankResponse currentMember) {
+		return previousMember.getRankingPoint() == currentMember.getRankingPoint()
+			&& previousMember.getTradeCount() == currentMember.getTradeCount();
 	}
 
 	private boolean isNotCache(Long existingCount) {
