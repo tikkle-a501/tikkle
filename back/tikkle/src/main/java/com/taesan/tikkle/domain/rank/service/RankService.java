@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
@@ -52,7 +51,7 @@ public class RankService {
 		return stringObjectZSetOperations.size(RANKING_KEY);
 	}
 
-	@Scheduled(cron = "0/1 * * * * *")
+	// @Scheduled(cron = "0/1 * * * * *")
 	public void deleteRankList() {
 		redisTemplate.delete(RANKING_KEY);
 		log.info("기존 랭킹 데이터 삭제 완료");
