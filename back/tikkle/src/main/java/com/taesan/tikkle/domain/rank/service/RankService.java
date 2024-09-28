@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 import com.taesan.tikkle.domain.member.service.MemberService;
 
@@ -21,6 +22,7 @@ public class RankService {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final MemberService memberService;
+	private final ObjectMapper objectMapper;
 
 	private static final String RANKING_KEY = "ranking";
 
@@ -33,7 +35,7 @@ public class RankService {
 		}
 		return Objects.requireNonNull(stringObjectZSetOperations.reverseRange(RANKING_KEY, 1, existingCount + 1))
 			.stream()
-			.map(rank -> (MemberRankResponse)rank)
+			.map(this::convertToMemberRankResponse)
 			.collect(Collectors.toList());
 	}
 
@@ -55,5 +57,8 @@ public class RankService {
 	public void deleteRankList() {
 		redisTemplate.delete(RANKING_KEY);
 		log.info("기존 랭킹 데이터 삭제 완료");
+	}
+	private MemberRankResponse convertToMemberRankResponse(Object data) {
+		return objectMapper.convertValue(data, MemberRankResponse.class);
 	}
 }
