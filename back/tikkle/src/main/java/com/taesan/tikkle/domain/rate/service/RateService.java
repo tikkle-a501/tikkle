@@ -14,6 +14,8 @@ import com.taesan.tikkle.domain.account.service.AccountService;
 import com.taesan.tikkle.domain.rate.dto.response.RateFindAllResponse;
 import com.taesan.tikkle.domain.rate.entity.Rate;
 import com.taesan.tikkle.domain.rate.repository.RateRepository;
+import com.taesan.tikkle.global.errors.ErrorCode;
+import com.taesan.tikkle.global.exceptions.CustomException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,9 +59,8 @@ public class RateService {
 			.collect(Collectors.toList());
 	}
 
-	public Rate findById(UUID rateId){
-		//TODO: 예외 정의하기
-		return rateRepository.findById(rateId).orElseThrow(() -> new IllegalArgumentException("정의 되지 않은 환율입니다."));
+	public Rate findById(UUID rateId) {
+		return rateRepository.findById(rateId).orElseThrow(() -> new CustomException(ErrorCode.RATE_NOT_FOUND));
 	}
 
 	private LocalDateTime getOneHourAgo() {
