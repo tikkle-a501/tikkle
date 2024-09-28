@@ -35,7 +35,7 @@ public class RankService {
 		Long existingCount = stringObjectZSetOperations.size(RANKING_KEY);
 
 		if (isNotCache(existingCount)) {
-			existingCount = makeRankList(stringObjectZSetOperations);
+			existingCount = updateCache(stringObjectZSetOperations);
 		}
 
 		AtomicReference<MemberRankResponse> myRankRef = new AtomicReference<>();
@@ -62,7 +62,7 @@ public class RankService {
 		return existingCount == null || existingCount == 0;
 	}
 
-	private Long makeRankList(ZSetOperations<String, Object> stringObjectZSetOperations) {
+	private Long updateCache(ZSetOperations<String, Object> stringObjectZSetOperations) {
 		memberService.findMemberRankings()
 			.forEach(
 				memberRanking -> stringObjectZSetOperations.add(
@@ -73,12 +73,12 @@ public class RankService {
 	}
 
 	@Scheduled(cron = "0 1 * * * *")
-	public void deleteRankList() {
+	public void deleteCache() {
 		redisTemplate.delete(RANKING_KEY);
-		log.info("기존 랭킹 데이터 삭제 완료");
+		log.info("Redis 랭킹 삭제");
 		ZSetOperations<String, Object> stringObjectZSetOperations = redisTemplate.opsForZSet();
-		makeRankList(stringObjectZSetOperations);
-		log.info("랭킹 업데이트 성공");
+		updateCache(stringObjectZSetOperations);
+		log.info("Redis 랭킹 업데이트");
 	}
 
 	private MemberRankResponse convertToMemberRankResponse(Object data) {
