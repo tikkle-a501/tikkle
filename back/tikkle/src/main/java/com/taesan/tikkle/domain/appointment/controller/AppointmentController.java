@@ -35,7 +35,7 @@ public class AppointmentController {
 
 	@PostMapping("")
 	public ResponseEntity<ApiResponse<UUID>> createAppointment(@RequestBody CreateAppointmentRequest request,@AuthedUsername UUID memberId) {
-		ApiResponse<UUID> response = ApiResponse.success("",appointmentService.createAppointment(request,memberId));
+		ApiResponse<UUID> response = ApiResponse.success("약속 생성에 성공했습니다.",appointmentService.createAppointment(request,memberId));
 		return ResponseEntity.ok(response);
 	}
 
@@ -48,7 +48,7 @@ public class AppointmentController {
 
 	@GetMapping("")
 	public ResponseEntity<ApiResponse<List<DetailAppointmentResponse>>> getAppointments(@AuthedUsername UUID memberId) {
-		ApiResponse<List<DetailAppointmentResponse>> response = ApiResponse.success("약속 리스트 불러오기에 성공했습니다.",
+		ApiResponse<List<DetailAppointmentResponse>> response = ApiResponse.success("약속 목록 조회에 성공했습니다.",
 			appointmentService.getAppointments(memberId));
 		return ResponseEntity.ok(response);
 	}
