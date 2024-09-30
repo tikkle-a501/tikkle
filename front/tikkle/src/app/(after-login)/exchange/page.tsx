@@ -2,7 +2,7 @@
 
 import Button from "@/components/button/Button";
 import Chart from "@/components/chart/Chart";
-import { useFetchRate, useCreateRate } from "@/hooks";
+import { useFetchRate, useFetchRecentRate, useCreateRate } from "@/hooks";
 
 export default function Exchange() {
   const {
@@ -15,6 +15,12 @@ export default function Exchange() {
     createRateMutation(); // 테스트용 환율 생성 요청
   };
 
+  const {
+    data: latestRate,
+    isPending,
+    error: fetchError,
+  } = useFetchRecentRate(); // 최근 환율 조회
+
   return (
     <>
       {/* title: 환전 */}
@@ -23,11 +29,31 @@ export default function Exchange() {
       <div className="flex flex-col gap-10 px-40 py-20">
         {/* 보유 재화 */}
         <div className="flex items-start justify-between gap-10 self-stretch px-12">
-          <div className="text-34 font-bold text-teal500">
-            {/* {latestRate
-              ? `현재 환율 = ${latestRate.timeToRate} 포인트/시간`
-              : "데이터 없음"} */}
+          {/* 현재 환율 */}
+          <div>
+            <div className="flex items-center gap-10">
+              <div className="text-20 text-teal900">현재 환율: </div>
+              <div className="text-34 text-teal900">1시간 = </div>
+              <div className="text-34 font-bold text-teal500">
+                {isPending ? (
+                  "환율 정보를 불러오는 중..."
+                ) : fetchError ? (
+                  <div className="text-red-500">
+                    Error: {fetchError.message}
+                  </div>
+                ) : latestRate ? (
+                  `${latestRate.timeToRank}`
+                ) : (
+                  "데이터 없음"
+                )}
+              </div>
+              <div className="text-34 text-teal900">티끌</div>
+            </div>
+            <div className="text-end text-warmGray500">
+              {latestRate?.createdAt} 기준
+            </div>
           </div>
+
           <div className="flex">
             <div className="flex items-center justify-center gap-10 px-10">
               <div className="text-teal900">나의 보유 시간</div>
