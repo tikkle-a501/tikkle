@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import MenuList from "../list/MenuList";
 
@@ -21,7 +23,7 @@ const renderStars = (rate: number) => {
     } else {
       stars.push(
         <span key={i} className="material-symbols-outlined">
-          star
+          star_outline
         </span>,
       ); // 빈 별
     }
