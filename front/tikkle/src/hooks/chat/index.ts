@@ -1,2 +1,2 @@
 export * from "./useFetchChatroomsByUserId";
-export * from "./usefetchChatroomById";
+export * from "./useFetchChatroomById";
