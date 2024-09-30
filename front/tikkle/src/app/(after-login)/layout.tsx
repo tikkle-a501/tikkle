@@ -4,7 +4,9 @@ import Navigation from "@/components/navigation/Navigation";
 import QueryProvider from "@/components/QueryProvider";
 import localFont from "next/font/local";
 import Head from "next/head";
+import NavigationLoading from "@/components/loading/NavigationLoading";
 
+// Pretendard font 설정
 const pretendard = localFont({
   src: "../_font/PretendardVariable.woff2",
   display: "swap",
@@ -16,11 +18,7 @@ export default function AfterLoginLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const [isNavigationLoaded] = useState(true);
 
   return (
     <>
@@ -31,7 +29,7 @@ export default function AfterLoginLayout({
         />
       </Head>
       <div className={pretendard.className}>
-        {isMounted && <Navigation />}
+        {isNavigationLoaded ? <Navigation /> : <NavigationLoading />}
         <QueryProvider>
           <div className="flex flex-col gap-[10px] pb-[40px] pl-[48px] pr-[48px] pt-[28px]">
             {children}
