@@ -44,19 +44,19 @@ export default function Write() {
   };
 
   // 글 작성 중 새로고침 방지
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        e.preventDefault();
-      }
-    };
+  // useEffect(() => {
+  //   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  //     if (isDirty) {
+  //       e.preventDefault();
+  //     }
+  //   };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [isDirty]);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, [isDirty]);
 
   // 글 작성 중 뒤로가기 방지, 페이지 이동 방지 필요
 
@@ -132,7 +132,7 @@ export default function Write() {
             height="500px"
             initialValue=""
             placeholder="내용을 입력해주세요."
-            previewStyle={window.innerWidth > 1000 ? "vertical" : "tab"}
+            previewStyle={"tab"}
             initialEditType="markdown"
             hideModeSwitch={false}
             toolbarItems={[
