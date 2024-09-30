@@ -7,9 +7,9 @@ interface BoardCardProps {
   title: string;
   status: string;
   writer: string;
-  createdAt: string;
-  time: string;
-  context: string;
+  createdAt: Date;
+  time: number;
+  content: string;
 }
 
 const BoardCard: React.FC<BoardCardProps> = ({
@@ -19,7 +19,7 @@ const BoardCard: React.FC<BoardCardProps> = ({
   writer,
   createdAt,
   time,
-  context,
+  content,
 }) => {
   return (
     <Link href={`/board/${boardId}`} passHref className="hover:scale-110">
@@ -40,7 +40,7 @@ const BoardCard: React.FC<BoardCardProps> = ({
           {time} 시간
         </div>
         <div className="self-stretch overflow-hidden text-ellipsis text-15 text-warmGray900 [-webkit-box-orient:vertical] [-webkit-line-clamp:3] [display:-webkit-box]">
-          {context}
+          {content}
         </div>
       </div>
     </Link>

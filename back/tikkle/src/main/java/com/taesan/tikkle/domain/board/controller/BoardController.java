@@ -21,14 +21,13 @@ public class BoardController {
     //전체 보드 조회
     @GetMapping("")
     public ResponseEntity<ApiResponse> getBoards() {
-        return ResponseEntity.ok(ApiResponse.success("공고 받아오기 성공",boardService.getBoards()));
+        return ResponseEntity.ok(ApiResponse.success("공고 받아오기 성공", boardService.getBoards()));
     }
 
     //보드 상세정보 조회
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponse> getBoardDetail(@PathVariable UUID boardId) {
-
-        return ResponseEntity.ok(boardService.getBoardDetail(boardId));
+    public ResponseEntity<ApiResponse<BoardResponse>> getBoardDetail(@PathVariable UUID boardId) {
+        return ResponseEntity.ok(ApiResponse.success("공고 받아오기 성공", boardService.getBoardDetail(boardId)));
     }
 
     //보드 생성

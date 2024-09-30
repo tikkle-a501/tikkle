@@ -4,23 +4,53 @@ import dynamic from "next/dynamic";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import Badge from "@/components/badge/Badge";
 import Chips from "@/components/chips/Chips";
+import { usePathname } from "next/navigation";
+import { useFetchBoardDetail } from "@/hooks/board";
+import { useState } from "react";
+import Dropbox from "@/components/drop-down/Dropbox";
 
+// 동적으로 Viewer 컴포넌트를 로드
 const Viewer = dynamic(
   () => import("@toast-ui/react-editor").then((mod) => mod.Viewer),
   { ssr: false },
 );
 
-export default function Boarddetail() {
-  const board = {
-    boardId: "1",
-    status: "게시중",
-    title: "test title",
-    writer: "test writer",
-    createdAt: "2024-09-11T17:45:15Z",
-    category: "업무",
-    time: 2,
-    content: "test content",
+export default function BoardDetail() {
+  const [isDropboxOpen, setIsDropboxOpen] = useState(false); // Dropbox 열림 상태 관리
+
+  const toggleDropbox = () => {
+    setIsDropboxOpen(!isDropboxOpen); // 토글 기능 구현
   };
+
+  const pathname = usePathname();
+
+  // URL에서 boardId 추출
+  const boardId = pathname.split("/").pop()!; // 경로의 마지막 부분이 boardId
+  console.log(boardId);
+
+  // useFetchBoardDetail 훅을 통해 boardId로 데이터를 가져옴
+  const { data, isLoading, error } = useFetchBoardDetail(boardId);
+
+  // 콘솔 로그로 실제 데이터를 확인
+  console.log("API Response:", data);
+
+  // 로딩 상태 처리
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  // 에러 상태 처리
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  // 데이터가 없을 경우 처리
+  if (!data) {
+    return <div>No board data available.</div>;
+  }
+
+  // 가져온 데이터를 board로 사용
+  const board = data;
 
   return (
     <>
@@ -32,23 +62,37 @@ export default function Boarddetail() {
             {board.status}
           </Badge>
           <div className="flex flex-1 text-28 font-bold">{board.title}</div>
-          <div>
-            <span className="material-symbols-outlined">more_horiz</span>
+          <div className="relative flex flex-col">
+            {" "}
+            {/* relative 추가 */}
+            <span
+              className="material-symbols-outlined cursor-pointer"
+              onClick={toggleDropbox} // 클릭 시 드롭박스 열림 상태 토글
+            >
+              more_horiz
+            </span>
+            {isDropboxOpen && ( // 드롭박스 열림 상태에 따라 표시
+              <div className="absolute right-0 top-full z-10">
+                <Dropbox items={["수정하기", "삭제하기"]} />
+              </div>
+            )}
           </div>
         </div>
 
         {/* 작성자, 작성일 */}
         <div className="flex items-center gap-20 pb-10">
-          <div className="font-semibold text-warmGray500">{board.writer}</div>
+          <div className="font-semibold text-warmGray500">{board.memberId}</div>
           <div className="text-warmGray400">
-            {new Date(board.createdAt).toLocaleString()}
+            {board.createdAt
+              ? new Date(board.createdAt).toLocaleString()
+              : "N/A"}
           </div>
         </div>
 
         {/* 카테고리, 예상 시간 */}
         <div className="flex items-center gap-20">
           <Chips size="l" variant="primary" design="fill">
-            {board.category}
+            {board.category ?? "카테고리 없음"}
           </Chips>
           <div className="w-1 self-stretch bg-warmGray200"></div>
           <div className="flex items-center justify-center gap-10">
