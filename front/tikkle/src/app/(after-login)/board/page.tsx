@@ -1,384 +1,42 @@
 "use client";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import Button from "@/components/button/Button";
 import BoardCard from "@/components/card/BoardCard";
 import SearchInput from "@/components/input/SearchInput";
 import { useRouter } from "next/navigation";
-import { useFetchBoardList } from "@/hooks/board/useFetchBoardList";
+import { useFetchBoardList } from "@/hooks/board/index";
 
-export default function Board() {
+export default function BoardPage() {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const cardsPerPage = 8; // 한 페이지에 8개의 카드(두 줄)
   const router = useRouter();
-  const testCards = [
-    {
-      title: "Announcement",
-      status: "Active",
-      writer: "John Doe",
-      createdAt: "2024.09.10 10:00",
-      time: "10",
-      context:
-        "This is an important announcement regarding the upcoming event. Please read carefully. This is an important announcement regarding the upcoming event. Please read carefully.",
-    },
-    {
-      title: "Maintenance Update",
-      status: "Scheduled",
-      writer: "Jane Smith",
-      createdAt: "2024.09.09 13:00",
-      time: "2.5",
-      context:
-        "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "Announcement",
-      status: "Active",
-      writer: "John Doe",
-      createdAt: "2024.09.10 10:00",
-      time: "10",
-      context:
-        "This is an important announcement regarding the upcoming event. Please read carefully. This is an important announcement regarding the upcoming event. Please read carefully.",
-    },
-    {
-      title: "Maintenance Update",
-      status: "Scheduled",
-      writer: "Jane Smith",
-      createdAt: "2024.09.09 13:00",
-      time: "2.5",
-      context:
-        "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: "11",
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-  ];
 
+  // useFetchBoardList에서 가져온 데이터를 명시적으로 BoardListResponses로 처리
+  const { data, isLoading, error } = useFetchBoardList();
+
+  // data가 BoardListResponses일 경우만 접근. 없으면 빈 배열로 처리.
+  const boardList = data || [];
+  console.log(boardList);
   // 현재 페이지에서 보여줄 카드들 계산
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = testCards.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = boardList.slice(indexOfFirstCard, indexOfLastCard);
 
   // 페이지 변경 핸들러
   const paginate = (pageNumber: SetStateAction<number>) =>
     setCurrentPage(pageNumber);
 
-  // 총 페이지 수
-  const totalPages = Math.ceil(testCards.length / cardsPerPage);
+  // 총 페이지 수 계산
+  const totalPages = Math.ceil(boardList.length / cardsPerPage);
 
-  const { data, isLoading, error } = useFetchBoardList();
-  console.log(data);
-  console.log(error);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: 게시글을 불러오는 중 문제가 발생했습니다.</div>;
+  }
+
   return (
     <div className="bg- flex flex-shrink-0 flex-col items-start gap-10">
       <div className="text-40 font-bold text-teal900">SSAFY의 티끌</div>
@@ -386,7 +44,7 @@ export default function Board() {
       <div className="flex w-full items-center justify-between self-stretch px-10">
         <select name="category" id="category">
           <option value="업무">업무</option>
-          <option value="업무">비업무</option>
+          <option value="비업무">비업무</option>
         </select>
         <SearchInput
           width="609px"
@@ -402,18 +60,18 @@ export default function Board() {
           onClick={() => router.push("/board/write")}
         />
       </div>
-      {/* 공고 */}
+      {/* 게시글 목록 */}
       <div className="grid w-full grid-cols-1 gap-32 pt-16 sm:grid-cols-2 lg:grid-cols-4">
         {currentCards.map((card, index) => (
           <BoardCard
             key={index}
-            boardId="1"
+            boardId={card.boardId}
             title={card.title}
             status={card.status}
-            writer={card.writer}
+            writer={card.memberId}
             createdAt={card.createdAt}
             time={card.time}
-            context={card.context}
+            content={card.content}
           />
         ))}
       </div>

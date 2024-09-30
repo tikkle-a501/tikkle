@@ -1,5 +1,5 @@
 import { fetchBoardList } from "@/libs";
-import { BoardListResponses } from "@/types/board";
+import { BoardListResponses, Board } from "@/types/board";
 import { useQuery } from "@tanstack/react-query";
 
 export const useFetchBoardList = () => {

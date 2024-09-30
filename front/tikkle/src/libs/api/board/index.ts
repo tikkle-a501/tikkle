@@ -2,6 +2,7 @@ import {
   BoardDetailResponse,
   BoardListResponses,
   BoardRequest,
+  Board,
 } from "@/types/board";
 import { handleApiRequest } from "../client";
 
@@ -12,10 +13,7 @@ export const fetchBoardList = async () => {
 
 //공고 디테일 조회
 export const fetchBoardDetail = async (boardId: string) => {
-  return handleApiRequest<BoardDetailResponse, "get">(
-    `/board/${boardId}`,
-    "get",
-  );
+  return handleApiRequest<Board, "get">(`/board/${boardId}`, "get");
 };
 
 //공고 작성

@@ -129,7 +129,7 @@ export default function Landing() {
           writer={card.writer}
           createdAt={card.createdAt}
           time={card.time}
-          context={card.context}
+          content={card.context}
         />
       ))}
 
