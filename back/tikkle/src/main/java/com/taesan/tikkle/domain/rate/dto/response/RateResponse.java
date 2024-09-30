@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class RateFindAllResponse {
+public class RateResponse {
 
 	private UUID id;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -20,14 +20,14 @@ public class RateFindAllResponse {
 	private Integer timeToRank;
 
 	@Builder
-	private RateFindAllResponse(UUID id, LocalDateTime createdAt, Integer timeToRank) {
+	private RateResponse(UUID id, LocalDateTime createdAt, Integer timeToRank) {
 		this.id = id;
 		this.createdAt = createdAt;
 		this.timeToRank = timeToRank;
 	}
 
-	public static RateFindAllResponse from(Rate rate) {
-		return RateFindAllResponse.builder()
+	public static RateResponse from(Rate rate) {
+		return RateResponse.builder()
 			.id(rate.getId())
 			.createdAt(rate.getCreatedAt())
 			.timeToRank(rate.getTimeToRank())
