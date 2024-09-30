@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import InfoBox from "@/components/box/InfoBox";
+import InfoBoxLoading from "@/components/loading/InfoBoxLoading";
 
 export default function MypageLayout({
   children,
@@ -16,6 +17,8 @@ export default function MypageLayout({
   };
 
   const [isMounted, setIsMounted] = useState(false);
+
+  const [isInfoBoxLoaded] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
@@ -33,7 +36,7 @@ export default function MypageLayout({
             rate={testData.rate}
           />
         ) : (
-          <div>로딩 중...</div> // Loading segment 만들어야 함
+          <InfoBoxLoading />
         )}
 
         <div className="flex w-full justify-between gap-10">{children}</div>
