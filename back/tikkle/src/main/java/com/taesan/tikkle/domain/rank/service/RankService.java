@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 import com.taesan.tikkle.domain.member.service.MemberService;
-import com.taesan.tikkle.domain.rank.dto.RankResponse;
+import com.taesan.tikkle.domain.rank.dto.response.RankBaseResponse;
+import com.taesan.tikkle.domain.rank.dto.response.RankResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +30,37 @@ public class RankService {
 
 	private static final String RANKING_KEY = "ranking";
 
-	public RankResponse getRankList(UUID username) {
+	public RankBaseResponse getRankList(UUID username) {
 		ZSetOperations<String, Object> stringObjectZSetOperations = redisTemplate.opsForZSet();
-		Long existingCount = stringObjectZSetOperations.size(RANKING_KEY);
+		Long existingCount = checkAndUpdateCache(stringObjectZSetOperations);
 
-		if (isNotCache(existingCount)) {
-			existingCount = updateCache(stringObjectZSetOperations);
-		}
-		return makeRankList(username, stringObjectZSetOperations, existingCount);
+		List<MemberRankResponse> rankList = fetchAndSortRankList(stringObjectZSetOperations, existingCount);
+		MemberRankResponse myRank = findMyRank(rankList, username);
+
+		return RankResponse.of(rankList, myRank);
 	}
 
-	private RankResponse makeRankList(UUID username, ZSetOperations<String, Object> stringObjectZSetOperations, Long existingCount){
+	public RankBaseResponse getSearchRankList(String keyword) {
+		ZSetOperations<String, Object> stringObjectZSetOperations = redisTemplate.opsForZSet();
+		Long existingCount = checkAndUpdateCache(stringObjectZSetOperations);
+
+		List<MemberRankResponse> rankList = fetchAndSortRankList(stringObjectZSetOperations, existingCount).stream()
+			.filter(member -> member.getNickname().contains(keyword))
+			.collect(Collectors.toList());
+
+		return RankBaseResponse.from(rankList);
+	}
+
+	private Long checkAndUpdateCache(ZSetOperations<String, Object> stringObjectZSetOperations) {
+		Long existingCount = stringObjectZSetOperations.size(RANKING_KEY);
+		if (existingCount == null || existingCount == 0) {
+			existingCount = updateCache(stringObjectZSetOperations);
+		}
+		return existingCount;
+	}
+
+	private List<MemberRankResponse> fetchAndSortRankList(ZSetOperations<String, Object> stringObjectZSetOperations,
+		Long existingCount) {
 		List<MemberRankResponse> rankList = Objects.requireNonNull(
 				stringObjectZSetOperations.reverseRange(RANKING_KEY, 0, existingCount + 1))
 			.stream()
@@ -52,35 +73,33 @@ public class RankService {
 				return compareByPoint;
 			})
 			.collect(Collectors.toList());
-
-		MemberRankResponse myRank = null;
-		int rankCounter = 1;
-
-		for (int i = 0; i < rankList.size(); i++) {
-			MemberRankResponse currentMember = rankList.get(i);
-
-			if (i == 0 || !isTie(rankList.get(i - 1), currentMember)) {
-				rankCounter = i + 1;
-				currentMember.grantOrder(rankCounter);
-			} else {
-				currentMember.grantOrder(rankList.get(i - 1).getOrder());
-			}
-			if (currentMember.getMemberId().equals(username)) {
-				myRank = currentMember;
-			}
-		}
-
-		return RankResponse.of(rankList, myRank);
+		grantRanksToMembers(rankList);
+		return rankList;
 	}
 
+	private void grantRanksToMembers(List<MemberRankResponse> rankList) {
+		int rankCounter = 1;
+		for (int i = 0; i < rankList.size(); i++) {
+			MemberRankResponse currentMember = rankList.get(i);
+			if (i == 0 || !isTie(rankList.get(i - 1), currentMember)) {
+				rankCounter = i + 1;
+			}
+			currentMember.grantOrder(rankCounter);
+		}
+	}
+
+	private MemberRankResponse findMyRank(List<MemberRankResponse> rankList, UUID username){
+		for (MemberRankResponse member : rankList) {
+			if(member.getMemberId().equals(username)){
+				return member;
+			}
+		}
+		return null;
+	}
 
 	private boolean isTie(MemberRankResponse previousMember, MemberRankResponse currentMember) {
 		return previousMember.getRankingPoint() == currentMember.getRankingPoint()
 			&& previousMember.getTradeCount() == currentMember.getTradeCount();
-	}
-
-	private boolean isNotCache(Long existingCount) {
-		return existingCount == null || existingCount == 0;
 	}
 
 	private Long updateCache(ZSetOperations<String, Object> stringObjectZSetOperations) {
