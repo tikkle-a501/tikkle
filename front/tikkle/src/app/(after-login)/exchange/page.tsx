@@ -1,7 +1,26 @@
+"use client";
+
 import Button from "@/components/button/Button";
 import Chart from "@/components/chart/Chart";
+import { useFetchRate, useFetchRecentRate, useCreateRate } from "@/hooks";
 
 export default function Exchange() {
+  const {
+    mutate: createRateMutation,
+    isPending: isCreating,
+    error: createError,
+  } = useCreateRate();
+
+  const handleCreateRate = () => {
+    createRateMutation(); // 테스트용 환율 생성 요청
+  };
+
+  const {
+    data: latestRate,
+    isPending,
+    error: fetchError,
+  } = useFetchRecentRate(); // 최근 환율 조회
+
   return (
     <>
       {/* title: 환전 */}
@@ -9,17 +28,60 @@ export default function Exchange() {
 
       <div className="flex flex-col gap-10 px-40 py-20">
         {/* 보유 재화 */}
-        <div className="flex items-start justify-end gap-10 self-stretch px-12">
-          <div className="flex items-center justify-center gap-10 px-10">
-            <div className="text-teal900">나의 보유 시간</div>
-            <div className="text-34 font-bold text-teal500">0</div>
-            <div className="text-34 text-teal900">시간</div>
+        <div className="flex items-start justify-between gap-10 self-stretch px-12">
+          {/* 현재 환율 */}
+          <div>
+            <div className="flex items-center gap-10">
+              <div className="text-20 text-teal900">현재 환율: </div>
+              <div className="text-34 text-teal900">1시간 = </div>
+              <div className="text-34 font-bold text-teal500">
+                {isPending ? (
+                  "환율 정보를 불러오는 중..."
+                ) : fetchError ? (
+                  <div className="text-red-500">
+                    Error: {fetchError.message}
+                  </div>
+                ) : latestRate ? (
+                  `${latestRate.timeToRank}`
+                ) : (
+                  "데이터 없음"
+                )}
+              </div>
+              <div className="text-34 text-teal900">티끌</div>
+            </div>
+            <div className="text-end text-warmGray500">
+              {latestRate?.createdAt} 기준
+            </div>
           </div>
-          <div className="flex items-center justify-center gap-10 px-10">
-            <div className="text-teal900">나의 보유 티끌</div>
-            <div className="text-34 font-bold text-teal500">0</div>
-            <div className="text-34 text-teal900">티끌</div>
+
+          <div className="flex">
+            <div className="flex items-center justify-center gap-10 px-10">
+              <div className="text-teal900">나의 보유 시간</div>
+              <div className="text-34 font-bold text-teal500">0</div>
+              <div className="text-34 text-teal900">시간</div>
+            </div>
+            <div className="flex items-center justify-center gap-10 px-10">
+              <div className="text-teal900">나의 보유 티끌</div>
+              <div className="text-34 font-bold text-teal500">0</div>
+              <div className="text-34 text-teal900">티끌</div>
+            </div>
           </div>
+        </div>
+
+        {/* 환율 생성 버튼 */}
+        {/* TODO: 추후 버튼 삭제 필요 */}
+        <div className="flex py-20">
+          <Button
+            size="l"
+            variant="primary"
+            design="fill"
+            main="환율 생성"
+            onClick={handleCreateRate}
+            disabled={isCreating}
+          />
+          {createError && (
+            <div className="text-red-500">Error: {createError.message}</div>
+          )}
         </div>
 
         {/* 환전 인풋 */}

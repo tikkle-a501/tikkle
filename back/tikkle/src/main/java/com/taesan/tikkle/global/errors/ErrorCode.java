@@ -13,8 +13,11 @@ public enum ErrorCode {
 	APPOINTMENT_NOT_AUTHORIZED(1200, "약속 참여자가 아닙니다."),
 	APPOINTMENT_NOT_FOUND(1204, "약속이 존재하지 않습니다."),
 	CHATROOM_NOT_FOUND(1404, "채팅방이 존재하지 않습니다."),
+	CHATROOM_NOT_AUTHORIZED(1400, "채팅방 참여자가 아닙니다."),
+	CHATROOM_EXISTS(1409, "이미 존재한 채팅방입니다."),
 	BOARD_NOT_FOUND(1304, "게시글이 존재하지 않습니다."),
 	RATE_NOT_FOUND(2004, "정의되지 않은 환율입니다."),
+	RATE_NOT_EXIST(2005, "정의된 환율이 없습니다."),
 	ACCOUNT_NOT_FOUND(1104, "사용자의 계좌가 없습니다."),
 	ACCOUNT_INSUFFICIENT_BALANCE(1105, "사용자의 잔고가 부족합니다.");
 

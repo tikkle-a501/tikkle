@@ -1,5 +1,6 @@
 package com.taesan.tikkle.domain.rate.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +13,6 @@ import com.taesan.tikkle.domain.rate.entity.Rate;
 public interface RateRepository extends JpaRepository<Rate, UUID> {
 
 	Optional<Rate> findTopByOrderByCreatedAtDesc();
+
+	List<Rate> findAllByOrderByCreatedAtAsc();
 }

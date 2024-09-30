@@ -2,7 +2,7 @@
 export interface RateGetResponse {
   id: string;
   createdAt: string;
-  timeToRate: string;
+  timeToRank: string;
 }
 
 export interface RateGetResponses {

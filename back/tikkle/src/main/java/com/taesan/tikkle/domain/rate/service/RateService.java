@@ -1,9 +1,11 @@
 package com.taesan.tikkle.domain.rate.service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.service.AccountService;
-import com.taesan.tikkle.domain.rate.dto.response.RateFindAllResponse;
+import com.taesan.tikkle.domain.rate.dto.response.RateResponse;
 import com.taesan.tikkle.domain.rate.entity.Rate;
 import com.taesan.tikkle.domain.rate.repository.RateRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
@@ -53,10 +55,18 @@ public class RateService {
 		rateRepository.save(Rate.builder().timeToRank(newRate).build());
 	}
 
-	public List<RateFindAllResponse> findAll() {
-		return rateRepository.findAll().stream()
-			.map(RateFindAllResponse::from)
-			.collect(Collectors.toList());
+	public List<RateResponse> findAll() {
+		return findAllResponses(true);
+	}
+
+	public List<RateResponse> findAllByOrderByCreatedAtAsc() {
+		return findAllResponses(false);
+	}
+
+	public RateResponse findTopByOrderByCreatedAtDesc() {
+		Rate rate = rateRepository.findTopByOrderByCreatedAtDesc()
+			.orElseThrow(() -> new CustomException(ErrorCode.RATE_NOT_EXIST));
+		return RateResponse.from(rate);
 	}
 
 	public Rate findById(UUID rateId) {
@@ -113,5 +123,14 @@ public class RateService {
 		double transactionVolumeImpact = Math.log(numerator + denominator);
 
 		return (int)Math.round(rateChangeLimit * demandDiscrepancyRatio + transactionVolumeImpact);
+	}
+
+	private List<RateResponse> findAllResponses(boolean sortByCreatedAtAsc) {
+		Stream<RateResponse> rateStream = rateRepository.findAll().stream()
+			.map(RateResponse::from);
+		if (sortByCreatedAtAsc) {
+			rateStream = rateStream.sorted(Comparator.comparing(RateResponse::getCreatedAt));
+		}
+		return rateStream.collect(Collectors.toList());
 	}
 }

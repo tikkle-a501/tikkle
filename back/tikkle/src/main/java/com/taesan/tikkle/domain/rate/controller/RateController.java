@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.taesan.tikkle.domain.rate.dto.response.RateFindAllResponse;
+import com.taesan.tikkle.domain.rate.dto.response.RateResponse;
 import com.taesan.tikkle.domain.rate.service.RateService;
 import com.taesan.tikkle.global.response.ApiResponse;
 
@@ -27,8 +27,16 @@ public class RateController {
 	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<RateFindAllResponse>>> findAll() {
-		ApiResponse<List<RateFindAllResponse>> response = ApiResponse.success("환율 조회를 성공했습니다.", rateService.findAll());
+	public ResponseEntity<ApiResponse<List<RateResponse>>> findAll() {
+		ApiResponse<List<RateResponse>> response = ApiResponse.success("환율 조회를 성공했습니다.", rateService.findAll());
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+
+	@GetMapping("/recent")
+	public ResponseEntity<ApiResponse<RateResponse>> findTopByOrderByCreatedAtDesc() {
+		ApiResponse<RateResponse> response = ApiResponse.success("최근 환율 조회를 성공했습니다.",
+			rateService.findTopByOrderByCreatedAtDesc());
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
 }

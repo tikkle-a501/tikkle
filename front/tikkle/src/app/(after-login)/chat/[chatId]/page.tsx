@@ -217,8 +217,6 @@ export default function ChatId() {
                   handleDeleteAppointment(appointmentData.appointmentId)
                 }
               />
-
-              {/* TODO: 약속취소 onclick (appointmentId를 매개변수로)*/}
             </div>
           ) : (
             // 약속이 없을 때 '약속잡기' 버튼 표시

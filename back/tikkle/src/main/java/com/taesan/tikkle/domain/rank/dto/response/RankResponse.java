@@ -1,24 +1,23 @@
-package com.taesan.tikkle.domain.rank.dto;
+package com.taesan.tikkle.domain.rank.dto.response;
 
 import java.util.List;
 
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class RankResponse {
+@SuperBuilder
+public class RankResponse extends RankBaseResponse{
 
-	private List<MemberRankResponse> rankList;
 	private MemberRankResponse myRank;
 
-	public static RankResponse of(List<MemberRankResponse> rankList, MemberRankResponse myRank){
+	public static RankResponse of(List<MemberRankResponse> rankList, MemberRankResponse myRank) {
 		return RankResponse.builder()
 			.rankList(rankList)
 			.myRank(myRank)

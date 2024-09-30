@@ -1,23 +1,12 @@
-import api from "../client";
+import { handleApiRequest } from "../client";
+import { ChatroomResponses, ChatroomData } from "@/types";
 
 // 특정 유저의 채팅 목록 조회 API
 export const fetchChatroomsByUserId = async () => {
-  try {
-    const response = await api.get(`/chatroom`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching chatrooms:", error);
-    throw new Error("Failed to fetch chatrooms");
-  }
+  return handleApiRequest<ChatroomResponses, "get">(`/chatroom`, "get");
 };
 
 // 특정 채팅방 조회 API (roomId를 파라미터로 받음)
 export const fetchChatroomById = async (roomId: string) => {
-  try {
-    const response = await api.get(`/chatroom/${roomId}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching chatroom:", error);
-    throw new Error("Failed to fetch chatroom");
-  }
+  return handleApiRequest<ChatroomData, "get">(`/chatroom/${roomId}`, "get");
 };
