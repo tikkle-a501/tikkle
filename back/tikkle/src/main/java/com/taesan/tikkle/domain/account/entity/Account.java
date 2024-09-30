@@ -6,6 +6,8 @@ import com.github.f4b6a3.ulid.UlidCreator;
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.global.entity.AuditableEntity;
+import com.taesan.tikkle.global.errors.ErrorCode;
+import com.taesan.tikkle.global.exceptions.CustomException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,9 +60,8 @@ public class Account extends AuditableEntity {
 	}
 
 	private void validTimeQntAndRankingPoint(Integer timeQnt, Integer rankingPoint) {
-		//TODO: 예외 정의 하기
 		if (timeQnt < 0 || rankingPoint < 0)
-			throw new IllegalArgumentException("보유 잔고가 부족합니다.");
+			throw new CustomException(ErrorCode.ACCOUNT_INSUFFICIENT_BALANCE);
 	}
 }
 
