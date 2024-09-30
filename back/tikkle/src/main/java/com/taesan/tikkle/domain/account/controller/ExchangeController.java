@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.taesan.tikkle.domain.account.dto.request.ExchangeRequest;
 import com.taesan.tikkle.domain.account.dto.response.ExchangeLogFindAllResponse;
 import com.taesan.tikkle.domain.account.service.ExchangeService;
+import com.taesan.tikkle.global.annotations.AuthedUsername;
+import com.taesan.tikkle.global.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,18 +27,16 @@ public class ExchangeController {
 	private final ExchangeService exchangeService;
 
 	@GetMapping
-	public ResponseEntity<List<ExchangeLogFindAllResponse>> getExchangeLogs(Authentication authentication) {
-		//TODO: 추후 사용자 인증 처리 로직 결정 되면 수정해야합니다.
-		UUID memberId = UUID.fromString("01920dd1-423e-f86b-a4dd-28a20d81fab0");
+	public ResponseEntity<ApiResponse<List<ExchangeLogFindAllResponse>>> getExchangeLogs(
+		@AuthedUsername UUID username) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(exchangeService.getExchangeLogs(memberId));
+			.body(ApiResponse.success("환전 내역 조회를 성공했습니다", exchangeService.getExchangeLogs(username)));
 	}
 
 	@PostMapping
-	public ResponseEntity<?> exchange(@RequestBody ExchangeRequest exchangeRequest) {
-		//TODO: 추후 사용자 인증 처리 로직 결정 되면 수정해야합니다.
-		UUID memberId = UUID.fromString("01920dd1-423e-f86b-a4dd-28a20d81fab0");
-		exchangeService.exchange(memberId, exchangeRequest);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<ApiResponse<?>> exchange(@AuthedUsername UUID username,
+		@RequestBody ExchangeRequest exchangeRequest) {
+		exchangeService.exchange(username, exchangeRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("환전을 성공했습니다.", null));
 	}
 }

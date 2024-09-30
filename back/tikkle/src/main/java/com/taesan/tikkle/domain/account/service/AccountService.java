@@ -2,7 +2,6 @@ package com.taesan.tikkle.domain.account.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,6 +11,8 @@ import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.dto.response.ExchangeLogFindAllResponse;
 import com.taesan.tikkle.domain.account.entity.Account;
 import com.taesan.tikkle.domain.account.repository.AccountRepository;
+import com.taesan.tikkle.global.errors.ErrorCode;
+import com.taesan.tikkle.global.exceptions.CustomException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +40,8 @@ public class AccountService {
 	}
 
 	public Account updateAccount(UUID memberId, ExchangeType exchangeType, Integer rate, Integer quantity) {
-		//TODO: 추후 예외 정의 하기
 		Account account = accountRepository.findByMember_Id(memberId)
-			.orElseThrow(() -> new NoSuchElementException("계좌가 없습니다."));
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 		account.updateAccount(exchangeType, rate, quantity);
 		return account;
 	}
