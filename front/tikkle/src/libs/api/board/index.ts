@@ -8,7 +8,7 @@ import { handleApiRequest } from "../client";
 
 //전체 공고 조회
 export const fetchBoardList = async () => {
-  return handleApiRequest<Board[], "get">("/board", "get");
+  return handleApiRequest<BoardListResponses, "get">("/board", "get");
 };
 
 //공고 디테일 조회

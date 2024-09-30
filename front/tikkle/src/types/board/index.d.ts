@@ -14,9 +14,7 @@ export interface BoardDetailResponse {
   board: Board;
 }
 
-export interface BoardListResponses {
-  data: Board[];
-}
+export type BoardListResponses = Board[];
 
 export interface BoardRequest {
   title: string;

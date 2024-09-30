@@ -5,10 +5,11 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import Badge from "@/components/badge/Badge";
 import Chips from "@/components/chips/Chips";
 import { usePathname } from "next/navigation";
-import { useFetchBoardDetail } from "@/hooks/board";
+import { useDeleteBoard, useFetchBoardDetail } from "@/hooks/board";
 import { useState } from "react";
 import Dropbox from "@/components/drop-down/Dropbox";
-
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 // 동적으로 Viewer 컴포넌트를 로드
 const Viewer = dynamic(
   () => import("@toast-ui/react-editor").then((mod) => mod.Viewer),
@@ -21,18 +22,34 @@ export default function BoardDetail() {
   const toggleDropbox = () => {
     setIsDropboxOpen(!isDropboxOpen); // 토글 기능 구현
   };
-
+  const router = useRouter();
   const pathname = usePathname();
-
+  const queryClient = useQueryClient(); // react-query의 QueryClient를 가져옴
   // URL에서 boardId 추출
   const boardId = pathname.split("/").pop()!; // 경로의 마지막 부분이 boardId
   console.log(boardId);
+  const { mutate: deleteBoard } = useDeleteBoard(boardId);
 
+  const handleItemClick = (item: string) => {
+    if (item === "수정하기") {
+      console.log("Clicked item:", item);
+    } else {
+      console.log("Clicked item:", item);
+      deleteBoard(boardId, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["Boards"] });
+          queryClient.invalidateQueries({ queryKey: ["board", boardId] });
+
+          router.push("/board"); // 성공 후 리다이렉트
+        },
+      });
+    }
+  };
   // useFetchBoardDetail 훅을 통해 boardId로 데이터를 가져옴
-  const { data, isLoading, error } = useFetchBoardDetail(boardId);
+  const { data: board, isLoading, error } = useFetchBoardDetail(boardId);
 
   // 콘솔 로그로 실제 데이터를 확인
-  console.log("API Response:", data);
+  console.log("API Response:", board);
 
   // 로딩 상태 처리
   if (isLoading) {
@@ -45,12 +62,11 @@ export default function BoardDetail() {
   }
 
   // 데이터가 없을 경우 처리
-  if (!data) {
+  if (!board) {
     return <div>No board data available.</div>;
   }
 
   // 가져온 데이터를 board로 사용
-  const board = data;
 
   return (
     <>
@@ -63,7 +79,6 @@ export default function BoardDetail() {
           </Badge>
           <div className="flex flex-1 text-28 font-bold">{board.title}</div>
           <div className="relative flex flex-col">
-            {" "}
             {/* relative 추가 */}
             <span
               className="material-symbols-outlined cursor-pointer"
@@ -73,7 +88,10 @@ export default function BoardDetail() {
             </span>
             {isDropboxOpen && ( // 드롭박스 열림 상태에 따라 표시
               <div className="absolute right-0 top-full z-10">
-                <Dropbox items={["수정하기", "삭제하기"]} />
+                <Dropbox
+                  onClick={handleItemClick}
+                  items={["수정하기", "삭제하기"]}
+                />
               </div>
             )}
           </div>
@@ -92,7 +110,7 @@ export default function BoardDetail() {
         {/* 카테고리, 예상 시간 */}
         <div className="flex items-center gap-20">
           <Chips size="l" variant="primary" design="fill">
-            {board.category ?? "카테고리 없음"}
+            {board.category ?? "null"}
           </Chips>
           <div className="w-1 self-stretch bg-warmGray200"></div>
           <div className="flex items-center justify-center gap-10">

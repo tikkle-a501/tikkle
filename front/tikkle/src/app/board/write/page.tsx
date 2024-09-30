@@ -5,8 +5,18 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import Button from "@/components/button/Button";
 import Chips from "@/components/chips/Chips";
-
+import { useCreateBoard } from "@/hooks/board";
+import { useRouter } from "next/navigation";
+export interface BoardRequest {
+  title: string;
+  content: string;
+  time: number;
+  status: string;
+  category: string;
+}
 export default function Write() {
+  // useRouter 훅 사용
+  const router = useRouter();
   // 글 작성 중인지 확인용 변수
   const [isDirty, setIsDirty] = useState(false);
 
@@ -14,12 +24,14 @@ export default function Write() {
     setIsDirty(true);
   };
 
-  // 제목, 카테고리, 내용
+  // 제목, 카테고리, 시간, 내용
   const [title, setTitle] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<"업무" | "비업무">(
-    "업무",
-  );
+  const [category, setCategory] = useState<"업무" | "비업무">("업무");
+  const [time, setTime] = useState(0);
   const editorRef = useRef<Editor>(null);
+
+  // useCreateBoard 훅을 호출
+  const { mutate, isPending, isError } = useCreateBoard();
 
   // 발행 버튼
   const handleFormSubmit = async () => {
@@ -39,8 +51,20 @@ export default function Write() {
     const postData = {
       title,
       content,
-      selectedCategory,
+      time,
+      status: "진행전",
+      category,
     };
+    // mutate 함수를 호출하여 보드 생성
+    mutate(postData, {
+      onSuccess: () => {
+        console.log("Appointment created successfully");
+        router.push("/board"); // 성공 시 /board로 리다이렉트
+      },
+      onError: (error) => {
+        console.error("Error creating appointment:", error);
+      },
+    });
   };
 
   // 글 작성 중 새로고침 방지
@@ -90,6 +114,7 @@ export default function Write() {
               variant="primary"
               design="fill"
               main="등록하기"
+              onClick={handleFormSubmit}
             ></Button>
           </div>
         </div>
@@ -99,16 +124,16 @@ export default function Write() {
             <Chips
               size="l"
               variant="primary"
-              design={selectedCategory === "업무" ? "fill" : "outline"}
-              onClick={() => setSelectedCategory("업무")}
+              design={category === "업무" ? "fill" : "outline"}
+              onClick={() => setCategory("업무")}
             >
               업무
             </Chips>
             <Chips
               size="l"
               variant="primary"
-              design={selectedCategory === "비업무" ? "fill" : "outline"}
-              onClick={() => setSelectedCategory("비업무")}
+              design={category === "비업무" ? "fill" : "outline"}
+              onClick={() => setCategory("비업무")}
             >
               비업무
             </Chips>
@@ -118,6 +143,12 @@ export default function Write() {
             <div>예상 시간</div>
             <div className="max-w-20">
               <input
+                type="number"
+                value={time}
+                onChange={(e) => {
+                  setTime(Number(e.target.value));
+                  handleFormChange();
+                }}
                 className="min-w-0 max-w-20 flex-grow appearance-none border-none text-right text-18 font-semibold placeholder-coolGray300 outline-none placeholder:text-18 placeholder:font-semibold"
                 placeholder="0"
               />

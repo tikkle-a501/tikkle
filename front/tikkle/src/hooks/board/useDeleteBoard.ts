@@ -2,8 +2,8 @@ import { deleteBoard, updateBoard } from "@/libs";
 import { BoardRequest } from "@/types/board";
 import { useMutation } from "@tanstack/react-query";
 
-export const useDeleteBoard = () => {
+export const useDeleteBoard = (boardId: string) => {
   return useMutation<any, Error, string>({
-    mutationFn: (boardId: string) => deleteBoard(boardId),
+    mutationFn: () => deleteBoard(boardId),
   });
 };

@@ -3,7 +3,7 @@ import { BoardListResponses, Board } from "@/types/board";
 import { useQuery } from "@tanstack/react-query";
 
 export const useFetchBoardList = () => {
-  return useQuery<Board[], Error>({
+  return useQuery<BoardListResponses, Error>({
     queryKey: ["Boards"],
     queryFn: () => fetchBoardList(),
   });
