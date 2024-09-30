@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchChatroomById } from "@/hooks/chat/usefetchChatroomById";
+import { useFetchChatroomById } from "@/hooks/chat/useFetchChatroomById";
 import Loading from "@/components/loading/Loading";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
