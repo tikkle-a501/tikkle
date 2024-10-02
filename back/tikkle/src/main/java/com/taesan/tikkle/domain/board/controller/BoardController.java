@@ -58,4 +58,10 @@ public class BoardController {
         boardService.updateBoardStatus(boardId, status);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{keyword}")
+    public ResponseEntity<ApiResponse<List<BoardResponse>>> getBoardsByKeyword(@PathVariable String keyword) {
+        ApiResponse<List<BoardResponse>> response = ApiResponse.success("게시글 검색에 성공했습니다.",boardService.getBoardsByKeyword(keyword));
+        return ResponseEntity.ok(response);
+    }
 }
