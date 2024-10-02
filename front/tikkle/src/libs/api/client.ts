@@ -8,7 +8,7 @@ import {
 } from "@/types";
 
 const api = axios.create({
-  baseURL: "https://j11a501.p.ssafy.io",
+  baseURL: "https://j11a501.p.ssafy.io/api/v1",
   withCredentials: true,
 });
 
