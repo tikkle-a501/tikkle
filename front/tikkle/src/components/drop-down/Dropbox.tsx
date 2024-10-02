@@ -2,7 +2,7 @@
 import DropboxBtn from "./DropboxBtn";
 
 interface DropdownProps {
-  items: string[]; // 드롭다운에 표시될 항목들
+  items: { label: string; href?: string }[]; // 각 항목의 레이블과 이동할 경로를 포함
   onClick?: (item: string) => void; // 각 항목 클릭 시 호출될 함수
 }
 
@@ -12,9 +12,10 @@ const Dropbox: React.FC<DropdownProps> = ({ items, onClick }) => {
       {items.map((item, index) => (
         <DropboxBtn
           key={index}
-          onClick={() => onClick?.(item)} // 클릭 시 항목 값을 onClick에 전달
+          href={item.href} // 각 항목의 링크 경로
+          onClick={() => onClick?.(item.label)} // 클릭 시 항목 레이블을 onClick에 전달
         >
-          {item}
+          {item.label}
         </DropboxBtn>
       ))}
     </div>
