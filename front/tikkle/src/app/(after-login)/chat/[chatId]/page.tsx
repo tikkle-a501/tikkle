@@ -48,7 +48,7 @@ export default function ChatId() {
 
   useEffect(() => {
     // const socket = new SockJS("http://localhost:8080/ws");
-    const socket = new SockJS("wss://j11a501.p.ssafy.io/ws");
+    const socket = new SockJS("https://j11a501.p.ssafy.io/ws");
     const stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000, // 5초 후에 재연결 시도
