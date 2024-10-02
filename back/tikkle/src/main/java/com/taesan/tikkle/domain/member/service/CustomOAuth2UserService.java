@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Service;
 
+import com.taesan.tikkle.domain.account.entity.Account;
+import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.domain.organization.entity.Organization;
@@ -30,6 +32,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private static final Logger logger = LoggerFactory.getLogger(CustomOAuth2UserService.class);
 	private final MemberRepository memberRepository;
 	private final OrganizationRepository organizationRepository;
+	private final AccountRepository accountRepository;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -75,7 +78,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 				.nickname(nickname)
 				.email(email)
 				.build();
-			return memberRepository.save(newMember);
+
+			Member savedMember = memberRepository.save(newMember);
+
+			// Account 생성
+			Account account = Account.builder()
+				.member(savedMember)  // Member를 Account에 설정
+				.timeQnt(10)         // 초기 시간 양 설정
+				.build();
+
+			// Account 저장
+			accountRepository.save(account);
+
+			return savedMember;
+
 		}
 	}
 

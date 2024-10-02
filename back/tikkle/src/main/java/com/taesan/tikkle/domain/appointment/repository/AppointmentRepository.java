@@ -1,13 +1,28 @@
 package com.taesan.tikkle.domain.appointment.repository;
 
-import com.taesan.tikkle.domain.appointment.entity.Appointment;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.taesan.tikkle.domain.appointment.entity.Appointment;
+import com.taesan.tikkle.domain.board.entity.Board;
+
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
-    Optional<Appointment> findByRoomIdAndDeletedAtIsNull(UUID roomId);
+	Optional<Appointment> findByRoomIdAndDeletedAtIsNull(UUID roomId);
+
+	@Query("SELECT a.room.board FROM Appointment a " +
+		"WHERE a.room.performer.id = :memberId OR a.room.writer.id = :memberId")
+	List<Board> findBoardsByMemberId(@Param("memberId") UUID memberId);
+
+	@Query("SELECT a.room.board FROM Appointment a " +
+		"WHERE (a.room.performer.id = :memberId OR a.room.writer.id = :memberId) " +
+		"AND (a.room.board.title LIKE %:keyword% OR a.room.board.content LIKE %:keyword%)")
+	List<Board> searchBoardsByMemberIdAndKeyword(@Param("memberId") UUID memberId, @Param("keyword") String keyword);
+
 }
