@@ -2,10 +2,10 @@
 
 import Chips from "@/components/chips/Chips";
 import SearchInput from "@/components/input/SearchInput";
-import { useFetchAccount } from "@/hooks";
+import { useFetchTrade } from "@/hooks";
 
 export default function Trade() {
-  const { data, isLoading, error } = useFetchAccount();
+  const { data, isLoading, error } = useFetchTrade();
   const account = data || [];
   console.log(data);
 
