@@ -8,7 +8,7 @@ export default function Activity() {
       writer: "writer",
       status: "done",
       createdAt: "00000",
-      time: "2",
+      time: 2,
       context: "Jorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
@@ -16,7 +16,7 @@ export default function Activity() {
       writer: "writer",
       status: "done",
       createdAt: "00000",
-      time: "2",
+      time: 2,
       context: "Jorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
@@ -24,7 +24,7 @@ export default function Activity() {
       writer: "writer",
       status: "done",
       createdAt: "00000",
-      time: "2",
+      time: 2,
       context: "Jorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
@@ -32,7 +32,7 @@ export default function Activity() {
       writer: "writer",
       status: "done",
       createdAt: "00000",
-      time: "2",
+      time: 2,
       context: "djklfajdfljadlfajdflj",
     },
   ];
@@ -58,7 +58,7 @@ export default function Activity() {
                 status={item.status}
                 createdAt={item.createdAt}
                 time={item.time}
-                context={item.context}
+                content={item.context}
               />
             ))}
           </div>
@@ -79,7 +79,7 @@ export default function Activity() {
                 status={item.status}
                 createdAt={item.createdAt}
                 time={item.time}
-                context={item.context}
+                content={item.context}
               />
             ))}
           </div>
@@ -100,7 +100,7 @@ export default function Activity() {
                 status={item.status}
                 createdAt={item.createdAt}
                 time={item.time}
-                context={item.context}
+                content={item.context}
               />
             ))}
           </div>
