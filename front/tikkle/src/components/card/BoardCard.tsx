@@ -7,7 +7,7 @@ interface BoardCardProps {
   title: string;
   status: string;
   writer: string;
-  createdAt: Date;
+  createdAt: string;
   time: number;
   content: string;
 }

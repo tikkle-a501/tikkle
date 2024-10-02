@@ -39,7 +39,7 @@ export default function Home() {
       status: "Active",
       writer: "John Doe",
       createdAt: "2024.09.10 10:00",
-      time: "10",
+      time: 10,
       context:
         "This is an important announcement regarding the upcoming event. Please read carefully.",
     },
@@ -48,7 +48,7 @@ export default function Home() {
       status: "Scheduled",
       writer: "Jane Smith",
       createdAt: "2024.09.09 13:00",
-      time: "2.5",
+      time: 2.5,
       context:
         "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
     },
@@ -57,7 +57,7 @@ export default function Home() {
       status: "Draft",
       writer: "Admin",
       createdAt: "2024.09.08 17:30",
-      time: "11",
+      time: 11,
       context:
         "A new policy document has been drafted and is open for review. Please provide your feedback.",
     },
@@ -66,7 +66,7 @@ export default function Home() {
       status: "Active",
       writer: "John Doe",
       createdAt: "2024.09.10 10:00",
-      time: "10",
+      time: 10,
       context:
         "This is an important announcement regarding the upcoming event. Please read carefully.",
     },
@@ -75,7 +75,7 @@ export default function Home() {
       status: "Scheduled",
       writer: "Jane Smith",
       createdAt: "2024.09.09 13:00",
-      time: "2.5",
+      time: 2.5,
       context:
         "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
     },
@@ -84,7 +84,7 @@ export default function Home() {
       status: "Draft",
       writer: "Admin",
       createdAt: "2024.09.08 17:30",
-      time: "11",
+      time: 11,
       context:
         "A new policy document has been drafted and is open for review. Please provide your feedback.",
     },
@@ -93,7 +93,7 @@ export default function Home() {
       status: "Active",
       writer: "John Doe",
       createdAt: "2024.09.10 10:00",
-      time: "10",
+      time: 10,
       context:
         "This is an important announcement regarding the upcoming event. Please read carefully.",
     },
@@ -102,7 +102,7 @@ export default function Home() {
       status: "Scheduled",
       writer: "Jane Smith",
       createdAt: "2024.09.09 13:00",
-      time: "2.5",
+      time: 2.5,
       context:
         "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
     },
@@ -111,7 +111,7 @@ export default function Home() {
       status: "Draft",
       writer: "Admin",
       createdAt: "2024.09.08 17:30",
-      time: "11",
+      time: 11,
       context:
         "A new policy document has been drafted and is open for review. Please provide your feedback.",
     },
@@ -120,7 +120,7 @@ export default function Home() {
       status: "Active",
       writer: "John Doe",
       createdAt: "2024.09.10 10:00",
-      time: "10",
+      time: 11,
       context:
         "This is an important announcement regarding the upcoming event. Please read carefully.",
     },
@@ -129,7 +129,7 @@ export default function Home() {
       status: "Scheduled",
       writer: "Jane Smith",
       createdAt: "2024.09.09 13:00",
-      time: "2.5",
+      time: 11,
       context:
         "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
     },
@@ -138,7 +138,7 @@ export default function Home() {
       status: "Draft",
       writer: "Admin",
       createdAt: "2024.09.08 17:30",
-      time: "11",
+      time: 11,
       context:
         "A new policy document has been drafted and is open for review. Please provide your feedback.",
     },
@@ -171,7 +171,7 @@ export default function Home() {
                 writer={card.writer}
                 createdAt={card.createdAt}
                 time={card.time}
-                context={card.context}
+                content={card.context}
               />
             </SwiperSlide>
           ))}

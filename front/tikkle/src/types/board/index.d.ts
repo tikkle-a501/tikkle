@@ -7,7 +7,7 @@ export interface Board {
   time: number;
   status: string;
   category: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface BoardDetailResponse {
