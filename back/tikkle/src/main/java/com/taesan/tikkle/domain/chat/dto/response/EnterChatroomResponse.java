@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EnterChatroomResponse {
 	private List<ChatResponse> chats;
+	private UUID writerId;
 	private String partnerName;
 	// 방 상태
 	private String status;
