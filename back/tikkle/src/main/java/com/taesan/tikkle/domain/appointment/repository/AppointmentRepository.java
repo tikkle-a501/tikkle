@@ -14,7 +14,7 @@ import com.taesan.tikkle.domain.board.entity.Board;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
-	Optional<Appointment> findByRoomIdAndDeletedAtIsNull(UUID roomId);
+	Appointment findByRoomIdAndDeletedAtIsNull(UUID roomId);
 
 	@Query("SELECT a.room.board FROM Appointment a " +
 		"WHERE a.room.performer.id = :memberId OR a.room.writer.id = :memberId")
