@@ -36,7 +36,7 @@ public class BoardService {
 			BoardResponse response = new BoardResponse(
 				board.getId(),
 				board.getMember().getId(),
-                board.getMember().getNickname(),
+                board.getMember().getName(),
 				board.getTitle(),
 				board.getContent(),
 				board.getTime(),
@@ -56,8 +56,8 @@ public class BoardService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다: " + boardId));
 		return new BoardResponse(board.getId(),
 			board.getMember().getId(),
-            board.getMember().getNickname(),
-			board.getTitle(),
+            board.getMember().getName(),
+            board.getTitle(),
 			board.getContent(),
 			board.getTime(),
 			board.getStatus(),
@@ -118,7 +118,7 @@ public class BoardService {
 			.map(board -> new BoardResponse(
 				board.getId(),
 				board.getMember().getId(),
-                board.getMember().getNickname(),
+                board.getMember().getName(),
 				board.getTitle(),
 				board.getContent(),
 				board.getTime(),
