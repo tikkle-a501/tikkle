@@ -45,4 +45,11 @@ public class AccountService {
 		account.updateAccount(exchangeType, rate, quantity);
 		return account;
 	}
+
+	public Account fetchAccount(UUID memberId) {
+		Account account = accountRepository.findByMember_Id(memberId)
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+		return account;
+	}
 }
