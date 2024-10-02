@@ -86,8 +86,7 @@ public class AppointmentService {
 	}
 
 	public BriefAppointmentResponse getAppointment(UUID roomId, UUID memberId) {
-		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(roomId)
-			.orElseThrow(() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
+		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(roomId);
 		if (!memberId.equals(appointment.getRoom().getWriter().getId())) {
 			throw new CustomException(ErrorCode.APPOINTMENT_NOT_AUTHORIZED);
 		} else {
