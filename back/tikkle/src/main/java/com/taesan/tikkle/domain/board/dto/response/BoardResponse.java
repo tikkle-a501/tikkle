@@ -14,6 +14,7 @@ import java.util.UUID;
 public class BoardResponse {
     private UUID boardId;
     private UUID memberId;
+    private String nickname;
     private String title;
     private String content;
     private Integer time;
