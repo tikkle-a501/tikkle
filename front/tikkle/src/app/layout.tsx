@@ -25,7 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={pretendard.className}>
+      <body className={`${pretendard.className} bg-warmGray50`}>
         <div className="flex flex-col gap-[10px] pb-[40px]">{children}</div>
       </body>
     </html>

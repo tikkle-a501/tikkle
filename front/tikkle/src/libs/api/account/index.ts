@@ -18,7 +18,7 @@ export const fetchTrade = async () => {
 // 거래내역 검색
 export const searchTrade = async (keyword: string) => {
   return handleApiRequest<TradeSearchResponses, "get">(
-    `/account/search?keyword=${keyword}`,
+    `account/search?keyword=${keyword}`,
     "get",
   );
 };

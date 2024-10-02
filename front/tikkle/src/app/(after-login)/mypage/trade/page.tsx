@@ -1,44 +1,16 @@
+"use client";
+
 import Chips from "@/components/chips/Chips";
 import SearchInput from "@/components/input/SearchInput";
-import HistoryList from "@/components/list/HistoryList";
+import { useFetchAccount } from "@/hooks";
 
 export default function Trade() {
-  // mock data
-  const historyData = [
-    {
-      profileImg: "/profile.png",
-      nickname: "NickName",
-      status: "Status",
-      title: "Title",
-      appointmentTime: "Time",
-      boardId: "1",
-      time: 0,
-      buttonText: "후기작성",
-    },
-    {
-      profileImg: "/profile.png",
-      nickname: "NickName2",
-      status: "Status",
-      title: "Title",
-      appointmentTime: "Time",
-      boardId: "1",
-      time: 0,
-      buttonText: "거래완료",
-    },
-    {
-      profileImg: "/profile.png",
-      nickname: "NickName2",
-      status: "Status",
-      title: "Title",
-      appointmentTime: "Time",
-      boardId: "1",
-      time: 0,
-      buttonText: "거래완료",
-    },
-  ];
+  const { data, isLoading, error } = useFetchAccount();
+  const account = data || [];
+  console.log(data);
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex w-full flex-col gap-10">
       <span className="py-6 text-28 font-bold leading-34 text-teal-900">
         나의 거래 내역
       </span>
@@ -81,7 +53,7 @@ export default function Trade() {
         />
       </div>
       <div className="scrollbar-custom flex h-[41rem] w-full flex-col overflow-y-auto border-t border-t-warmGray200 py-10">
-        {historyData.map((item, index) => (
+        {/* {historyData.map((item, index) => (
           <HistoryList
             key={index}
             profileImg={item.profileImg}
@@ -93,7 +65,7 @@ export default function Trade() {
             time={item.time}
             buttonText={item.buttonText}
           />
-        ))}
+        ))} */}
       </div>
     </div>
   );
