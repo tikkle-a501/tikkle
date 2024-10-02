@@ -1,65 +1,25 @@
 "use client";
 
 import { useEffect } from "react";
+import { useFetchRate } from "@/hooks";
 import * as d3 from "d3";
 
 const Chart: React.FC = () => {
+  const { data: exchangeRates, isLoading, isError } = useFetchRate();
+
   useEffect(() => {
+    // 데이터가 배열인지 확인
+    if (
+      isLoading ||
+      isError ||
+      !exchangeRates ||
+      !Array.isArray(exchangeRates)
+    ) {
+      console.log("조건에 맞지 않아 렌더링 중지");
+      return;
+    }
     // 이전 SVG 삭제
     d3.select("#chart").selectAll("*").remove();
-
-    // 샘플 데이터
-    const data = [
-      { createdAt: "2024-09-01T00:00:00", rate: 1000 },
-      { createdAt: "2024-09-01T01:00:00", rate: 1002 },
-      { createdAt: "2024-09-01T02:00:00", rate: 1005 },
-      { createdAt: "2024-09-01T03:00:00", rate: 1007 },
-      { createdAt: "2024-09-01T04:00:00", rate: 1010 },
-      { createdAt: "2024-09-01T05:00:00", rate: 1008 },
-      { createdAt: "2024-09-01T06:00:00", rate: 1005 },
-      { createdAt: "2024-09-01T07:00:00", rate: 1003 },
-      { createdAt: "2024-09-01T08:00:00", rate: 1006 },
-      { createdAt: "2024-09-01T09:00:00", rate: 1010 },
-      { createdAt: "2024-09-01T10:00:00", rate: 1012 },
-      { createdAt: "2024-09-01T11:00:00", rate: 1015 },
-      { createdAt: "2024-09-01T12:00:00", rate: 1018 },
-      { createdAt: "2024-09-01T13:00:00", rate: 1016 },
-      { createdAt: "2024-09-01T14:00:00", rate: 1012 },
-      { createdAt: "2024-09-01T15:00:00", rate: 1010 },
-      { createdAt: "2024-09-01T16:00:00", rate: 1008 },
-      { createdAt: "2024-09-01T17:00:00", rate: 1006 },
-      { createdAt: "2024-09-01T18:00:00", rate: 1003 },
-      { createdAt: "2024-09-01T19:00:00", rate: 1001 },
-      { createdAt: "2024-09-01T20:00:00", rate: 1005 },
-      { createdAt: "2024-09-01T21:00:00", rate: 1008 },
-      { createdAt: "2024-09-01T22:00:00", rate: 1012 },
-      { createdAt: "2024-09-01T23:00:00", rate: 1015 },
-      { createdAt: "2024-09-02T00:00:00", rate: 1018 },
-      { createdAt: "2024-09-02T01:00:00", rate: 1016 },
-      { createdAt: "2024-09-02T02:00:00", rate: 1014 },
-      { createdAt: "2024-09-02T03:00:00", rate: 1011 },
-      { createdAt: "2024-09-02T04:00:00", rate: 1008 },
-      { createdAt: "2024-09-02T05:00:00", rate: 1005 },
-      { createdAt: "2024-09-02T06:00:00", rate: 1003 },
-      { createdAt: "2024-09-02T07:00:00", rate: 1007 },
-      { createdAt: "2024-09-02T08:00:00", rate: 1010 },
-      { createdAt: "2024-09-02T09:00:00", rate: 1012 },
-      { createdAt: "2024-09-02T10:00:00", rate: 1016 },
-      { createdAt: "2024-09-02T11:00:00", rate: 1019 },
-      { createdAt: "2024-09-02T12:00:00", rate: 1021 },
-      { createdAt: "2024-09-02T13:00:00", rate: 1024 },
-      { createdAt: "2024-09-02T14:00:00", rate: 1020 },
-      { createdAt: "2024-09-02T15:00:00", rate: 1017 },
-      { createdAt: "2024-09-02T16:00:00", rate: 1014 },
-      { createdAt: "2024-09-02T17:00:00", rate: 1010 },
-      { createdAt: "2024-09-02T18:00:00", rate: 1008 },
-      { createdAt: "2024-09-02T19:00:00", rate: 1005 },
-      { createdAt: "2024-09-02T20:00:00", rate: 1003 },
-      { createdAt: "2024-09-02T21:00:00", rate: 1006 },
-      { createdAt: "2024-09-02T22:00:00", rate: 1009 },
-      { createdAt: "2024-09-02T23:00:00", rate: 1011 },
-      { createdAt: "2024-09-03T00:00:00", rate: 1014 },
-    ];
 
     // SVG 설정
     // 차트의 부모 요소 너비를 가져옴
@@ -78,7 +38,7 @@ const Chart: React.FC = () => {
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // x축: 시간
-    const xDomain = d3.extent(data, (d) => new Date(d.createdAt)) as
+    const xDomain = d3.extent(exchangeRates, (d) => new Date(d.createdAt)) as
       | [Date, Date]
       | [undefined, undefined];
 
@@ -100,8 +60,8 @@ const Chart: React.FC = () => {
       .attr("stroke-dasharray", "4 4"); // 점선으로 설정
 
     // y축: 환율 비율
-    const yMin = d3.min(data, (d) => d.rate) ?? 0;
-    const yMax = d3.max(data, (d) => d.rate) ?? 0;
+    const yMin = d3.min(exchangeRates, (d) => d.timeToRank) ?? 0;
+    const yMax = d3.max(exchangeRates, (d) => d.timeToRank) ?? 0;
 
     const y = d3
       .scaleLinear()
@@ -124,14 +84,14 @@ const Chart: React.FC = () => {
 
     // 라인 그리기
     const line = d3
-      .line<{ createdAt: string; rate: number }>()
+      .line<{ createdAt: string; timeToRank: number }>()
       .x((d) => x(new Date(d.createdAt)))
-      .y((d) => y(d.rate))
+      .y((d) => y(d.timeToRank))
       .curve(d3.curveCardinal); // 부드럽고 자연스러운 곡선, 포인트를 통과함
 
     svg
       .append("path")
-      .datum(data) // 데이터 바인딩
+      .datum(exchangeRates) // 데이터 바인딩
       .attr("fill", "none")
       .attr("stroke", "#14B8A6") // 라인 색상
       .attr("stroke-width", 2) // 라인 두께
@@ -179,7 +139,7 @@ const Chart: React.FC = () => {
         const dateAtMouseX = x.invert(mouseX);
 
         // 가까운 데이터 포인트 찾기
-        const closestData = data.reduce((prev, curr) =>
+        const closestData = exchangeRates.reduce((prev, curr) =>
           Math.abs(
             new Date(curr.createdAt).getTime() - dateAtMouseX.getTime(),
           ) <
@@ -197,7 +157,7 @@ const Chart: React.FC = () => {
         // 툴팁 위치 및 내용 설정
         tooltip
           .html(
-            `시간: ${new Date(closestData.createdAt).toLocaleString()}<br/>환율: ${closestData.rate}`,
+            `시간: ${new Date(closestData.createdAt).toLocaleString()}<br/>환율: ${closestData.timeToRank}`,
           )
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY - 30 + "px")
@@ -206,7 +166,7 @@ const Chart: React.FC = () => {
         // 초록색 점 위치 업데이트
         valueDot
           .attr("cx", x(new Date(closestData.createdAt)))
-          .attr("cy", y(closestData.rate))
+          .attr("cy", y(closestData.timeToRank))
           .style("opacity", 1);
       })
       .on("mouseout", () => {
@@ -214,7 +174,7 @@ const Chart: React.FC = () => {
         tooltip.style("opacity", 0);
         valueDot.style("opacity", 0); // 초록색 점 숨기기
       });
-  }, []);
+  }, [exchangeRates, isLoading, isError]);
 
   return <div id="chart" className="w-full"></div>;
 };
