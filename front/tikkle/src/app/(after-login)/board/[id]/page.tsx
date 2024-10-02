@@ -39,7 +39,6 @@ export default function BoardDetail() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["Boards"] });
           queryClient.invalidateQueries({ queryKey: ["board", boardId] });
-
           router.push("/board"); // 성공 후 리다이렉트
         },
       });
@@ -89,8 +88,14 @@ export default function BoardDetail() {
             {isDropboxOpen && ( // 드롭박스 열림 상태에 따라 표시
               <div className="absolute right-0 top-full z-10">
                 <Dropbox
-                  onClick={handleItemClick}
-                  items={["수정하기", "삭제하기"]}
+                  items={[
+                    {
+                      label: "수정하기",
+                      href: `/board/write?id=${board.boardId}`,
+                    }, // ID만 전달
+                    { label: "삭제하기" },
+                  ]}
+                  onClick={handleItemClick} // 각 항목 클릭 시 호출
                 />
               </div>
             )}
