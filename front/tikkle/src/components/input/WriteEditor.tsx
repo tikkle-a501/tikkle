@@ -10,7 +10,7 @@ import {
   useFetchBoardDetail,
   useUpdateBoard,
 } from "@/hooks/board";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 export interface BoardRequest {
   title: string;
   content: string;
@@ -18,15 +18,14 @@ export interface BoardRequest {
   status: string;
   category: string;
 }
-interface WriteEditorProps {
-  boardId?: string; // 게시글 ID를 받을 수 있는 props 추가
-}
-const WriteEditor: React.FC<WriteEditorProps> = ({ boardId }) => {
+const WriteEditor = () => {
   // useRouter 훅 사용
   const router = useRouter();
   // 글 작성 중인지 확인용 변수
   const [isDirty, setIsDirty] = useState(false);
-
+  //
+  const searchParams = useSearchParams(); // 쿼리 파라미터 사용
+  const boardId = searchParams.get("id") || undefined; // URL 쿼리에서 id 추출
   const handleFormChange = () => {
     setIsDirty(true);
   };
