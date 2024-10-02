@@ -2,7 +2,7 @@
 
 import Button from "@/components/button/Button";
 import Chart from "@/components/chart/Chart";
-import { useFetchRate, useFetchRecentRate, useCreateRate } from "@/hooks";
+import { useFetchRecentRate, useCreateRate } from "@/hooks";
 
 export default function Exchange() {
   const {

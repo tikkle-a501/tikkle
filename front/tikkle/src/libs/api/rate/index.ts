@@ -1,6 +1,7 @@
 import { RateGetResponse, RateGetResponses } from "@/types";
 import { handleApiRequest } from "../client";
 
+// 환율 리스트(차트) 조회
 export const fetchRate = async () => {
   return handleApiRequest<RateGetResponses, "get">("/rate", "get");
 };
