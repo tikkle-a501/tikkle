@@ -55,6 +55,7 @@ const Chart: React.FC = () => {
       .call(d3.axisBottom(x).tickSize(-height)) // x축 보조선 길이 설정
       .style("font-family", "Pretendard")
       .style("font-style", "normal")
+      .style("font-size", "0.75rem")
       .selectAll("line") // x축 보조선 스타일 설정
       .attr("stroke", "#e0e0e0")
       .attr("stroke-dasharray", "4 4"); // 점선으로 설정
@@ -76,6 +77,7 @@ const Chart: React.FC = () => {
       )
       .style("font-family", "Pretendard")
       .style("font-style", "normal")
+      .style("font-size", "0.75rem")
       .selectAll("line") // 보조선 스타일 설정
       .attr("stroke", "#e0e0e0");
 
