@@ -11,8 +11,8 @@ public class KafkaConsumer {
 	@Autowired
 	private SimpMessagingTemplate simpMessagingTemplate;
 
-	// @KafkaListener(topicPattern = "chatroom.*", groupId = "my-group")
-	@KafkaListener(topics = "chatroom.123e4567-e89b-12d3-a456-426614174004", groupId = "my-group")
+	@KafkaListener(topicPattern = "chatroom.*", groupId = "my-group")
+	// @KafkaListener(topics = "chatroom.123e4567-e89b-12d3-a456-426614174004", groupId = "my-group")
 	public void consume(ConsumerRecord<String, String> record) {
 		simpMessagingTemplate.convertAndSend("/topic/" + record.topic(), record.value());
 	}
