@@ -4,7 +4,7 @@ import { fetchTrade } from "@/libs";
 
 export const useFetchTrade = () => {
   return useQuery<TradeGetResponses, Error>({
-    queryKey: ["trade"],
-    queryFn: () => fetchTrade(),
+    queryKey: ["Trade"],
+    queryFn: fetchTrade,
   });
 };

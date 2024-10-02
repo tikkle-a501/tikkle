@@ -1,6 +1,13 @@
+"use client";
+
 import ExchangeList from "@/components/list/ExchangeList";
+import { useFetchExchange } from "@/hooks";
 
 export default function Exchange() {
+  const { data, isLoading, error } = useFetchExchange();
+  const account = data || [];
+  console.log(data);
+
   return (
     <div className="flex w-full flex-col gap-10">
       <span className="py-6 text-28 font-bold leading-34 text-teal900">
