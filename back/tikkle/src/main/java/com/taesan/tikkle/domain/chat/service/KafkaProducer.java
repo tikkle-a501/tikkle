@@ -12,7 +12,7 @@ import com.taesan.tikkle.domain.chat.repository.ChatRepository;
 @Service
 public class KafkaProducer {
 	@Autowired
-	private KafkaTemplate<String,String> kafkaTemplate;
+	private KafkaTemplate<String, String> kafkaTemplate;
 
 	@Autowired
 	private ChatRepository chatRepository;
@@ -20,6 +20,6 @@ public class KafkaProducer {
 	@Transactional
 	public void sendMessage(ChatMessage chatMessage) {
 		kafkaTemplate.send("chatroom." + chatMessage.getChatroomId().toString(), chatMessage.getContent());
-		chatRepository.save(new Chat(chatMessage.getChatroomId(),chatMessage.getSenderId(),chatMessage.getContent()));
+		chatRepository.save(new Chat(chatMessage.getChatroomId(), chatMessage.getSenderId(), chatMessage.getContent()));
 	}
 }

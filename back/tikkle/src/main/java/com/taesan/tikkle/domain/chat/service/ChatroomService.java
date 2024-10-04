@@ -72,7 +72,7 @@ public class ChatroomService {
 		for (Chatroom chatroom : chatrooms) {
 			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
 			if (lastChat != null) {
-				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(lastChat.getSenderId())
+				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(UUID.fromString(lastChat.getSenderId()))
 					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
 				// 대화 상대에 따라 performer와 writer 구분
@@ -102,7 +102,7 @@ public class ChatroomService {
 			throw new CustomException(ErrorCode.CHATROOM_NOT_AUTHORIZED);
 		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString())
 			.stream()
-			.map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))
+			.map(chat -> new ChatResponse(UUID.fromString(chat.getSenderId()), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());
 		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
 			chatroom.getWriter().getId() == memberId ? chatroom.getPerformer().getName() :
