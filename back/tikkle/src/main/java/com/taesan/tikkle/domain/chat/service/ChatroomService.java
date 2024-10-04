@@ -72,9 +72,9 @@ public class ChatroomService {
 	private void extractChatroomDetails(List<Chatroom> chatrooms, List<DetailChatroomResponse> responses,
 		boolean isWriter) {
 		for (Chatroom chatroom : chatrooms) {
-			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
+			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId());
 			if (lastChat != null) {
-				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(UUID.fromString(lastChat.getSenderId()))
+				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull((lastChat.getSenderId()))
 					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
 				// 대화 상대에 따라 performer와 writer 구분
@@ -117,11 +117,11 @@ public class ChatroomService {
 
 		// 로그: 채팅 조회 시도
 		logger.info("채팅 내역 조회 시도 - roomId: {}", roomId);
-		List<Chat> cs = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString());
+		List<Chat> cs = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId);
 		logger.info("변환 전 Chats : {} ", cs);
-		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString())
+		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId)
 			.stream()
-			.map(chat -> new ChatResponse(UUID.fromString(chat.getSenderId()), chat.getContent(), chat.getTimestamp()))
+			.map(chat -> new ChatResponse((chat.getSenderId()), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());
 
 		// 로그: 조회된 채팅 목록의 크기 출력
