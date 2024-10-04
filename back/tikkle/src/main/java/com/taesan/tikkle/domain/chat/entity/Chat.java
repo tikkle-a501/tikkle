@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Chat {
-	@Id
+	@MongoId
 	private ObjectId id;  // MongoDB가 자동으로 ObjectId 생성
 
 	private UUID chatroomId;
