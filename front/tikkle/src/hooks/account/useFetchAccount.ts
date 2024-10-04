@@ -4,6 +4,8 @@ import { fetchAccount } from "@/libs";
 
 export const useFetchAccount = () => {
   return useQuery<AccountGetResponses, Error>({
+    refetchInterval: false,
+    retry: false,
     queryKey: ["account"],
     queryFn: () => fetchAccount(),
   });
