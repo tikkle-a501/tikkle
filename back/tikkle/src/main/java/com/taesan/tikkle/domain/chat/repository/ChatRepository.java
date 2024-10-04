@@ -9,10 +9,10 @@ import com.taesan.tikkle.domain.chat.entity.Chat;
 
 public interface ChatRepository extends MongoRepository<Chat,String> {
 	// roomId에 해당하는 최신 Chat을 timestamp 기준으로 가져오기
-	Chat findTopByChatroomIdOrderByTimestampDesc(UUID chatroomId);
+	Chat findTopByChatroomIdOrderByTimestampDesc(String chatroomId);
 
 	// ChatRoom id에 따른 Chat 반환
-	List<Chat> findByChatroomIdOrderByTimestampAsc(UUID roomId);
+	List<Chat> findByChatroomIdOrderByTimestampAsc(String roomId);
 
-	Chat findByChatroomId(UUID chatroomId);
+	Chat findByChatroomId(String chatroomId);
 }
