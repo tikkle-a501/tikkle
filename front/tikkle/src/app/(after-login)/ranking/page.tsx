@@ -4,6 +4,7 @@ import { useState } from "react";
 import SearchInput from "@/components/input/SearchInput";
 import RankList from "@/components/list/RankList";
 import { useFetchRank } from "@/hooks";
+import Loading from "@/components/loading/Loading";
 
 export default function Ranking() {
   const { data: rankData, isLoading, isError } = useFetchRank();
@@ -14,7 +15,12 @@ export default function Ranking() {
 
   // 데이터가 로딩 중일 때 보여줄 UI
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <div className="text-40 font-bold text-teal900">랭킹</div>
+        <Loading />
+      </>
+    );
   }
 
   // 에러가 발생했을 때 보여줄 UI
