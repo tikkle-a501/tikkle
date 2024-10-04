@@ -79,21 +79,24 @@ function RankingComponent() {
         />
       </div>
       <div className="relative">
-        {isSearchActive && searchData?.rankList?.length === 0 ? (
-          <div className="text-center text-red-500">검색 결과가 없습니다.</div>
-        ) : (
-          <div className="flex flex-col gap-12">
-            <div className="flex h-[63px] items-center justify-between rounded-t-12 bg-teal500 px-[64px] py-12 text-18 font-semibold text-white">
-              <div className="flex-start flex gap-16">
-                <div>순위</div>
-                <div>이름</div>
-              </div>
-              <div className="flex-start flex gap-64 px-10">
-                <div>티끌</div>
-                <div>거래횟수</div>
-              </div>
+        <div className="flex flex-col gap-12">
+          <div className="flex h-[63px] items-center justify-between rounded-t-12 bg-teal500 px-[64px] py-12 text-18 font-semibold text-white">
+            <div className="flex-start flex gap-16">
+              <div>순위</div>
+              <div>이름</div>
             </div>
-            {currentData.map((data) => (
+            <div className="flex-start flex gap-64 px-10">
+              <div>티끌</div>
+              <div>거래횟수</div>
+            </div>
+          </div>
+          {/* 검색 결과가 없는 경우 */}
+          {isSearchActive && searchData?.rankList?.length === 0 ? (
+            <div className="py-12 text-center">
+              "{keyword}"의 검색 결과가 없습니다.
+            </div>
+          ) : (
+            currentData.map((data) => (
               <RankList
                 key={data.order}
                 size="m"
@@ -103,9 +106,9 @@ function RankingComponent() {
                 tikkle={data.rankingPoint}
                 count={data.tradeCount}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
         {/* 나의 랭킹 및 페이지네이션 (검색어가 없을 때만 나의 랭킹 표시) */}
         {!isSearchActive && (
           <div className="sticky bottom-0 z-10">
@@ -129,7 +132,7 @@ function RankingComponent() {
         <div className="flex justify-center bg-warmGray50 py-8">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+            disabled={currentPage === 1 || currentData.length === 0}
             className={`mx-2 px-4 py-2 ${
               currentPage === 1 ? "text-gray-400" : "text-black"
             }`}
@@ -141,7 +144,7 @@ function RankingComponent() {
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || currentData.length === 0}
             className={`mx-2 px-4 py-2 ${
               currentPage === totalPages ? "text-gray-400" : "text-black"
             }`}
