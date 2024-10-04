@@ -91,7 +91,7 @@ public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		objectMapper.writeValue(response.getWriter(), apiResponse);
 
 		// redirect 처리는 frontend에서 처리하도록 수정
-		// response.sendRedirect("http://localhost:3000/home");
+		response.sendRedirect("https://j11a501.p.ssafy.io/home");
 	}
 
 }
