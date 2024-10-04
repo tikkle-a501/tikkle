@@ -104,9 +104,9 @@ public class ChatroomService {
 			.stream()
 			.map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());
-		return new EnterChatroomResponse(chats, chatroom.getBoard().getId(),
-			chatroom.getWriter().getId() == memberId ? chatroom.getPerformer().getNickname() :
-				chatroom.getWriter().getNickname(), chatroom.getBoard().getStatus(),
+		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
+			chatroom.getWriter().getId() == memberId ? chatroom.getPerformer().getName() :
+				chatroom.getWriter().getName(), chatroom.getBoard().getStatus(),
 			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
 	}
 }
