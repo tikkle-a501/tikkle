@@ -2,11 +2,13 @@
 
 import ExchangeList from "@/components/list/ExchangeList";
 import { useFetchExchange } from "@/hooks";
+import { ExchangeGetResponse } from "@/types";
 
 export default function Exchange() {
   const { data, isLoading, error } = useFetchExchange();
-  const account = data || [];
-  console.log(data);
+  const exchange: ExchangeGetResponse[] = Array.isArray(data) ? data : [];
+  const toTikkleList = exchange.filter((item) => item.exchangeType === "TTOR");
+  const toTimeList = exchange.filter((item) => item.exchangeType !== "TTOR");
 
   return (
     <div className="flex w-full flex-col gap-10">
@@ -21,8 +23,20 @@ export default function Exchange() {
               티끌로 바꾼 내역
             </span>
           </div>
-          <ExchangeList mode="toTikkle" time={0} tikkle={0} />
-          <ExchangeList mode="toTikkle" time={110} tikkle={10} />
+          {isLoading ? (
+            <span className="text-gray-500">로딩 중입니다...</span>
+          ) : toTikkleList.length > 0 ? (
+            toTikkleList.map((item, index) => (
+              <ExchangeList
+                key={index}
+                mode="toTikkle"
+                time={item.time}
+                tikkle={item.rankingPoint}
+              />
+            ))
+          ) : (
+            <span className="text-gray-500">아무것도 없습니다.</span>
+          )}
         </div>
         <div className="scrollbar-custom flex w-full flex-col overflow-y-auto rounded-10 border border-warmGray200 p-20">
           <div className="flex items-center space-x-6 py-14">
@@ -31,8 +45,20 @@ export default function Exchange() {
               시간으로 바꾼 내역
             </span>
           </div>
-          <ExchangeList mode="toTime" time={0} tikkle={0} />
-          <ExchangeList mode="toTime" time={110} tikkle={10} />
+          {isLoading ? (
+            <span className="text-gray-500">로딩 중입니다...</span>
+          ) : toTimeList.length > 0 ? (
+            toTimeList.map((item, index) => (
+              <ExchangeList
+                key={index}
+                mode="toTime"
+                time={item.time}
+                tikkle={item.rankingPoint}
+              />
+            ))
+          ) : (
+            <span className="text-gray-500">환전내역이 없습니다.</span>
+          )}
         </div>
       </div>
     </div>
