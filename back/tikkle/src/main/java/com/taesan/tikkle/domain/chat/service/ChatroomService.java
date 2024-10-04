@@ -16,6 +16,8 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,17 +98,46 @@ public class ChatroomService {
 
 	@Transactional
 	public EnterChatroomResponse enterChatroom(UUID roomId, UUID memberId) {
+		Logger logger = LoggerFactory.getLogger(this.getClass());
+
+		// 로그: roomId와 memberId 출력
+		logger.info("채팅방 입장 시도 - roomId: {}, memberId: {}", roomId, memberId);
+
 		Chatroom chatroom = chatroomRepository.findById(roomId)
 			.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId()))
+
+		// 로그: chatroom 정보 출력
+		logger.info("채팅방 찾음 - roomId: {}, 작성자: {}, 참가자: {}", roomId, chatroom.getWriter().getId(),
+			chatroom.getPerformer().getId());
+
+		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId())) {
+			logger.warn("채팅방 입장 권한 없음 - memberId: {}", memberId);
 			throw new CustomException(ErrorCode.CHATROOM_NOT_AUTHORIZED);
+		}
+
+		// 로그: 채팅 조회 시도
+		logger.info("채팅 내역 조회 시도 - roomId: {}", roomId);
+		List<Chat> cs = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString());
+		logger.info("변환 전 Chats : {} ", cs);
 		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString())
 			.stream()
 			.map(chat -> new ChatResponse(UUID.fromString(chat.getSenderId()), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());
+
+		// 로그: 조회된 채팅 목록의 크기 출력
+		logger.info("조회된 채팅 수: {}", chats.size());
+
+		// 로그: 채팅 데이터가 비어 있을 때 경고 로그 출력
+		if (chats.isEmpty()) {
+			logger.warn("채팅 내역이 없습니다 - roomId: {}", roomId);
+		} else {
+			logger.info("채팅 내역: {}", chats);
+		}
+
 		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
-			chatroom.getWriter().getId() == memberId ? chatroom.getPerformer().getName() :
+			chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer().getName() :
 				chatroom.getWriter().getName(), chatroom.getBoard().getStatus(),
 			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
 	}
+
 }
