@@ -30,7 +30,6 @@ export default function Home() {
       name: `User ${rankNumber}`,
       tikkle: Math.floor(Math.random() * 1000),
       count: Math.floor(Math.random() * 500),
-      success: Math.floor(Math.random() * 300),
     };
   });
   const testCards = [
@@ -192,7 +191,6 @@ export default function Home() {
                 name={data.name}
                 tikkle={data.tikkle}
                 count={data.count}
-                success={data.success}
               />
             ))}
           </div>
