@@ -10,6 +10,7 @@ interface SearchInputProps {
   rightIcon?: boolean; // 오른쪽 아이콘 여부
   warningMessage?: string;
   onSearch?: (value: string) => void; // 검색어를 상위 컴포넌트로 전달하는 함수
+  handleKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void; // KeyDown 핸들러를 props로 받음
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
@@ -20,6 +21,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   rightIcon,
   warningMessage,
   onSearch,
+  handleKeyDown,
 }) => {
   const [inputValue, setInputValue] = useState(""); // 입력 값 상태 관리
 
@@ -71,6 +73,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           placeholder={placeholder}
           value={inputValue}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           className="text-17` flex-1 appearance-none bg-warmGray50 placeholder-warmGray300 focus:outline-none"
         />
 
