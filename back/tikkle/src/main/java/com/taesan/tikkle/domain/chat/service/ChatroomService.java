@@ -70,7 +70,7 @@ public class ChatroomService {
 	private void extractChatroomDetails(List<Chatroom> chatrooms, List<DetailChatroomResponse> responses,
 		boolean isWriter) {
 		for (Chatroom chatroom : chatrooms) {
-			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId());
+			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
 			if (lastChat != null) {
 				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(lastChat.getSenderId())
 					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -100,7 +100,7 @@ public class ChatroomService {
 			.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId()))
 			throw new CustomException(ErrorCode.CHATROOM_NOT_AUTHORIZED);
-		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId)
+		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString())
 			.stream()
 			.map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());

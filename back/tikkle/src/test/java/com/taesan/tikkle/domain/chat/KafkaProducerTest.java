@@ -40,7 +40,7 @@ public class KafkaProducerTest {
 		kafkaProducer.sendMessage(chatMessage);
 
 		// Then
-		var savedChat = chatRepository.findByChatroomId(chatroomId);
+		var savedChat = chatRepository.findByChatroomId(chatroomId.toString());
 		assertThat(savedChat).isNotNull();
 		assertThat(savedChat.getContent()).isEqualTo(content);
 
