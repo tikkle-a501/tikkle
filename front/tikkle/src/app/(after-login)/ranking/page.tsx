@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation"; // useSearchParams 추가
 import SearchInput from "@/components/input/SearchInput";
 import RankList from "@/components/list/RankList";
 import { useFetchRank, useSearchRank } from "@/hooks";
 import Loading from "@/components/loading/Loading";
 
-export default function Ranking() {
+function RankingComponent() {
+  const router = useRouter();
+  const searchParams = useSearchParams(); // useSearchParams 훅 사용
+
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
   // URL의 쿼리 파라미터에서 검색어를 추출
-  const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword") || ""; // 검색어 추출
 
   // useSearchRank 훅 사용
@@ -40,7 +42,6 @@ export default function Ranking() {
     ) || [];
 
   // 키 입력 핸들러
-  const router = useRouter();
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       const searchKeyword = (event.target as HTMLInputElement).value;
@@ -48,17 +49,7 @@ export default function Ranking() {
     }
   };
 
-  // 로딩 중인 경우
-  if (isLoading || isSearchLoading) {
-    return (
-      <>
-        <div className="text-40 font-bold text-teal900">랭킹</div>
-        <Loading />
-      </>
-    );
-  }
-
-  // 에러가 발생한 경우
+  // 에러 처리
   if (isError || isSearchError || !displayedData) {
     return <div>Error loading rank data</div>;
   }
@@ -89,7 +80,7 @@ export default function Ranking() {
       </div>
       <div className="relative">
         {isSearchActive && searchData?.rankList?.length === 0 ? (
-          <div className="text-center">"{keyword}"의 검색 결과가 없습니다.</div>
+          <div className="text-center text-red-500">검색 결과가 없습니다.</div>
         ) : (
           <div className="flex flex-col gap-12">
             <div className="flex h-[63px] items-center justify-between rounded-t-12 bg-teal500 px-[64px] py-12 text-18 font-semibold text-white">
@@ -160,5 +151,13 @@ export default function Ranking() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function Ranking() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <RankingComponent />
+    </Suspense>
   );
 }
