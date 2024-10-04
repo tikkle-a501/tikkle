@@ -15,6 +15,7 @@ import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,76 +28,85 @@ import java.util.stream.Collectors;
 
 @Service
 public class ChatroomService {
-    @Autowired
-    private ChatroomRepository chatroomRepository;
+	@Autowired
+	private ChatroomRepository chatroomRepository;
 
-    @Autowired
-    private ChatRepository chatRepository;
+	@Autowired
+	private ChatRepository chatRepository;
 
-    @Autowired
-    private BoardRepository boardRepository;
+	@Autowired
+	private BoardRepository boardRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
+	@Autowired
+	private MemberRepository memberRepository;
 
-    @Transactional
-    public CreateChatroomResponse createChatroom(CreateChatroomRequest request, UUID memberId) {
-        Board board = boardRepository.findById(request.getBoardId()).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-        Member writer = board.getMember();
-        Member performer = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        if (chatroomRepository.findByBoardId(request.getBoardId()).isPresent()) {
-            throw new CustomException(ErrorCode.CHATROOM_EXISTS);
-        }
-        Chatroom chatroom = new Chatroom(board, performer, writer);
-        chatroomRepository.save(chatroom);
-        return new CreateChatroomResponse(chatroom.getId());
-    }
+	@Transactional
+	public CreateChatroomResponse createChatroom(CreateChatroomRequest request, UUID memberId) {
+		Board board = boardRepository.findById(request.getBoardId())
+			.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+		Member writer = board.getMember();
+		Member performer = memberRepository.findById(memberId)
+			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+		if (chatroomRepository.findByBoardId(request.getBoardId()).isPresent()) {
+			throw new CustomException(ErrorCode.CHATROOM_EXISTS);
+		}
+		Chatroom chatroom = new Chatroom(board, performer, writer);
+		chatroomRepository.save(chatroom);
+		return new CreateChatroomResponse(chatroom.getId());
+	}
 
-    @Transactional(readOnly = true)
-    public List<DetailChatroomResponse> getChatrooms(UUID memberId) {
-        List<DetailChatroomResponse> responses = new ArrayList<>();
-        // 공통 메서드를 사용하여 writerRooms와 performerRooms 처리
-        extractChatroomDetails(chatroomRepository.findByWriterId(memberId), responses, true);
-        extractChatroomDetails(chatroomRepository.findByPerformerId(memberId), responses, false);
-        // 가장 최신인 메세지를 갖는 채팅방을 앞으로
-        responses.sort(Comparator.comparing(DetailChatroomResponse::getLastMsgTime, Comparator.nullsLast(Comparator.reverseOrder())));
-        return responses;
-    }
+	@Transactional(readOnly = true)
+	public List<DetailChatroomResponse> getChatrooms(UUID memberId) {
+		List<DetailChatroomResponse> responses = new ArrayList<>();
+		// 공통 메서드를 사용하여 writerRooms와 performerRooms 처리
+		extractChatroomDetails(chatroomRepository.findByWriterId(memberId), responses, true);
+		extractChatroomDetails(chatroomRepository.findByPerformerId(memberId), responses, false);
+		// 가장 최신인 메세지를 갖는 채팅방을 앞으로
+		responses.sort(Comparator.comparing(DetailChatroomResponse::getLastMsgTime,
+			Comparator.nullsLast(Comparator.reverseOrder())));
+		return responses;
+	}
 
-    private void extractChatroomDetails(List<Chatroom> chatrooms, List<DetailChatroomResponse> responses, boolean isWriter) {
-        for (Chatroom chatroom : chatrooms) {
-            Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId());
-            if (lastChat != null) {
-                Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(lastChat.getSenderId())
-                        .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+	private void extractChatroomDetails(List<Chatroom> chatrooms, List<DetailChatroomResponse> responses,
+		boolean isWriter) {
+		for (Chatroom chatroom : chatrooms) {
+			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId());
+			if (lastChat != null) {
+				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(lastChat.getSenderId())
+					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-                // 대화 상대에 따라 performer와 writer 구분
-                String partnerName = isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
+				// 대화 상대에 따라 performer와 writer 구분
+				String partnerName =
+					isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
 
-                responses.add(new DetailChatroomResponse(
-                        chatroom.getId(),
-                        partnerName,
-                        lastSender.getNickname(),
-                        lastChat.getContent(),
-                        lastChat.getTimestamp()
-                ));
-            } else {
-                String partnerName = isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
-                responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName));
-            }
-        }
-    }
+				responses.add(new DetailChatroomResponse(
+					chatroom.getId(),
+					partnerName,
+					lastSender.getNickname(),
+					lastChat.getContent(),
+					lastChat.getTimestamp()
+				));
+			} else {
+				String partnerName =
+					isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
+				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName));
+			}
+		}
+	}
 
-    @Transactional
-    public EnterChatroomResponse enterChatroom(UUID roomId, UUID memberId) {
-        Chatroom chatroom = chatroomRepository.findById(roomId).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-        if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId()))
-            throw new CustomException(ErrorCode.CHATROOM_NOT_AUTHORIZED);
-        List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId)
-                .stream()
-                .map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))
-                .collect(Collectors.toList());
-        return new EnterChatroomResponse(chats, chatroom.getWriter().getId() == memberId ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname(), chatroom.getBoard().getStatus(),
-                chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
-    }
+	@Transactional
+	public EnterChatroomResponse enterChatroom(UUID roomId, UUID memberId) {
+		Chatroom chatroom = chatroomRepository.findById(roomId)
+			.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId()))
+			throw new CustomException(ErrorCode.CHATROOM_NOT_AUTHORIZED);
+		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId)
+			.stream()
+			.map(chat -> new ChatResponse(chat.getSenderId(), chat.getContent(), chat.getTimestamp()))
+			.collect(Collectors.toList());
+		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
+			chatroom.getWriter().getId() == memberId ? chatroom.getPerformer().getName() :
+				chatroom.getWriter().getName(), chatroom.getBoard().getStatus(),
+			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
+	}
 }
