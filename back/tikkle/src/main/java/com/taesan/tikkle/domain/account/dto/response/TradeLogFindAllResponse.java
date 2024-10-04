@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.taesan.tikkle.domain.board.entity.Board;
-import com.taesan.tikkle.domain.member.entity.Member;
+import com.taesan.tikkle.domain.member.dto.response.MemberBriefResponse;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +15,8 @@ import lombok.NoArgsConstructor;
 public class TradeLogFindAllResponse {
 
 	@Builder
-	public TradeLogFindAllResponse(Member member, String title, String content, Integer time, String status,
+	public TradeLogFindAllResponse(MemberBriefResponse member, String title, String content, Integer time,
+		String status,
 		LocalDateTime createdAt) {
 		this.member = member;
 		this.title = title;
@@ -25,7 +26,7 @@ public class TradeLogFindAllResponse {
 		this.createdAt = createdAt;
 	}
 
-	private Member member;
+	private MemberBriefResponse member;
 	private String title;
 	private String content;
 	private Integer time;
@@ -35,7 +36,7 @@ public class TradeLogFindAllResponse {
 
 	public static TradeLogFindAllResponse from(Board board) {
 		return TradeLogFindAllResponse.builder()
-			.member(board.getMember())
+			.member(MemberBriefResponse.from(board.getMember()))
 			.title(board.getTitle())
 			.content(board.getContent())
 			.time(board.getTime())
