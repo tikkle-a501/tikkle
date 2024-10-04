@@ -31,13 +31,6 @@ public enum ErrorCode {
 	private final HttpStatus status;
 	private final int code;
 	private final String message;
-	
-	// public int getCode() {
-	// 	return code;
-	// }
-	//
-	// public String getMessage() {
-	// 	return message;
-	// }
+
 }
 
