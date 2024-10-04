@@ -21,7 +21,7 @@ public class AccountResponse {
 		);
 	}
 
-	private UUID id;
+	private UUID accountId;
 	private Integer timeQnt;
 	private Integer rankingPoint;
 }

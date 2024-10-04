@@ -34,9 +34,9 @@ public class ChatroomController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("{roomId}")
+    @GetMapping("/{roomId}")
     public ResponseEntity<ApiResponse<EnterChatroomResponse>> enterChatroom(@PathVariable UUID roomId, @AuthedUsername UUID memberId) {
-        ApiResponse<EnterChatroomResponse> response = ApiResponse.success("", chatroomService.enterChatroom(roomId, memberId));
+        ApiResponse<EnterChatroomResponse> response = ApiResponse.success("채팅 불러오기에 성공했습니다.", chatroomService.enterChatroom(roomId, memberId));
         return ResponseEntity.ok(response);
     }
 

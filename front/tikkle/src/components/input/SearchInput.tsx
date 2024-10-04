@@ -9,6 +9,7 @@ interface SearchInputProps {
   leftIcon?: boolean; // 왼쪽 아이콘 여부
   rightIcon?: boolean; // 오른쪽 아이콘 여부
   warningMessage?: string;
+  onSearch?: (value: string) => void; // 검색어를 상위 컴포넌트로 전달하는 함수
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
@@ -18,17 +19,24 @@ const SearchInput: React.FC<SearchInputProps> = ({
   leftIcon,
   rightIcon,
   warningMessage,
+  onSearch,
 }) => {
   const [inputValue, setInputValue] = useState(""); // 입력 값 상태 관리
 
   // 입력 값 변경 핸들러
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value); // 입력 값 업데이트
+    if (onSearch) {
+      onSearch(event.target.value); // onSearch가 있을 경우에만 호출
+    }
   };
 
   // 입력 필드 초기화 핸들러
   const handleClearInput = () => {
     setInputValue(""); // 입력 필드 초기화
+    if (onSearch) {
+      onSearch(""); // onSearch가 있을 경우에만 초기화된 값 전달
+    }
   };
 
   // 경고 필드
