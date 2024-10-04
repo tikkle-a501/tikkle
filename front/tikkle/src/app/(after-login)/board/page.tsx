@@ -4,30 +4,40 @@ import Button from "@/components/button/Button";
 import BoardCard from "@/components/card/BoardCard";
 import SearchInput from "@/components/input/SearchInput";
 import { useRouter } from "next/navigation";
-import { useFetchBoardList } from "@/hooks/board/index";
+import { useFetchBoardByKeyword, useFetchBoardList } from "@/hooks/board/index";
 
 export default function BoardPage() {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const cardsPerPage = 8; // 한 페이지에 8개의 카드(두 줄)
   const router = useRouter();
 
+  // 검색어 상태 관리
+  const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태
+  console.log(searchKeyword);
   // useFetchBoardList에서 가져온 데이터를 명시적으로 BoardListResponses로 처리
   const { data, isLoading, error } = useFetchBoardList();
 
-  // data가 BoardListResponses일 경우만 접근. 없으면 빈 배열로 처리.
-  const boardList = data || [];
+  // 검색어에 맞는 게시글 목록 불러오기
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    error: searchError,
+  } = useFetchBoardByKeyword(searchKeyword); // 검색어에 맞춰 API 호출
+
+  // 검색어가 있을 경우 검색 결과, 없으면 전체 리스트
+  const boardList = searchKeyword ? searchData : data || [];
   console.log(boardList);
   // 현재 페이지에서 보여줄 카드들 계산
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = boardList.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = boardList?.slice(indexOfFirstCard, indexOfLastCard);
 
   // 페이지 변경 핸들러
   const paginate = (pageNumber: SetStateAction<number>) =>
     setCurrentPage(pageNumber);
 
   // 총 페이지 수 계산
-  const totalPages = Math.ceil(boardList.length / cardsPerPage);
+  const totalPages = Math.ceil((boardList?.length || 0) / cardsPerPage);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -51,6 +61,7 @@ export default function BoardPage() {
           placeholder="검색어를 입력하세요"
           leftIcon
           warningMessage="그건 아니지"
+          onSearch={(value: string) => setSearchKeyword(value)}
         />
         <Button
           size="m"
@@ -62,13 +73,13 @@ export default function BoardPage() {
       </div>
       {/* 게시글 목록 */}
       <div className="grid w-full grid-cols-1 gap-32 pt-16 sm:grid-cols-2 lg:grid-cols-4">
-        {currentCards.map((card, index) => (
+        {currentCards?.map((card, index) => (
           <BoardCard
             key={index}
             boardId={card.boardId}
             title={card.title}
             status={card.status}
-            writer={card.memberId}
+            writer={card.nickname}
             createdAt={card.createdAt}
             time={card.time}
             content={card.content}

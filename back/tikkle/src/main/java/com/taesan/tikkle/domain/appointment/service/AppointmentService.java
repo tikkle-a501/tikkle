@@ -89,7 +89,7 @@ public class AppointmentService {
 		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(roomId);
 		if (appointment == null)
 			return new BriefAppointmentResponse();
-		if (!memberId.equals(appointment.getRoom().getWriter().getId()) || !memberId.equals(appointment.getRoom().getPerformer().getId())) {
+		if (!memberId.equals(appointment.getRoom().getWriter().getId()) && !memberId.equals(appointment.getRoom().getPerformer().getId())) {
 			throw new CustomException(ErrorCode.APPOINTMENT_NOT_AUTHORIZED);
 		} else {
 			return new BriefAppointmentResponse(appointment.getId(), appointment.getApptTime(),

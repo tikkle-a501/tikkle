@@ -104,10 +104,10 @@ public class BoardService {
 
 	public List<BoardResponse> getBoardsByKeyword(String keyword) {
 		// 제목에 keyword가 포함된 게시물 검색
-		List<Board> titleMatches = boardRepository.findByTitleContaining(keyword);
+		List<Board> titleMatches = boardRepository.findByTitleContainingAndDeletedAtIsNull(keyword);
 
 		// 내용에 keyword가 포함된 게시물 검색
-		List<Board> contentMatches = boardRepository.findByContentContaining(keyword);
+		List<Board> contentMatches = boardRepository.findByContentContainingAndDeletedAtIsNull(keyword);
 
 		// 제목과 내용에서 검색된 게시물을 하나의 Set으로 합침 (중복 제거)
 		Set<Board> combinedResults = new HashSet<>(titleMatches);

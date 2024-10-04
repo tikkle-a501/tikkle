@@ -24,7 +24,9 @@ export default function Exchange() {
             </span>
           </div>
           {isLoading ? (
-            <span className="text-gray-500">로딩 중입니다...</span>
+            <span className="text-warmGray300">
+              환전 내역을 불러오는 중입니다.
+            </span>
           ) : toTikkleList.length > 0 ? (
             toTikkleList.map((item, index) => (
               <ExchangeList
@@ -35,7 +37,7 @@ export default function Exchange() {
               />
             ))
           ) : (
-            <span className="text-gray-500">아무것도 없습니다.</span>
+            <span className="text-warmGray300">환전 내역이 없습니다.</span>
           )}
         </div>
         <div className="scrollbar-custom flex w-full flex-col overflow-y-auto rounded-10 border border-warmGray200 p-20">
@@ -46,7 +48,9 @@ export default function Exchange() {
             </span>
           </div>
           {isLoading ? (
-            <span className="text-gray-500">로딩 중입니다...</span>
+            <span className="text-warmGray300">
+              환전 내역을 불러오는 중입니다.
+            </span>
           ) : toTimeList.length > 0 ? (
             toTimeList.map((item, index) => (
               <ExchangeList
@@ -57,7 +61,7 @@ export default function Exchange() {
               />
             ))
           ) : (
-            <span className="text-gray-500">환전내역이 없습니다.</span>
+            <span className="text-warmGray300">환전 내역이 없습니다.</span>
           )}
         </div>
       </div>

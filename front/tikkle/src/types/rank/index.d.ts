@@ -4,14 +4,15 @@ export interface RankGetResponse {
   memberId: string;
   nickname: string;
   rankingPoint: number;
+  tradeCount: number;
 }
 
 export interface RankGetResponses {
-  data: RankGetResponse[];
-  myrRank: RankGetResponse[];
+  rankList: RankGetResponse[];
+  myRank: RankGetResponse;
 }
 
 // 랭킹 검색 응답
 export interface RankSearchGetResponses {
-  data: RankGetResponse[];
+  rankList: RankGetResponse[];
 }

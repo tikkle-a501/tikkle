@@ -1,3 +1,5 @@
+"use client";
+
 import BoardCard from "@/components/card/BoardCard";
 
 export default function Activity() {

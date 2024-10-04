@@ -11,6 +11,15 @@ export const fetchBoardList = async () => {
   return handleApiRequest<BoardListResponses, "get">("/board", "get");
 };
 
+//키워드 검색 공고 조회
+
+export const fetchBoardByKeyword = async (keyword: string) => {
+  return handleApiRequest<BoardListResponses, "get">(
+    `/board/search/${keyword}`,
+    "get",
+  );
+};
+
 //공고 디테일 조회
 export const fetchBoardDetail = async (boardId: string) => {
   return handleApiRequest<Board, "get">(`/board/${boardId}`, "get");
