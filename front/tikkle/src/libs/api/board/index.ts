@@ -15,7 +15,7 @@ export const fetchBoardList = async () => {
 
 export const fetchBoardByKeyword = async (keyword: string) => {
   return handleApiRequest<BoardListResponses, "get">(
-    `/search/${keyword}`,
+    `/board/search/${keyword}`,
     "get",
   );
 };
