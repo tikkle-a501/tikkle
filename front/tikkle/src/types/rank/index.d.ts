@@ -14,5 +14,5 @@ export interface RankGetResponses {
 
 // 랭킹 검색 응답
 export interface RankSearchGetResponses {
-  data: RankGetResponse[];
+  rankList: RankGetResponse[];
 }
