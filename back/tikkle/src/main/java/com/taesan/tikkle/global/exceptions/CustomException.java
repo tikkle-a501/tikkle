@@ -1,5 +1,7 @@
 package com.taesan.tikkle.global.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 import com.taesan.tikkle.global.errors.ErrorCode;
 
 public class CustomException extends RuntimeException {
@@ -17,6 +19,10 @@ public class CustomException extends RuntimeException {
 	@Override
 	public String getMessage() {
 		return errorCode.getMessage();
+	}
+
+	public HttpStatus getHttpStatus() {
+		return errorCode.getStatus();
 	}
 }
 

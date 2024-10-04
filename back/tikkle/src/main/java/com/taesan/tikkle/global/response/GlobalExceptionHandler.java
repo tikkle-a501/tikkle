@@ -1,6 +1,5 @@
 package com.taesan.tikkle.global.response;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +23,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ApiResponse<String>> handleCustomException(CustomException ex, WebRequest request) {
 		ApiResponse<String> response = ApiResponse.error(ex.getCode(), ex.getMessage());
-		return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getCode()));
+		return new ResponseEntity<>(response, ex.getHttpStatus());
 	}
 }
 
