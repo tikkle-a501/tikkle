@@ -68,7 +68,7 @@ export default function BoardPage() {
             boardId={card.boardId}
             title={card.title}
             status={card.status}
-            writer={card.memberId}
+            writer={card.nickname}
             createdAt={card.createdAt}
             time={card.time}
             content={card.content}

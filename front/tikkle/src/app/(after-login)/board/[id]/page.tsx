@@ -104,7 +104,7 @@ export default function BoardDetail() {
 
         {/* 작성자, 작성일 */}
         <div className="flex items-center gap-20 pb-10">
-          <div className="font-semibold text-warmGray500">{board.memberId}</div>
+          <div className="font-semibold text-warmGray500">{board.nickname}</div>
           <div className="text-warmGray400">
             {board.createdAt
               ? new Date(board.createdAt).toLocaleString()

@@ -2,6 +2,7 @@ import { Board } from "./index.d";
 export interface Board {
   boardId: string;
   memberId: string;
+  nickname: string;
   title: string;
   content: string;
   time: number;
