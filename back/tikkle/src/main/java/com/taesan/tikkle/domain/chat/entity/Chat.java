@@ -18,14 +18,14 @@ public class Chat {
 	@MongoId
 	private ObjectId id;  // MongoDB가 자동으로 ObjectId 생성
 
-	private UUID chatroomId;
-	private UUID senderId;
+	private String chatroomId;
+	private String senderId;
 	private String content;
 
 	@CreatedDate
 	private LocalDateTime timestamp;
 
-	public Chat(UUID chatroomId, UUID senderId, String content) {
+	public Chat(String chatroomId, String senderId, String content) {
 		this.chatroomId = chatroomId;
 		this.senderId = senderId;
 		this.content = content;
