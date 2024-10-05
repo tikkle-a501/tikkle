@@ -72,26 +72,27 @@ public class JwtOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandl
 
 		redisTokenService.storeRefreshToken(memberId, refreshToken, 1000 * 60 * 60 * 24);
 
-		MemberResponse memberResponse = new MemberResponse(
-			oAuth2User.getAttribute("memberId"),
-			oAuth2User.getAttribute("username"),
-			oAuth2User.getAttribute("nickname"),
-			oAuth2User.getAttribute("email")
-		);
+		String redirectUrl = "https://j11a501.p.ssafy.io/home";
+		getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
-		// ApiResponse 객체 생성
-		ApiResponse<MemberResponse> apiResponse
-			= new ApiResponse<>(200, "회원 정보 불러오기에 성공했습니다.", memberResponse);
-
-		// 응답 헤더 설정
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-		response.setStatus(HttpServletResponse.SC_OK);
-
-		// ObjectMapper를 사용해 ApiResponse 객체를 JSON으로 변환하여 응답으로 전송
-		objectMapper.writeValue(response.getWriter(), apiResponse);
-
-		getRedirectStrategy().sendRedirect(request, response, "https://j11a501.p.ssafy.io/home");
+//		MemberResponse memberResponse = new MemberResponse(
+//			oAuth2User.getAttribute("memberId"),
+//			oAuth2User.getAttribute("username"),
+//			oAuth2User.getAttribute("nickname"),
+//			oAuth2User.getAttribute("email")
+//		);
+//
+//		// ApiResponse 객체 생성
+//		ApiResponse<MemberResponse> apiResponse
+//			= new ApiResponse<>(200, "회원 정보 불러오기에 성공했습니다.", memberResponse);
+//
+//		// 응답 헤더 설정
+//		response.setContentType("application/json");
+//		response.setCharacterEncoding("UTF-8");
+//		response.setStatus(HttpServletResponse.SC_OK);
+//
+//		// ObjectMapper를 사용해 ApiResponse 객체를 JSON으로 변환하여 응답으로 전송
+//		objectMapper.writeValue(response.getWriter(), apiResponse);
 	}
 
 }
