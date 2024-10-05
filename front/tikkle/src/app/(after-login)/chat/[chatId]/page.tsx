@@ -94,7 +94,7 @@ export default function ChatId() {
   const handleSendMessage = () => {
     if (stompClientRef.current && inputValue.trim() !== "") {
       const chatMessage = {
-        chatroomId: roomId.toString(),
+        chatroomId: roomId,
         // senderId: memberId,
         content: inputValue,
       };
@@ -103,7 +103,8 @@ export default function ChatId() {
         destination: "/app/sendMessage",
         body: JSON.stringify(chatMessage),
       };
-
+      console.log("chatMessage는 말이죠 : " ,chatMessage);
+      console.log("chatroomId의 타입은 말이죠 : " , typeof (chatMessage.chatroomId));
       stompClientRef.current.publish(sendMessage);
       console.log("메시지 전송:", sendMessage); // 전송한 메시지 로그
       setInputValue("");
