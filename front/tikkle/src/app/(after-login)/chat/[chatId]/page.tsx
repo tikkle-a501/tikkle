@@ -24,7 +24,7 @@ export default function ChatId() {
 
   // 특정 유저 ID 설정
   // TODO: 하드코딩된 유저ID를 로그인된 유저ID 받아오는 로직
-  const memberId = "74657374-3200-0000-0000-000000000000";
+  const memberId = "150e6552-807e-11ef-896d-0242ac120005";
   const {
     data: chatroomData,
     error: chatroomError,
