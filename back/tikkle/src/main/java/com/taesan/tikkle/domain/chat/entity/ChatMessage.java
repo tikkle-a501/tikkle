@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessage {
-    private UUID chatroomId;
+    private String chatroomId;
     //	private UUID senderId;
     private String content;
 

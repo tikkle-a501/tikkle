@@ -13,15 +13,15 @@ import java.util.UUID;
 
 @Service
 public class KafkaProducer {
-	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-	@Autowired
-	private ChatRepository chatRepository;
+    @Autowired
+    private ChatRepository chatRepository;
 
-	@Transactional
-	public void sendMessage(ChatMessage chatMessage, UUID memberId) {
-		kafkaTemplate.send("chatroom." + chatMessage.getChatroomId().toString(), chatMessage.getContent());
-		chatRepository.save(new Chat(chatMessage.getChatroomId().toString(), memberId.toString(), chatMessage.getContent()));
-	}
+    @Transactional
+    public void sendMessage(ChatMessage chatMessage, UUID memberId) {
+        kafkaTemplate.send("chatroom." + chatMessage.getChatroomId(), chatMessage.getContent());
+        chatRepository.save(new Chat(chatMessage.getChatroomId(), memberId.toString(), chatMessage.getContent()));
+    }
 }
