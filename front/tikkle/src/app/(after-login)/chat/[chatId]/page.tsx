@@ -94,7 +94,7 @@ export default function ChatId() {
   const handleSendMessage = () => {
     if (stompClientRef.current && inputValue.trim() !== "") {
       const chatMessage = {
-        chatroomId: roomId,
+        chatroomId: roomId.toString(),
         // senderId: memberId,
         content: inputValue,
       };
