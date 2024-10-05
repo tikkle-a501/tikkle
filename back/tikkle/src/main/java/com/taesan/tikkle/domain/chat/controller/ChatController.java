@@ -26,6 +26,7 @@ public class ChatController {
 
     @MessageMapping("/sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage, @AuthedUsername UUID memberId) {
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@" + chatMessage);
         // 로그로 메시지와 멤버 ID 출력
         logger.info("ChatMessage 형태 : {}", chatMessage);
         logger.info("맴버 아이디 : {}", memberId);
