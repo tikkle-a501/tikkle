@@ -12,6 +12,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
+public class JwtOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(JwtOAuth2SuccessHandler.class);
 	private final JwtUtil jwtUtil;
@@ -90,8 +91,7 @@ public class JwtOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// ObjectMapper를 사용해 ApiResponse 객체를 JSON으로 변환하여 응답으로 전송
 		objectMapper.writeValue(response.getWriter(), apiResponse);
 
-		// redirect 처리는 frontend에서 처리하도록 수정
-		response.sendRedirect("https://j11a501.p.ssafy.io/home");
+		getRedirectStrategy().sendRedirect(request, response, "https://j11a501.p.ssafy.io/home");
 	}
 
 }
