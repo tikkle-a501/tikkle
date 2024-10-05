@@ -9,6 +9,8 @@ import com.taesan.tikkle.domain.chat.entity.Chat;
 import com.taesan.tikkle.domain.chat.entity.ChatMessage;
 import com.taesan.tikkle.domain.chat.repository.ChatRepository;
 
+import java.util.UUID;
+
 @Service
 public class KafkaProducer {
 	@Autowired
@@ -18,8 +20,8 @@ public class KafkaProducer {
 	private ChatRepository chatRepository;
 
 	@Transactional
-	public void sendMessage(ChatMessage chatMessage) {
+	public void sendMessage(ChatMessage chatMessage, UUID memberId) {
 		kafkaTemplate.send("chatroom." + chatMessage.getChatroomId().toString(), chatMessage.getContent());
-		chatRepository.save(new Chat(chatMessage.getChatroomId(), chatMessage.getSenderId(), chatMessage.getContent()));
+		chatRepository.save(new Chat(chatMessage.getChatroomId(), memberId, chatMessage.getContent()));
 	}
 }

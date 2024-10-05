@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatMessage {
 	private UUID chatroomId;
-	private UUID senderId;
+//	private UUID senderId;
 	private String content;
 }
