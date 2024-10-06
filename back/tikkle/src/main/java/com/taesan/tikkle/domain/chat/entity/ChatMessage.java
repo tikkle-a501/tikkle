@@ -12,14 +12,14 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ChatMessage implements Serializable {
 //    @JsonDeserialize(using = ToStringDeserializer.class)
-    private UUID chatroomId;
+//    private UUID chatroomId;
     //	private UUID senderId;
     private String content;
 
     @Override
     public String toString() {
         return "ChatMessage{" +
-                "chatroomId=" + chatroomId +
+//                "chatroomId=" + chatroomId +
                 ", content='" + content + '\'' +
                 '}';
     }
