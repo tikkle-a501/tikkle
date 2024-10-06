@@ -37,7 +37,7 @@ public class ChatMessage {
     @Override
     public String toString() {
         return "ChatMessage{" +
-                "chatroomId=" + chatroomId +
+                "chatroomId='" + chatroomId + '\'' +
                 ", content='" + content + '\'' +
                 '}';
     }
