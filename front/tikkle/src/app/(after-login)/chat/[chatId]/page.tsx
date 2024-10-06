@@ -103,8 +103,11 @@ export default function ChatId() {
         destination: "/app/sendMessage",
         body: JSON.stringify(chatMessage),
       };
-      console.log("chatMessage는 말이죠 : " ,chatMessage);
-      console.log("chatroomId의 타입은 말이죠 : " , typeof (chatMessage.chatroomId));
+      console.log("chatMessage는 말이죠 : ", chatMessage);
+      console.log(
+        "chatroomId의 타입은 말이죠 : ",
+        typeof chatMessage.chatroomId,
+      );
       stompClientRef.current.publish(sendMessage);
       console.log("메시지 전송:", sendMessage); // 전송한 메시지 로그
       setInputValue("");
@@ -189,8 +192,9 @@ export default function ChatId() {
           ) : appointmentError ? (
             // 에러가 있을 때
             <p>Error: {appointmentError.message}</p>
-          ) : appointmentData ? (
-            // 약속이 있을 때
+          ) : appointmentData?.appointmentId &&
+            appointmentData?.appointmentTime ? (
+            // 약속이 있을 때 (appointmentId와 appointmentTime이 null이 아닐 때)
             <div className="flex items-center justify-end gap-6 self-stretch p-10">
               <div>
                 {new Date(appointmentData?.appointmentTime).toLocaleString(
@@ -209,6 +213,7 @@ export default function ChatId() {
                 {appointmentData?.timeQnt}시간
               </div>
               <div>약속</div>
+              {/* TODO: 게시글 작성자에게만 약속취소 버튼 표시 */}
               <Button
                 size="s"
                 variant="primary"
@@ -221,6 +226,7 @@ export default function ChatId() {
             </div>
           ) : (
             // 약속이 없을 때 '약속잡기' 버튼 표시
+            // TODO: 게시글 작성자에게만 약속잡기 버튼 표시
             <div>
               <Button
                 size="m"
