@@ -1,8 +1,11 @@
 package com.taesan.tikkle.domain.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConversionException;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -13,9 +16,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+	@Autowired
+	private MappingJackson2MessageConverter mappingJackson2MessageConverter;
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -26,6 +34,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/ws").setAllowedOrigins("https://j11a501.p.ssafy.io").withSockJS();
+	}
+
+	@Override
+	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+		// MappingJackson2MessageConverter를 사용하여 메시지 컨버터 설정
+		messageConverters.add(mappingJackson2MessageConverter);
+		return false; // 기본 메시지 컨버터를 사용하지 않음
 	}
 
 	@Bean
