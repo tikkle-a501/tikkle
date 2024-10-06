@@ -22,6 +22,6 @@ public class KafkaProducer {
     @Transactional
     public void sendMessage(ChatMessage chatMessage, UUID memberId) {
         kafkaTemplate.send("chatroom." + chatMessage.getChatroomId(), chatMessage.getContent());
-        chatRepository.save(new Chat(chatMessage.getChatroomId(), memberId.toString(), chatMessage.getContent()));
+        chatRepository.save(new Chat(chatMessage.getChatroomId().toString(), memberId.toString(), chatMessage.getContent()));
     }
 }
