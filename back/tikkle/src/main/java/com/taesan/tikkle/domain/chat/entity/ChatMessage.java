@@ -15,9 +15,9 @@ import java.util.UUID;
 @Getter
 @Setter
 //@AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 public class ChatMessage {
-//    @JsonDeserialize(using = UUIDDeserializer.class)
+    @JsonDeserialize(using = UUIDDeserializer.class)
     private UUID chatroomId;
     //	private UUID senderId;
     private String content;
@@ -28,6 +28,10 @@ public class ChatMessage {
             @JsonProperty("content") String content) {
         this.chatroomId = chatroomId;
         this.content = content;
+    }
+
+    public ChatMessage() {
+
     }
 
     @Override
