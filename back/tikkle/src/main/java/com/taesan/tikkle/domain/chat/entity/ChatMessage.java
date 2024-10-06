@@ -10,15 +10,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessage {
-//    @JsonDeserialize(using = ToStringDeserializer.class)
-//    private UUID chatroomId;
+    //    @JsonDeserialize(using = ToStringDeserializer.class)
+    private UUID chatroomId;
     //	private UUID senderId;
     private String content;
 
     @Override
     public String toString() {
         return "ChatMessage{" +
-//                "chatroomId=" + chatroomId +
+                "chatroomId=" + chatroomId +
                 ", content='" + content + '\'' +
                 '}';
     }
