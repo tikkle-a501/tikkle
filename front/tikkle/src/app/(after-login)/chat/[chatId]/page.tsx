@@ -117,7 +117,7 @@ export default function ChatId() {
         headers: {
             'content-type': 'application/json; charset=UTF-8',
         },
-        body: JSON.stringify(chatMessage),
+        body: chatMessage,
       });
 
       // stompClientRef.current.publish(sendMessage);
