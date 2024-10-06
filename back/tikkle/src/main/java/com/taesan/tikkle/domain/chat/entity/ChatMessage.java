@@ -18,13 +18,13 @@ import java.util.UUID;
 //@NoArgsConstructor
 public class ChatMessage {
 //    @JsonDeserialize(using = UUIDDeserializer.class)
-    private UUID chatroomId;
+    private String chatroomId;
     //	private UUID senderId;
     private String content;
 
     @JsonCreator
     public ChatMessage(
-            @JsonProperty("chatroomId") UUID chatroomId,
+            @JsonProperty("chatroomId") String chatroomId,
             @JsonProperty("content") String content) {
         this.chatroomId = chatroomId;
         this.content = content;
