@@ -3,6 +3,7 @@ package com.taesan.tikkle.domain.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.messaging.converter.MessageConverter;
@@ -37,6 +38,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	}
 
 	@Override
+	@DependsOn("mappingJackson2MessageConverter")
 	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
 		// MappingJackson2MessageConverter를 사용하여 메시지 컨버터 설정
 		messageConverters.add(mappingJackson2MessageConverter);
