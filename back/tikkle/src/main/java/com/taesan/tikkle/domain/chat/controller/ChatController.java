@@ -42,7 +42,7 @@ public class ChatController {
 //    }
 
     @MessageMapping("/sendMessage")
-    public void sendMessage(Message<?> message, @AuthedUsername UUID memberId) throws JsonProcessingException {
+    public void sendMessage(Message<?> message) throws JsonProcessingException {
         byte[] payloadBytes = (byte[]) message.getPayload();
         String payload = new String(payloadBytes, StandardCharsets.UTF_8);
         System.out.println("Received raw payload: " + payload);
