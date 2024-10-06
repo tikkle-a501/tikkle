@@ -17,6 +17,7 @@ public class MessageConverterConfig {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         // 기존에 Bean으로 등록된 ObjectMapper를 사용하도록 설정
         converter.setObjectMapper(objectMapper);
+        System.out.println("Custom MappingJackson2MessageConverter registered with ObjectMapper: " + objectMapper);
         return converter;
     }
 }
