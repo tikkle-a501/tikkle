@@ -41,7 +41,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@DependsOn("mappingJackson2MessageConverter")
 	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
 		// MappingJackson2MessageConverter를 사용하여 메시지 컨버터 설정
-		messageConverters.add(mappingJackson2MessageConverter);
+		messageConverters.add(0, mappingJackson2MessageConverter);
 		return false; // 기본 메시지 컨버터를 사용하지 않음
 	}
 
