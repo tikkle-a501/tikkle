@@ -1,5 +1,7 @@
 package com.taesan.tikkle.domain.chat.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.taesan.tikkle.domain.config.UUIDDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessage {
-    //    @JsonDeserialize(using = ToStringDeserializer.class)
+    @JsonDeserialize(using = UUIDDeserializer.class)
     private UUID chatroomId;
     //	private UUID senderId;
     private String content;
