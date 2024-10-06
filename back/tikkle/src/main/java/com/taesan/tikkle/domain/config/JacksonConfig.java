@@ -14,6 +14,7 @@ public class JacksonConfig {
 	public ObjectMapper objectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION.mappedFeature(), true);
+		mapper.findAndRegisterModules();
 		mapper.registerModule(new JavaTimeModule());
 		return mapper;
 	}
