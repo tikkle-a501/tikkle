@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
-@Setter
+//@Setter
 //@AllArgsConstructor
 //@NoArgsConstructor
 public class ChatMessage {
@@ -30,9 +30,9 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public ChatMessage() {
-
-    }
+//    public ChatMessage() {
+//
+//    }
 
     @Override
     public String toString() {
