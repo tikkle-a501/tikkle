@@ -11,9 +11,8 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class JacksonConfig {
 
-	@Bean
-	@Primary
-	public ObjectMapper objectMapper() {
+	@Bean(name = "customObjectMapper")
+	public ObjectMapper customObjectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION.mappedFeature(), true);
 		mapper.findAndRegisterModules();
