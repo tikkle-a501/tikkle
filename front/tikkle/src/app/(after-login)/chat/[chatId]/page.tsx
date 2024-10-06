@@ -101,7 +101,7 @@ export default function ChatId() {
 
       const sendMessage = {
         destination: "/app/sendMessage",
-        body: JSON.stringify(chatMessage),
+        body: chatMessage,
       };
       console.log("chatMessage는 말이죠 : ", chatMessage);
       console.log(
