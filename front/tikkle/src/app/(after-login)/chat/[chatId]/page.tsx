@@ -101,6 +101,9 @@ export default function ChatId() {
 
       const sendMessage = {
         destination: "/app/sendMessage",
+        headers: {
+          'content-type': 'application/json; charset=UTF-8'  // 헤더 설정
+        },
         body: JSON.stringify(chatMessage),
       };
       console.log("chatMessage는 말이죠 : ", chatMessage);
