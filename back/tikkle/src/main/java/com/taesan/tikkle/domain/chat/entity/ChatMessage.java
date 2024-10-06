@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessage {
+public class ChatMessage implements Serializable {
 //    @JsonDeserialize(using = ToStringDeserializer.class)
     private UUID chatroomId;
     //	private UUID senderId;
