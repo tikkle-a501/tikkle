@@ -24,9 +24,9 @@ import java.util.List;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-	@Autowired
-	@Qualifier("customJacksonMessageConverter")
-	private MappingJackson2MessageConverter messageConverter;
+//	@Autowired
+//	@Qualifier("customJacksonMessageConverter")
+//	private MappingJackson2MessageConverter messageConverter;
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -39,11 +39,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		registry.addEndpoint("/ws").setAllowedOrigins("https://j11a501.p.ssafy.io").withSockJS();
 	}
 
-	@Override
-	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-		messageConverters.add(0, messageConverter);  // 명시적으로 설정된 메시지 컨버터를 등록
-		return false;  // 기본 메시지 컨버터 사용 안 함
-	}
+//	@Override
+//	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+//		messageConverters.add(0, messageConverter);  // 명시적으로 설정된 메시지 컨버터를 등록
+//		return false;  // 기본 메시지 컨버터 사용 안 함
+//	}
 
 	@Bean
 	public WebSocketHandlerDecoratorFactory webSocketHandlerDecoratorFactory() {

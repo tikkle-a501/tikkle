@@ -13,11 +13,11 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class MessageConverterConfig {
 
-    @Bean(name = "customJacksonMessageConverter")
-    public MappingJackson2MessageConverter customJacksonMessageConverter(@Qualifier("customObjectMapper") ObjectMapper objectMapper) {
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setObjectMapper(objectMapper);
-        System.out.println("Custom MappingJackson2MessageConverter registered with ObjectMapper: " + objectMapper);
-        return converter;
-    }
+//    @Bean(name = "customJacksonMessageConverter")
+//    public MappingJackson2MessageConverter customJacksonMessageConverter(@Qualifier("objectMapper") ObjectMapper objectMapper) {
+//        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+//        converter.setObjectMapper(objectMapper);
+//        System.out.println("Custom MappingJackson2MessageConverter registered with ObjectMapper: " + objectMapper);
+//        return converter;
+//    }
 }

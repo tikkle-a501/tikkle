@@ -47,9 +47,9 @@ public class ChatController {
         String payload = new String(payloadBytes, StandardCharsets.UTF_8);
         System.out.println("Received raw payload: " + payload);
 
-        ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+//        ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
 
         // 서비스 레이어로 메시지를 넘겨서 처리
-        kafkaProducer.sendMessage(chatMessage, memberId);
+//        kafkaProducer.sendMessage(chatMessage, memberId);
     }
 }
