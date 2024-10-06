@@ -1,5 +1,7 @@
 package com.taesan.tikkle.domain.chat.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taesan.tikkle.domain.chat.entity.ChatMessage;
 import com.taesan.tikkle.domain.chat.service.KafkaConsumer;
 import com.taesan.tikkle.domain.chat.service.KafkaProducer;
@@ -26,6 +28,9 @@ public class ChatController {
     @Autowired
     private KafkaConsumer kafkaConsumer;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
 //    @MessageMapping("/sendMessage")
 //    public void sendMessage(@Payload ChatMessage chatMessage, @AuthedUsername UUID memberId) {
 //        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@" + chatMessage);
@@ -37,9 +42,14 @@ public class ChatController {
 //    }
 
     @MessageMapping("/sendMessage")
-    public void sendMessage(Message<?> message) {
+    public void sendMessage(Message<?> message, @AuthedUsername UUID memberId) throws JsonProcessingException {
         byte[] payloadBytes = (byte[]) message.getPayload();
         String payload = new String(payloadBytes, StandardCharsets.UTF_8);
         System.out.println("Received raw payload: " + payload);
+
+        ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+
+        // 서비스 레이어로 메시지를 넘겨서 처리
+        kafkaProducer.sendMessage(chatMessage, memberId);
     }
 }
