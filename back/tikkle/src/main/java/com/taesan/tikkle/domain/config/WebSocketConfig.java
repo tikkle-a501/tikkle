@@ -1,6 +1,7 @@
 package com.taesan.tikkle.domain.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -24,7 +25,8 @@ import java.util.List;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Autowired
-	private MappingJackson2MessageConverter mappingJackson2MessageConverter;
+	@Qualifier("customJacksonMessageConverter")
+	private MappingJackson2MessageConverter messageConverter;
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -38,11 +40,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	}
 
 	@Override
-	@DependsOn("mappingJackson2MessageConverter")
 	public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
-		// MappingJackson2MessageConverter를 사용하여 메시지 컨버터 설정
-		messageConverters.add(0, mappingJackson2MessageConverter);
-		return false; // 기본 메시지 컨버터를 사용하지 않음
+		messageConverters.add(0, messageConverter);  // 명시적으로 설정된 메시지 컨버터를 등록
+		return false;  // 기본 메시지 컨버터 사용 안 함
 	}
 
 	@Bean
