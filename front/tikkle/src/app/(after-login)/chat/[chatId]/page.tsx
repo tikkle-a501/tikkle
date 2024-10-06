@@ -111,12 +111,8 @@ export default function ChatId() {
         "chatroomId의 타입은 말이죠 : ",
         typeof chatMessage.chatroomId,
       );
-      stompClientRef.send(
-        "/app/sendMessage",
-        { 'content-type': 'application/json; charset=UTF-8' },
-        JSON.stringify(chatMessage)
-      );
-      // stompClientRef.current.publish(sendMessage);
+      
+      stompClientRef.current.publish(sendMessage);
       console.log("메시지 전송:", sendMessage); // 전송한 메시지 로그
       setInputValue("");
     }
