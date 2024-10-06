@@ -17,7 +17,7 @@ import java.util.UUID;
 //@AllArgsConstructor
 //@NoArgsConstructor
 public class ChatMessage {
-    @JsonDeserialize(using = UUIDDeserializer.class)
+//    @JsonDeserialize(using = UUIDDeserializer.class)
     private UUID chatroomId;
     //	private UUID senderId;
     private String content;
