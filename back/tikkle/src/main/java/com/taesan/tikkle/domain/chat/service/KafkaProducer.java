@@ -30,6 +30,6 @@ public class KafkaProducer {
 	public void sendMessage(ChatMessage chatMessage) {
 		kafkaTemplate.send("chatroom." + chatMessage.getChatroomId(), chatMessage.getContent());
 		chatRepository.save(
-			new Chat(chatMessage.getChatroomId(), chatMessage.getMemberId(), chatMessage.getContent()));
+			new Chat(chatMessage.getChatroomId(), chatMessage.getSenderId(), chatMessage.getContent()));
 	}
 }

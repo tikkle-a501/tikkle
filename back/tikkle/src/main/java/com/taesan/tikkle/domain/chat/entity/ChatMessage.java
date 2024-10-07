@@ -18,16 +18,16 @@ import java.util.UUID;
 //@AllArgsConstructor
 public class ChatMessage {
 	private String chatroomId;
-	private String memberId;
+	private String senderId;
 	private String content;
 
 	@JsonCreator
 	public ChatMessage(
 		@JsonProperty("chatroomId") String chatroomId,
-		@JsonProperty("memberId") String memberId,
+		@JsonProperty("memberId") String senderId,
 		@JsonProperty("content") String content) {
 		this.chatroomId = chatroomId;
-		this.memberId = memberId;
+		this.senderId = senderId;
 		this.content = content;
 	}
 
