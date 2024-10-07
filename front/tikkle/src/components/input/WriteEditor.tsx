@@ -144,7 +144,7 @@ const WriteEditor = () => {
             type="text"
             value={title}
             placeholder="제목을 입력해주세요."
-            className="inline-flex flex-1 appearance-none items-center justify-center border-b border-warmGray200 pb-5 text-28 font-bold placeholder-warmGray300 focus:outline-none"
+            className="inline-flex flex-1 appearance-none items-center justify-center border-b border-warmGray200 bg-warmGray50 pb-5 text-28 font-bold placeholder-warmGray300 focus:outline-none"
             onChange={(e) => {
               setTitle(e.target.value);
               handleFormChange();
