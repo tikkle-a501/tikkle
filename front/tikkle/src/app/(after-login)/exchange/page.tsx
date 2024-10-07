@@ -33,13 +33,13 @@ export default function Exchange() {
   };
 
   const handleExchange = (exchangeType: "TTOR" | "RTOT") => {
-    if (!latestRate || !latestRate.rateId) {
+    if (!latestRate || !latestRate.id) {
       console.error("환율 정보가 없습니다.");
       return;
     }
 
     const exchangeData = {
-      rateId: latestRate?.rateId, // 최신 환율에서 rateId 가져오기
+      rateId: latestRate?.id, // 최신 환율에서 rateId 가져오기
       timeToRank: latestRate?.timeToRank || 0,
       quantity:
         exchangeType === "TTOR" ? timeToConvertToTikkle : tikkleToConvertToTime,

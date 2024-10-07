@@ -1,6 +1,6 @@
 // 환율 조회 응답
 export interface RateGetResponse {
-  rateId: string;
+  id: string;
   createdAt: string;
   timeToRank: number;
 }
