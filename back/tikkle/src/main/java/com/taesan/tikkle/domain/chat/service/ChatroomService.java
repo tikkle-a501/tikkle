@@ -78,7 +78,7 @@ public class ChatroomService {
 		boolean isWriter) {
 		for (Chatroom chatroom : chatrooms) {
 			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
-			logger.debug("lastChat senderId, timestamp: {}, {}", lastChat.getSenderId(), lastChat.getTimestamp());
+			// logger.debug("lastChat senderId, timestamp: {}, {}", lastChat.getSenderId(), lastChat.getTimestamp());
 			if (lastChat != null) {
 				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(
 						(UUID.fromString(lastChat.getSenderId())))
