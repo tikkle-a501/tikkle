@@ -6,5 +6,6 @@ export const useFetchBoardByKeyword = (keyword: string) => {
   return useQuery<BoardListResponses, Error>({
     queryKey: ["Boards", keyword],
     queryFn: () => fetchBoardByKeyword(keyword),
+    enabled: !!keyword,
   });
 };

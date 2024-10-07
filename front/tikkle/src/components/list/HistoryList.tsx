@@ -2,6 +2,7 @@ import Link from "next/link";
 import Badge from "../badge/Badge";
 import Image from "next/image";
 import Button from "../button/Button";
+// import ReviewCard from "../card/ReviewCard";
 
 interface HistoryListProps {
   profileImg: string; // 프로필 이미지
@@ -11,8 +12,20 @@ interface HistoryListProps {
   appointmentTime: string; // 약속 시간
   boardId: string; // 게시글 ID
   time: number; // 시간(재화)
-  buttonText: string; // 버튼 내용
 }
+
+const getBadgeColor = (status: string) => {
+  switch (status) {
+    case "POSTED":
+      return "red";
+    case "DONE":
+      return "gray";
+    case "ACTIVE":
+      return "yellow";
+    default:
+      return "red";
+  }
+};
 
 const HistoryList: React.FC<HistoryListProps> = ({
   profileImg,
@@ -22,10 +35,9 @@ const HistoryList: React.FC<HistoryListProps> = ({
   appointmentTime,
   time,
   boardId,
-  buttonText,
 }) => {
   return (
-    <div className="inline-flex h-[61px] w-full items-center px-10 text-18">
+    <div className="inline-flex h-[61px] items-center px-10 text-18">
       <div className="flex w-[172px] items-center gap-10 p-10">
         <Image
           src={profileImg}
@@ -37,29 +49,20 @@ const HistoryList: React.FC<HistoryListProps> = ({
         <div>{nickname}</div>
       </div>
       <div className="flex w-[119px] items-center justify-center">
-        <Badge size="l" color="red">
-          {/* 추후 뱃지 컬러를 동적으로 받는 로직 작성 필요 */}
+        <Badge size="l" color={getBadgeColor(status)}>
           {status}
         </Badge>
       </div>
       <Link href={`/board/${boardId}`} passHref>
-        <div className="flex w-[210px] cursor-pointer items-center justify-center truncate text-warmGray600">
+        <div className="flex w-[300px] cursor-pointer items-center justify-center truncate text-warmGray600">
           {title}
         </div>
       </Link>
       <div className="flex w-[255px] items-center justify-center text-warmGray600">
         {appointmentTime}
       </div>
-      <div className="flex w-[82px] items-center justify-center text-warmGray600">
+      <div className="flex w-[250px] items-center justify-center text-warmGray600">
         {time}시간
-      </div>
-      <div className="flex w-[152px] items-center justify-center">
-        <Button
-          size="m"
-          variant="primary"
-          design="outline"
-          main={`${buttonText}`}
-        ></Button>
       </div>
     </div>
   );

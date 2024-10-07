@@ -15,8 +15,6 @@ export default function BoardPage() {
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태
   const [submittedKeyword, setSubmittedKeyword] = useState(""); // 제출된 검색어 상태
 
-  console.log(searchKeyword);
-
   // useFetchBoardList에서 가져온 데이터를 명시적으로 BoardListResponses로 처리
   const { data, isLoading, error } = useFetchBoardList();
 

@@ -10,3 +10,4 @@ export * from "./member";
 export * from "./rank";
 export * from "./rate";
 export * from "./review";
+export * from "./activity";

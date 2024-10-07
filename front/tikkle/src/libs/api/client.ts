@@ -26,7 +26,6 @@ export const handleApiRequest = async <T, M extends HttpMethod, D = undefined>(
       data,
       ...config,
     });
-    console.log(response);
     return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {

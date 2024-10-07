@@ -56,7 +56,7 @@ const Button: React.FC<ButtonProps> = ({
       {/* Left 텍스트 (옵셔널) */}
       {left && <div className="font-normal">{left}</div>}
       {/* Main 텍스트 (필수) */}
-      <div className="font-semibold">{main}</div>
+      <div className="ont-semibold">{main}</div>
       {/* Right 텍스트 (옵셔널) */}
       {right && <div className="font-normal">{right}</div>}
     </button>

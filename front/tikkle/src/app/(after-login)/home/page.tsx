@@ -10,6 +10,7 @@ import Chart from "@/components/chart/Chart";
 import RankList from "@/components/list/RankList";
 import { useFetchMypageMember } from "@/hooks";
 import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
+import { useFetchBoardList } from "@/hooks/board";
 
 export default function Home() {
   const member = useMypageStore((state) => state.member); // zustand에서 현재 member 상태 가져오기
@@ -22,22 +23,14 @@ export default function Home() {
     }
   }, [member]);
 
-  const { data, isLoading, error } = useFetchMypageMember(); // 인자 없이 호출
+  const { data: memberData, isLoading, error } = useFetchMypageMember(); // 인자 없이 호출
 
   useEffect(() => {
-    if (data && !member && fetchData) {
-      setMember(data); // member 상태가 없을 때만 zustand에 저장
+    if (memberData && !member && fetchData) {
+      setMember(memberData); // member 상태가 없을 때만 zustand에 저장
       setFetchData(false); // 데이터를 받아온 후 다시 API 호출을 막기 위해 설정
     }
-  }, [data, member, setMember, fetchData]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: 데이터를 불러오는 중 문제가 발생했습니다.</div>;
-  }
+  }, [memberData, member, setMember, fetchData]);
 
   console.log("zustand member state:", member);
 
@@ -66,19 +59,7 @@ export default function Home() {
     };
   });
 
-  const testCards = [
-    {
-      title: "Announcement",
-      status: "Active",
-      writer: "John Doe",
-      createdAt: "2024.09.10 10:00",
-      time: 10,
-      context:
-        "This is an important announcement regarding the upcoming event. Please read carefully.",
-    },
-    // ... 추가 카드 데이터
-  ];
-
+  const { data: boardList } = useFetchBoardList();
   return (
     <div className="flex w-full flex-col items-start gap-10">
       <div className="w-full text-40 font-bold text-teal900">SSAFY의 티끌</div>
@@ -97,16 +78,16 @@ export default function Home() {
           speed={10000} // 슬라이드 전환 속도를 느리게 설정
           scrollbar={{ draggable: true, hide: true }} // 드래그 가능한 스크롤바 설정
         >
-          {testCards.map((card, index) => (
+          {boardList?.map((card, index) => (
             <SwiperSlide key={index}>
               <BoardCard
-                boardId="1"
+                boardId={card.boardId}
                 title={card.title}
                 status={card.status}
-                writer={card.writer}
+                writer={card.nickname}
                 createdAt={card.createdAt}
                 time={card.time}
-                content={card.context}
+                content={card.content}
               />
             </SwiperSlide>
           ))}
