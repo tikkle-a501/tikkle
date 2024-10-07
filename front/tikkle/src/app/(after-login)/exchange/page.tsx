@@ -38,15 +38,35 @@ export default function Exchange() {
       return;
     }
 
+    // 조건에 따른 확인 메시지
+    const confirmationMessage =
+      exchangeType === "TTOR"
+        ? `${timeToConvertToTikkle}시간으로 ${latestRate.timeToRank * timeToConvertToTikkle}티끌 구매하시겠습니까?`
+        : `${tikkleToConvertToTime}티끌로 ${Math.floor(tikkleToConvertToTime / latestRate.timeToRank)}시간 구매하시겠습니까?`;
+
+    // 확인 창 띄우기
+    if (!window.confirm(confirmationMessage)) {
+      return; // 취소 시 아무 작업도 하지 않음
+    }
+
     const exchangeData = {
       rateId: latestRate?.id, // 최신 환율에서 rateId 가져오기
-      timeToRank: latestRate?.timeToRank || 0,
+      timeToRank: latestRate?.timeToRank,
       quantity:
         exchangeType === "TTOR" ? timeToConvertToTikkle : tikkleToConvertToTime,
       exchangeType,
     };
 
-    createExchangeMutation(exchangeData);
+    createExchangeMutation(exchangeData, {
+      onSuccess: () => {
+        alert("환전이 완료되었습니다."); // 환전 완료 메시지
+        window.location.reload(); // 페이지 새로고침
+      },
+      onError: (error) => {
+        alert("환전 중 오류가 발생했습니다. 다시 시도해주세요.");
+        console.error("Error during exchange:", error);
+      },
+    });
   };
 
   const {
