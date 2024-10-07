@@ -42,7 +42,7 @@ export default function Exchange() {
     const confirmationMessage =
       exchangeType === "TTOR"
         ? `${timeToConvertToTikkle}시간으로 ${latestRate.timeToRank * timeToConvertToTikkle}티끌 구매하시겠습니까?`
-        : `${tikkleToConvertToTime}티끌로 ${Math.floor(tikkleToConvertToTime / latestRate.timeToRank)}시간 구매하시겠습니까?`;
+        : `${tikkleToConvertToTime * latestRate.timeToRank}티끌로 ${tikkleToConvertToTime}시간 구매하시겠습니까?`;
 
     // 확인 창 띄우기
     if (!window.confirm(confirmationMessage)) {
@@ -256,14 +256,16 @@ export default function Exchange() {
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
                   value={tikkleToConvertToTime}
-                  onChange={(e) => {
-                    const inputTime = Math.min(
-                      Number(e.target.value),
-                      accountData?.timeQnt || 0,
-                    );
-                    setTikkleToConvertToTime(inputTime); // 입력된 시간을 업데이트
-                  }}
+                  onChange={(e) =>
+                    setTikkleToConvertToTime(
+                      Math.min(
+                        Number(e.target.value),
+                        maxExchangeableTimeFromPoints, // 최대 티끌 환전 가능 값으로 적용
+                      ),
+                    )
+                  }
                 />
+
                 <div className="ml-4 whitespace-nowrap">시간</div>
               </div>
               <div>=</div>
