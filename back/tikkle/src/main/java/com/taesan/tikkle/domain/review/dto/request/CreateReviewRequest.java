@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateReviewRequest {
-	private UUID appointmentId;
+	private UUID chatroomId;
 	private String type;
 }
