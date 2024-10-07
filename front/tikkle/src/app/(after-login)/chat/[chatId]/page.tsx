@@ -265,7 +265,7 @@ export default function ChatId() {
             <ChatList
               key={index}
               content={chat.content}
-              createdAt={chat.timestamp}
+              timestamp={chat.timestamp}
               senderId={chat.senderId}
               isMine={chat.senderId === memberId}
             />
