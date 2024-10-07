@@ -49,7 +49,8 @@ public class ChatroomService {
 		Member writer = board.getMember();
 		Member performer = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-		if (chatroomRepository.findByBoardId(request.getBoardId()).isPresent()) {
+		// TODO : writer performer 중복체크
+		if (chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(),writer.getId(),performer.getId()).isPresent()) {
 			throw new CustomException(ErrorCode.CHATROOM_EXISTS);
 		}
 		Chatroom chatroom = new Chatroom(board, performer, writer);
