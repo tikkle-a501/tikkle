@@ -24,7 +24,6 @@ export default function Exchange() {
     error: exchangeError,
   } = useCreateExchange();
 
-  // 시간 -> 티끌, 티끌 -> 시간 각각의 상태를 관리
   const [timeToConvertToTikkle, setTimeToConvertToTikkle] = useState(0); // 시간 -> 티끌
   const [tikkleToConvertToTime, setTikkleToConvertToTime] = useState(0); // 티끌 -> 시간
 
@@ -38,19 +37,17 @@ export default function Exchange() {
       return;
     }
 
-    // 조건에 따른 확인 메시지
     const confirmationMessage =
       exchangeType === "TTOR"
         ? `${timeToConvertToTikkle}시간으로 ${latestRate.timeToRank * timeToConvertToTikkle}티끌 구매하시겠습니까?`
         : `${tikkleToConvertToTime * latestRate.timeToRank}티끌로 ${tikkleToConvertToTime}시간 구매하시겠습니까?`;
 
-    // 확인 창 띄우기
     if (!window.confirm(confirmationMessage)) {
-      return; // 취소 시 아무 작업도 하지 않음
+      return;
     }
 
     const exchangeData = {
-      rateId: latestRate?.id, // 최신 환율에서 rateId 가져오기
+      rateId: latestRate?.id,
       timeToRank: latestRate?.timeToRank,
       quantity:
         exchangeType === "TTOR" ? timeToConvertToTikkle : tikkleToConvertToTime,
@@ -59,8 +56,8 @@ export default function Exchange() {
 
     createExchangeMutation(exchangeData, {
       onSuccess: () => {
-        alert("환전이 완료되었습니다."); // 환전 완료 메시지
-        window.location.reload(); // 페이지 새로고침
+        alert("환전이 완료되었습니다.");
+        // window.location.reload();
       },
       onError: (error) => {
         alert("환전 중 오류가 발생했습니다. 다시 시도해주세요.");
@@ -73,13 +70,13 @@ export default function Exchange() {
     data: latestRate,
     isPending,
     error: fetchError,
-  } = useFetchRecentRate(); // 최근 환율 조회
+  } = useFetchRecentRate();
 
   const {
     data: accountData,
     isPending: isAccountPending,
     error: fetchAccountError,
-  } = useFetchAccount(); // 계좌 정보 조회
+  } = useFetchAccount();
 
   const maxExchangeableTimeFromPoints =
     latestRate && accountData
@@ -88,19 +85,16 @@ export default function Exchange() {
 
   const maxExchangeableTime = accountData ? accountData.timeQnt : 0;
 
-  // 환전 버튼의 메인 텍스트 계산 함수
   const getExchangeText = (exchangeType: "TTOR" | "RTOT") => {
     if (!latestRate) {
-      return exchangeType === "TTOR" ? `티끌 구매` : `시간 구매`; // 기본 텍스트
+      return exchangeType === "TTOR" ? `티끌 구매` : `시간 구매`;
     }
 
     if (exchangeType === "TTOR") {
-      // 시간 -> 티끌
       const tikkleValue = timeToConvertToTikkle * latestRate.timeToRank;
       return `${tikkleValue} 티끌 구매`;
     }
 
-    // 티끌 -> 시간
     const timeValue = Math.floor(tikkleToConvertToTime / latestRate.timeToRank);
     return `${timeValue} 시간 구매`;
   };
@@ -186,9 +180,13 @@ export default function Exchange() {
                 size="l"
                 variant="primary"
                 design="fill"
-                main={getExchangeText("TTOR")} // 동적으로 텍스트 변경
+                main={getExchangeText("TTOR")}
                 onClick={() => handleExchange("TTOR")}
-                disabled={isExchanging}
+                disabled={
+                  isExchanging ||
+                  timeToConvertToTikkle === 0 ||
+                  timeToConvertToTikkle === 0
+                }
               >
                 <span className="material-symbols-outlined">bubble_chart</span>
               </Button>
@@ -199,7 +197,8 @@ export default function Exchange() {
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
-                  value={timeToConvertToTikkle}
+                  placeholder="0"
+                  value={timeToConvertToTikkle || ""}
                   onChange={(e) =>
                     setTimeToConvertToTikkle(
                       Math.min(Number(e.target.value), maxExchangeableTime),
@@ -217,7 +216,7 @@ export default function Exchange() {
                     latestRate
                       ? timeToConvertToTikkle * latestRate.timeToRank
                       : 0
-                  } // 환전될 티끌 값 계산
+                  }
                   disabled
                 />
                 <div className="ml-4 whitespace-nowrap">티끌</div>
@@ -243,33 +242,35 @@ export default function Exchange() {
                 design="fill"
                 main={`${tikkleToConvertToTime} 시간 구매`}
                 onClick={() => handleExchange("RTOT")}
-                disabled={isExchanging}
+                disabled={
+                  isExchanging ||
+                  tikkleToConvertToTime === 0 ||
+                  tikkleToConvertToTime === 0
+                }
               >
                 <span className="material-symbols-outlined">access_time</span>
               </Button>
             </div>
 
             <div className="flex flex-1 items-center justify-center gap-10">
-              {/* 왼쪽 인풋: 시간을 입력하면 오른쪽에 티끌이 계산됨 */}
               <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
-                  value={tikkleToConvertToTime}
+                  placeholder="0"
+                  value={tikkleToConvertToTime || ""}
                   onChange={(e) =>
                     setTikkleToConvertToTime(
                       Math.min(
                         Number(e.target.value),
-                        maxExchangeableTimeFromPoints, // 최대 티끌 환전 가능 값으로 적용
+                        maxExchangeableTimeFromPoints,
                       ),
                     )
                   }
                 />
-
                 <div className="ml-4 whitespace-nowrap">시간</div>
               </div>
               <div>=</div>
-              {/* 오른쪽 인풋: 입력된 시간에 따른 티끌 값 계산 */}
               <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
@@ -278,7 +279,7 @@ export default function Exchange() {
                     latestRate
                       ? tikkleToConvertToTime * latestRate.timeToRank
                       : 0
-                  } // 시간에 따른 티끌 계산
+                  }
                   disabled
                 />
                 <div className="ml-4 whitespace-nowrap">티끌</div>
