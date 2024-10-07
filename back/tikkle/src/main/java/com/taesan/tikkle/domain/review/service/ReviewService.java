@@ -12,6 +12,7 @@ import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.domain.review.dto.request.CreateReviewRequest;
+import com.taesan.tikkle.domain.review.dto.response.ReviewIdResponse;
 import com.taesan.tikkle.domain.review.dto.response.ReviewListResponse;
 import com.taesan.tikkle.domain.review.entity.Review;
 import com.taesan.tikkle.domain.review.repository.ReviewRepository;
@@ -28,7 +29,7 @@ public class ReviewService {
 	private final AppointmentRepository appointmentRepository;
 	private final MemberRepository memberRepository;
 
-	public UUID createReview(CreateReviewRequest request, UUID senderId) {
+	public ReviewIdResponse createReview(CreateReviewRequest request, UUID senderId) {
 		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(request.getChatroomId())
 			.orElseThrow(
 				() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
@@ -39,7 +40,7 @@ public class ReviewService {
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 		Review review = new Review(sender, receiver, request.getType());
 		reviewRepository.save(review);
-		return review.getId();
+		return new ReviewIdResponse(review.getId());
 	}
 
 	public List<ReviewListResponse> getReviews(UUID memberId) {
