@@ -9,9 +9,11 @@ import org.springframework.context.annotation.Primary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 @Configuration
 public class JacksonConfig {
@@ -34,11 +36,13 @@ public class JacksonConfig {
 		javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
 
 		// 모듈 등록
+		mapper.registerModule(new Jdk8Module());
+		mapper.registerModule(new ParameterNamesModule());
 		mapper.registerModule(javaTimeModule);
 
 		// 다른 설정들
 		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-		mapper.findAndRegisterModules();
+		// mapper.findAndRegisterModules();
 
 		return mapper;
 	}
