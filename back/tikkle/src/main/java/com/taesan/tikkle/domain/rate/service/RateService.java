@@ -69,8 +69,14 @@ public class RateService {
 		return RateResponse.from(rate);
 	}
 
-	public Rate findById(UUID rateId) {
-		return rateRepository.findById(rateId).orElseThrow(() -> new CustomException(ErrorCode.RATE_NOT_FOUND));
+	public Rate findByIdAndRecentRate(UUID rateId) {
+		Rate rate = rateRepository.findById(rateId).orElseThrow(() -> new CustomException(ErrorCode.RATE_NOT_FOUND));
+		Rate recentRate = rateRepository.findTopByOrderByCreatedAtDesc()
+			.orElseThrow(() -> new CustomException(ErrorCode.RATE_NOT_FOUND));
+		if (rate.getId().equals(recentRate.getId())) {
+			return rate;
+		}
+		return recentRate;
 	}
 
 	private LocalDateTime getOneHourAgo() {
