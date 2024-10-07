@@ -1,5 +1,17 @@
 package com.taesan.tikkle.domain.chat.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.chat.dto.request.CreateChatroomRequest;
@@ -16,20 +28,11 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 @Service
 public class ChatroomService {
+
+	private static final Logger logger = LoggerFactory.getLogger(ChatroomService.class);
+
 	@Autowired
 	private ChatroomRepository chatroomRepository;
 
@@ -50,7 +53,8 @@ public class ChatroomService {
 		Member performer = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 		// TODO : writer performer 중복체크
-		if (chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(),writer.getId(),performer.getId()).isPresent()) {
+		if (chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(), writer.getId(),
+			performer.getId()).isPresent()) {
 			throw new CustomException(ErrorCode.CHATROOM_EXISTS);
 		}
 		Chatroom chatroom = new Chatroom(board, performer, writer);
@@ -74,8 +78,10 @@ public class ChatroomService {
 		boolean isWriter) {
 		for (Chatroom chatroom : chatrooms) {
 			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
+			logger.debug("lastChat senderId, timestamp: {}, {}", lastChat.getSenderId(), lastChat.getTimestamp());
 			if (lastChat != null) {
-				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull((UUID.fromString(lastChat.getSenderId())))
+				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(
+						(UUID.fromString(lastChat.getSenderId())))
 					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
 				// 대화 상대에 따라 performer와 writer 구분
@@ -122,7 +128,8 @@ public class ChatroomService {
 		logger.info("변환 전 Chats : {} ", cs);
 		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString())
 			.stream()
-			.map(chat -> new ChatResponse((UUID.fromString(chat.getSenderId())), chat.getContent(), chat.getTimestamp()))
+			.map(
+				chat -> new ChatResponse((UUID.fromString(chat.getSenderId())), chat.getContent(), chat.getTimestamp()))
 			.collect(Collectors.toList());
 
 		// 로그: 조회된 채팅 목록의 크기 출력
