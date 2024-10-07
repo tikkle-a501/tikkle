@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,9 @@ import com.taesan.tikkle.domain.chat.repository.ChatRepository;
 public class KafkaProducer {
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
+
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 
 	@Autowired
 	private ChatRepository chatRepository;
@@ -38,7 +42,8 @@ public class KafkaProducer {
 			chatMessage.getChatroomId(), chatMessage.getSenderId(), chatMessage.getContent());
 
 		// ChatMessageResponse 객체 생성
-		ChatMessageResponse response = new ChatMessageResponse(chatMessage.getContent(), chat.getTimestamp(), chatMessage.getSenderId());
+		ChatMessageResponse response = new ChatMessageResponse(chatMessage.getContent(), chat.getTimestamp(),
+			chatMessage.getSenderId());
 
 		try {
 			// 로그: 직렬화 시작
@@ -55,7 +60,7 @@ public class KafkaProducer {
 
 			// 로그: Kafka 메시지 전송 완료
 			logger.info("Kafka 메시지 전송 완료. 토픽: chatroom.{}", chatMessage.getChatroomId());
-
+			simpMessagingTemplate.convertAndSend("/topic/chatroom." + chatMessage.getChatroomId(), response);
 		} catch (JsonProcessingException e) {
 			// 로그: 직렬화 오류 발생
 			logger.error("JSON 직렬화 중 오류 발생: {}", e.getMessage());
