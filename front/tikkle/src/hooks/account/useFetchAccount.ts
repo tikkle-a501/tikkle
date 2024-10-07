@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { AccountGetResponses } from "@/types";
+import { AccountGetResponse } from "@/types";
 import { fetchAccount } from "@/libs";
 
 export const useFetchAccount = () => {
-  return useQuery<AccountGetResponses, Error>({
+  return useQuery<AccountGetResponse, Error>({
     refetchInterval: false,
     retry: false,
     queryKey: ["account"],
