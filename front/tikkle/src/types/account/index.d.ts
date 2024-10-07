@@ -5,10 +5,6 @@ export interface AccountGetResponse {
   rankingPoint: number;
 }
 
-export interface AccountGetResponses {
-  data: AccountGetResponse[];
-}
-
 // 거래 내역 조회
 export interface TradeMemberGetResponse {
   id: string;

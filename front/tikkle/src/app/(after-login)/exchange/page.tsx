@@ -2,7 +2,8 @@
 
 import Button from "@/components/button/Button";
 import Chart from "@/components/chart/Chart";
-import { useFetchRecentRate, useCreateRate } from "@/hooks";
+import { useFetchRecentRate, useCreateRate, useFetchAccount } from "@/hooks";
+import Loading from "@/components/loading/Loading";
 
 export default function Exchange() {
   const {
@@ -21,6 +22,12 @@ export default function Exchange() {
     error: fetchError,
   } = useFetchRecentRate(); // 최근 환율 조회
 
+  const {
+    data: accountData,
+    isPending: isAccountPending,
+    error: fetchAccountError,
+  } = useFetchAccount(); // 계좌 정보 조회
+
   return (
     <>
       {/* title: 환전 */}
@@ -36,7 +43,7 @@ export default function Exchange() {
               <div className="text-34 text-teal900">1시간 = </div>
               <div className="text-34 font-bold text-teal500">
                 {isPending ? (
-                  "환율 정보를 불러오는 중..."
+                  <Loading />
                 ) : fetchError ? (
                   <div className="text-red-500">
                     Error: {fetchError.message}
@@ -54,15 +61,36 @@ export default function Exchange() {
             </div>
           </div>
 
+          {/* account 정보 */}
           <div className="flex">
             <div className="flex items-center justify-center gap-10 px-10">
               <div className="text-teal900">나의 보유 시간</div>
-              <div className="text-34 font-bold text-teal500">0</div>
+              <div className="text-34 font-bold text-teal500">
+                {isAccountPending ? (
+                  <Loading />
+                ) : fetchAccountError ? (
+                  <div className="text-red-500">
+                    Error: {fetchAccountError.message}
+                  </div>
+                ) : (
+                  accountData?.timeQnt
+                )}
+              </div>
               <div className="text-34 text-teal900">시간</div>
             </div>
             <div className="flex items-center justify-center gap-10 px-10">
               <div className="text-teal900">나의 보유 티끌</div>
-              <div className="text-34 font-bold text-teal500">0</div>
+              <div className="text-34 font-bold text-teal500">
+                {isAccountPending ? (
+                  <Loading />
+                ) : fetchAccountError ? (
+                  <div className="text-red-500">
+                    Error: {fetchAccountError.message}
+                  </div>
+                ) : (
+                  accountData?.rankingPoint
+                )}
+              </div>
               <div className="text-34 text-teal900">티끌</div>
             </div>
           </div>
