@@ -66,9 +66,7 @@ export default function Exchange() {
       ? Math.floor(accountData.rankingPoint / latestRate.timeToRank)
       : 0;
 
-  const maxExchangeableTime = accountData
-    ? Math.min(accountData.timeQnt, maxExchangeableTimeFromPoints)
-    : 0;
+  const maxExchangeableTime = accountData ? accountData.timeQnt : 0;
 
   // 환전 버튼의 메인 텍스트 계산 함수
   const getExchangeText = (exchangeType: "TTOR" | "RTOT") => {
@@ -223,7 +221,7 @@ export default function Exchange() {
                 size="l"
                 variant="primary"
                 design="fill"
-                main={getExchangeText("RTOT")} // 동적으로 텍스트 변경
+                main={`${tikkleToConvertToTime} 시간 구매`}
                 onClick={() => handleExchange("RTOT")}
                 disabled={isExchanging}
               >
