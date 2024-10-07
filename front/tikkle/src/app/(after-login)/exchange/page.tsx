@@ -24,7 +24,9 @@ export default function Exchange() {
     error: exchangeError,
   } = useCreateExchange();
 
-  const [timeToConvert, setTimeToConvert] = useState(0); // 환전할 시간
+  // 시간 -> 티끌, 티끌 -> 시간 각각의 상태를 관리
+  const [timeToConvertToTikkle, setTimeToConvertToTikkle] = useState(0); // 시간 -> 티끌
+  const [tikkleToConvertToTime, setTikkleToConvertToTime] = useState(0); // 티끌 -> 시간
 
   const handleCreateRate = () => {
     createRateMutation(); // 테스트용 환율 생성 요청
@@ -39,7 +41,8 @@ export default function Exchange() {
     const exchangeData = {
       rateId: latestRate?.rateId, // 최신 환율에서 rateId 가져오기
       timeToRank: latestRate?.timeToRank || 0,
-      quantity: timeToConvert,
+      quantity:
+        exchangeType === "TTOR" ? timeToConvertToTikkle : tikkleToConvertToTime,
       exchangeType,
     };
 
@@ -73,9 +76,9 @@ export default function Exchange() {
       return exchangeType === "TTOR" ? `시간 구매` : `티끌 구매`; // 기본 텍스트
     }
     if (exchangeType === "TTOR") {
-      return `${timeToConvert} 시간 구매`; // 시간 -> 티끌
+      return `${timeToConvertToTikkle} 시간 구매`; // 시간 -> 티끌
     }
-    return `${Math.floor(timeToConvert * latestRate.timeToRank)} 티끌 구매`; // 티끌 -> 시간
+    return `${Math.floor(tikkleToConvertToTime / latestRate.timeToRank)} 티끌 구매`; // 티끌 -> 시간
   };
 
   return (
@@ -172,9 +175,9 @@ export default function Exchange() {
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
-                  value={timeToConvert}
+                  value={timeToConvertToTikkle}
                   onChange={(e) =>
-                    setTimeToConvert(
+                    setTimeToConvertToTikkle(
                       Math.min(Number(e.target.value), maxExchangeableTime),
                     )
                   }
@@ -186,7 +189,11 @@ export default function Exchange() {
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
-                  value={latestRate ? timeToConvert * latestRate.timeToRank : 0} // 환전될 티끌 값 계산
+                  value={
+                    latestRate
+                      ? timeToConvertToTikkle * latestRate.timeToRank
+                      : 0
+                  } // 환전될 티끌 값 계산
                   disabled
                 />
                 <div className="ml-4 whitespace-nowrap">티끌</div>
@@ -222,17 +229,17 @@ export default function Exchange() {
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
-                  value={timeToConvert}
+                  value={tikkleToConvertToTime}
                   onChange={(e) =>
-                    setTimeToConvert(
+                    setTikkleToConvertToTime(
                       Math.min(
                         Number(e.target.value),
-                        maxExchangeableTimeFromPoints,
+                        accountData?.timeQnt || 0,
                       ),
                     )
                   }
                 />
-                <div className="ml-4 whitespace-nowrap">시간</div>
+                <div className="ml-4 whitespace-nowrap">티끌</div>
               </div>
               <div>=</div>
               <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
@@ -241,17 +248,19 @@ export default function Exchange() {
                   type="number"
                   value={
                     latestRate
-                      ? Math.floor(timeToConvert / latestRate.timeToRank)
+                      ? Math.floor(
+                          tikkleToConvertToTime / latestRate.timeToRank,
+                        )
                       : 0
                   } // 환전될 시간 값 계산
                   disabled
                 />
-                <div className="ml-4 whitespace-nowrap">티끌</div>
+                <div className="ml-4 whitespace-nowrap">시간</div>
               </div>
             </div>
 
             <div className="text-sm text-warmGray500">
-              최대 {maxExchangeableTimeFromPoints}시간까지 환전 가능
+              최대 {accountData?.timeQnt || 0}시간까지 환전 가능
             </div>
           </div>
         </div>
