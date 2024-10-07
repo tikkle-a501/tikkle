@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import InfoBox from "@/components/box/InfoBox";
 import InfoBoxLoading from "@/components/loading/InfoBoxLoading";
+import { useMypageStore } from "@/store/mypageStore";
 
 export default function MypageLayout({
   children,
@@ -20,9 +21,21 @@ export default function MypageLayout({
 
   const [isInfoBoxLoaded] = useState(true);
 
+  const member = useMypageStore((state) => state.member);
+  const setMember = useMypageStore((state) => state.setMember);
+
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+
+    if (!member) {
+      setMember({
+        id: "1",
+        name: testData.name,
+        nickname: "jane_doe",
+        email: testData.email,
+      });
+    }
+  }, [member, setMember]);
 
   return (
     <>
@@ -31,9 +44,9 @@ export default function MypageLayout({
         {isMounted ? (
           <InfoBox
             profileImg={testData.profileImg}
-            name={testData.name}
-            email={testData.email}
-            rate={testData.rate}
+            name={member?.name ?? "이름 없음"}
+            email={member?.email ?? testData.email}
+            rate={3}
           />
         ) : (
           <InfoBoxLoading />
