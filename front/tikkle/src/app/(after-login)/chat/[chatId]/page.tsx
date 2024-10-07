@@ -15,6 +15,7 @@ import { Client } from "@stomp/stompjs";
 import { Chat } from "@/types/chat";
 import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppointmentByRoomId";
 import { useDeleteAppointmentById } from "@/hooks/appointment/useDeleteAppointmentById";
+import { useMypageStore } from "@/store/mypageStore";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -22,9 +23,10 @@ export default function ChatId() {
   // URL에서 roomId 추출 (예: '/chat/31000000-0000-0000-0000-000000000000')
   const roomId = pathname.split("/").pop()!; // 경로의 마지막 부분이 roomId, Non-null assertion 사용
 
-  // 특정 유저 ID 설정
-  // TODO: 하드코딩된 유저ID를 로그인된 유저ID 받아오는 로직
-  const memberId = "150e6552-807e-11ef-896d-0242ac120005";
+  // zustand에서 member 상태 가져오기
+  const member = useMypageStore((state) => state.member);
+  const memberId = member?.id; // member가 존재할 경우 memberId 가져오기
+
   const {
     data: chatroomData,
     error: chatroomError,
