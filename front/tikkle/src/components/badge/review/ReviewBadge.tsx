@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface ReviewBadgeProps {
   type: "time" | "accuracy" | "workload" | "kindness" | "fastReply";
+  onClick: (type: string, content: string) => void; // type과 content를 부모로 전달
 }
 
-const ReviewBadge: React.FC<ReviewBadgeProps> = ({ type }) => {
+const ReviewBadge: React.FC<ReviewBadgeProps> = ({ type, onClick }) => {
+  const [isSelected, setIsSelected] = useState(false); // 배지의 선택 상태 관리
+
   let emoji = "";
   let text = "";
 
@@ -34,8 +37,18 @@ const ReviewBadge: React.FC<ReviewBadgeProps> = ({ type }) => {
       text = "-";
   }
 
+  const handleClick = () => {
+    setIsSelected(!isSelected);
+    onClick(type, text); // type과 해당 텍스트(content)를 함께 부모로 전달
+  };
+
   return (
-    <div className="bg-baseWhite m-2 inline-flex items-center rounded-round border border-coolGray200 px-6 py-4 text-12 font-medium text-gray-700">
+    <div
+      onClick={handleClick}
+      className={`rm-2 flex cursor-pointer items-center justify-center rounded-round border border-coolGray200 px-6 py-4 text-12 font-medium text-gray-700 ${
+        isSelected ? "bg-warmGray100" : "bg-baseWhite"
+      }`}
+    >
       <span>{emoji}</span>
       <span className="ml-2">{text}</span>
     </div>
