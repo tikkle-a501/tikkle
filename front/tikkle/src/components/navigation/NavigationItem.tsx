@@ -10,7 +10,7 @@ interface CustomLinkProps {
 
 const NavigationItem: React.FC<CustomLinkProps> = ({ href, children }) => {
   const pathname = usePathname();
-  const isActive = pathname.includes(href); // 현재 경로와 링크 경로가 일치하는지 확인
+  const isActive = pathname.startsWith(href); // 경로가 특정 경로로 시작하는지 확인
 
   return (
     <Link href={href} className={`p-10 ${isActive ? "font-semibold" : ""}`}>
