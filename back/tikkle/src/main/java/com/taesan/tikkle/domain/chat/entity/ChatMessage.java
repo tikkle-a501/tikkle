@@ -24,7 +24,7 @@ public class ChatMessage {
 	@JsonCreator
 	public ChatMessage(
 		@JsonProperty("chatroomId") String chatroomId,
-		@JsonProperty("memberId") String senderId,
+		@JsonProperty("senderId") String senderId,
 		@JsonProperty("content") String content) {
 		this.chatroomId = chatroomId;
 		this.senderId = senderId;
