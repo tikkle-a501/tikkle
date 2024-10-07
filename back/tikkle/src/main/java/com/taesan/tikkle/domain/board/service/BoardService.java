@@ -69,6 +69,7 @@ public class BoardService {
 	public void createBoard(BoardRequest request, UUID memberId) {
 		Member member = memberRepository.findById(memberId).orElseThrow();
 		Board board = request.toBoard(member);
+		board.changeStatus("POSTED");
 		boardRepository.save(board);
 
 	}
