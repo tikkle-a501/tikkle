@@ -14,6 +14,7 @@ export default function BoardPage() {
   // 검색어 상태 관리
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태
   const [submittedKeyword, setSubmittedKeyword] = useState(""); // 제출된 검색어 상태
+  const [selectedCategory, setSelectedCategory] = useState("전체"); // 선택된 카테고리 상태
 
   // useFetchBoardList에서 가져온 데이터를 명시적으로 BoardListResponses로 처리
   const { data, isLoading, error } = useFetchBoardList();
@@ -28,17 +29,26 @@ export default function BoardPage() {
   // 검색어가 있을 경우 검색 결과, 없으면 전체 리스트
   const boardList = submittedKeyword ? searchData : data || [];
 
+  // 선택된 카테고리로 필터링된 리스트
+  const filteredBoardList =
+    selectedCategory === "전체"
+      ? boardList
+      : boardList?.filter((board) => board.category === selectedCategory);
+
   // 현재 페이지에서 보여줄 카드들 계산
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = boardList?.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = filteredBoardList?.slice(
+    indexOfFirstCard,
+    indexOfLastCard,
+  );
 
   // 페이지 변경 핸들러
   const paginate = (pageNumber: SetStateAction<number>) =>
     setCurrentPage(pageNumber);
 
   // 총 페이지 수 계산
-  const totalPages = Math.ceil((boardList?.length || 0) / cardsPerPage);
+  const totalPages = Math.ceil((filteredBoardList?.length || 0) / cardsPerPage);
 
   // 검색창에서 엔터키를 감지하여 submit 처리
   const handleSearchSubmit = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -61,7 +71,13 @@ export default function BoardPage() {
       <div className="text-40 font-bold text-teal900">SSAFY의 티끌</div>
       {/* 헤더 */}
       <div className="flex w-full items-center justify-between self-stretch px-10">
-        <select name="category" id="category">
+        <select
+          name="category"
+          id="category"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)} // 카테고리 선택 핸들러
+        >
+          <option value="전체">전체</option>
           <option value="업무">업무</option>
           <option value="비업무">비업무</option>
         </select>
