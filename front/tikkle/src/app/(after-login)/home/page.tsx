@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import BoardCard from "@/components/card/BoardCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Scrollbar } from "swiper/modules";
@@ -7,7 +8,39 @@ import "swiper/css/scrollbar";
 import "./custom-swiper.css";
 import Chart from "@/components/chart/Chart";
 import RankList from "@/components/list/RankList";
+import { useFetchMypageMember } from "@/hooks";
+import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
+
 export default function Home() {
+  const member = useMypageStore((state) => state.member); // zustand에서 현재 member 상태 가져오기
+  const setMember = useMypageStore((state) => state.setMember); // zustand에서 setMember 가져오기
+  const [fetchData, setFetchData] = useState(false); // API 호출 여부를 제어하기 위한 로컬 상태
+
+  useEffect(() => {
+    if (!member) {
+      setFetchData(true); // member가 없으면 데이터를 받아오도록 설정
+    }
+  }, [member]);
+
+  const { data, isLoading, error } = useFetchMypageMember(); // 인자 없이 호출
+
+  useEffect(() => {
+    if (data && !member && fetchData) {
+      setMember(data); // member 상태가 없을 때만 zustand에 저장
+      setFetchData(false); // 데이터를 받아온 후 다시 API 호출을 막기 위해 설정
+    }
+  }, [data, member, setMember, fetchData]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: 데이터를 불러오는 중 문제가 발생했습니다.</div>;
+  }
+
+  console.log("zustand member state:", member);
+
   const rankData = Array.from({ length: 10 }, (_, i) => {
     const rankNumber = i + 1;
     let rank: "first" | "second" | "third" | "others";
@@ -32,6 +65,7 @@ export default function Home() {
       count: Math.floor(Math.random() * 500),
     };
   });
+
   const testCards = [
     {
       title: "Announcement",
@@ -42,105 +76,7 @@ export default function Home() {
       context:
         "This is an important announcement regarding the upcoming event. Please read carefully.",
     },
-    {
-      title: "Maintenance Update",
-      status: "Scheduled",
-      writer: "Jane Smith",
-      createdAt: "2024.09.09 13:00",
-      time: 2.5,
-      context:
-        "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: 11,
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "Announcement",
-      status: "Active",
-      writer: "John Doe",
-      createdAt: "2024.09.10 10:00",
-      time: 10,
-      context:
-        "This is an important announcement regarding the upcoming event. Please read carefully.",
-    },
-    {
-      title: "Maintenance Update",
-      status: "Scheduled",
-      writer: "Jane Smith",
-      createdAt: "2024.09.09 13:00",
-      time: 2.5,
-      context:
-        "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: 11,
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "Announcement",
-      status: "Active",
-      writer: "John Doe",
-      createdAt: "2024.09.10 10:00",
-      time: 10,
-      context:
-        "This is an important announcement regarding the upcoming event. Please read carefully.",
-    },
-    {
-      title: "Maintenance Update",
-      status: "Scheduled",
-      writer: "Jane Smith",
-      createdAt: "2024.09.09 13:00",
-      time: 2.5,
-      context:
-        "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: 11,
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
-    {
-      title: "Announcement",
-      status: "Active",
-      writer: "John Doe",
-      createdAt: "2024.09.10 10:00",
-      time: 11,
-      context:
-        "This is an important announcement regarding the upcoming event. Please read carefully.",
-    },
-    {
-      title: "Maintenance Update",
-      status: "Scheduled",
-      writer: "Jane Smith",
-      createdAt: "2024.09.09 13:00",
-      time: 11,
-      context:
-        "There will be a scheduled maintenance on our servers next week. Expect some downtime.",
-    },
-    {
-      title: "New Policy",
-      status: "Draft",
-      writer: "Admin",
-      createdAt: "2024.09.08 17:30",
-      time: 11,
-      context:
-        "A new policy document has been drafted and is open for review. Please provide your feedback.",
-    },
+    // ... 추가 카드 데이터
   ];
 
   return (

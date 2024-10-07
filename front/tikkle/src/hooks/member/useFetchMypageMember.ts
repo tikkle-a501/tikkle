@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { MypageMemberResponses } from "@/types";
+import { MypageMemberResponse } from "@/types";
 import { fetchMypageMember } from "@/libs";
 
 export const useFetchMypageMember = () => {
-  return useQuery<MypageMemberResponses, Error>({
+  return useQuery<MypageMemberResponse, Error>({
     queryKey: ["mypageMember"],
     queryFn: () => fetchMypageMember(),
   });
