@@ -1,5 +1,5 @@
 export interface Chat {
   senderId: string;
   content: string;
-  timestamp: number[];
+  timestamp: Date; // Java의 LocalDateTime을 Date로 매핑
 }
