@@ -29,6 +29,6 @@ public class KafkaConsumer {
 		// 로그 추가: Kafka 토픽과 메시지 확인
 		logger.info("채팅방 아이디 : {}, 메시지 내용 : {}", record.topic(), chatMessage);
 		// STOMP 메시지 전송
-		simpMessagingTemplate.convertAndSend("/topic/" + record.topic(), chatMessage);
+		simpMessagingTemplate.convertAndSend("/topic/chatroom." + record.topic(), chatMessage);
 	}
 }
