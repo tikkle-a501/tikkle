@@ -15,7 +15,7 @@ import com.taesan.tikkle.domain.chat.repository.ChatRepository;
 @Service
 public class KafkaProducer {
 	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+	private KafkaTemplate<String, ChatMessageResponse> kafkaTemplate;
 
 	@Autowired
 	private ChatRepository chatRepository;
@@ -34,7 +34,7 @@ public class KafkaProducer {
 			// ObjectMapper를 사용하여 ChatMessageResponse 객체를 JSON으로 직렬화
 			String responseJson = objectMapper.writeValueAsString(response);
 			// 직렬화된 JSON 메시지를 Kafka에 전송
-			kafkaTemplate.send("chatroom." + chatMessage.getChatroomId(), responseJson);
+			kafkaTemplate.send("chatroom." + chatMessage.getChatroomId(), response);
 		} catch (JsonProcessingException e) {
 			// 직렬화 오류 처리
 			e.printStackTrace();
