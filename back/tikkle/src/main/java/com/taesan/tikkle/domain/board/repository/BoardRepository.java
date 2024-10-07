@@ -20,6 +20,9 @@ public interface BoardRepository extends JpaRepository<Board, UUID> {
 
 	// 내용에 keyword가 포함되면서 삭제되지 않은 게시물만 검색
 	List<Board> findByContentContainingAndDeletedAtIsNull(String keyword);
+	
+	// memberId에 따른 게시글 조회 최신순으로 반환
+	List<Board> findByMemberIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID username);
 }
 
 

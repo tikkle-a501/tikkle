@@ -2,6 +2,7 @@ package com.taesan.tikkle.domain.member.controller;
 
 import java.util.UUID;
 
+import com.taesan.tikkle.domain.member.dto.response.AllMemberBoardResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class MemberController {
 		MemberResponse memberResponse = memberService.getMemberResponse(username);
 		ApiResponse<MemberResponse> response = ApiResponse.success("회원 정보 불러오기에 성공했습니다.", memberResponse);
 		logger.debug("memberResponse: {}", memberResponse);
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/boards")
+	public ResponseEntity<ApiResponse<AllMemberBoardResponse>> getMemberBoards(@AuthedUsername UUID username) {
+		ApiResponse<AllMemberBoardResponse> response = ApiResponse.success("회원님의 게시글 조회에 성공했습니다.",memberService.getMemberBoard(username));
 		return ResponseEntity.ok(response);
 	}
 }

@@ -57,7 +57,7 @@ public class Board extends AuditableEntity {
 	// 임시로 ACTIVE 상태로 설정
 	public void setStatusActive() {
 		this.status = "ACTIVE";
-	}
+	} // POSTED , ACTIVE , DONE 으로
 
 	@Builder
 	private Board(Member member, List<Chatroom> chatrooms, String title, String content, Integer time, String status, String category, Integer viewCount) {
