@@ -73,12 +73,18 @@ export default function Exchange() {
   // 환전 버튼의 메인 텍스트 계산 함수
   const getExchangeText = (exchangeType: "TTOR" | "RTOT") => {
     if (!latestRate) {
-      return exchangeType === "TTOR" ? `시간 구매` : `티끌 구매`; // 기본 텍스트
+      return exchangeType === "TTOR" ? `티끌 구매` : `시간 구매`; // 기본 텍스트
     }
+
     if (exchangeType === "TTOR") {
-      return `${timeToConvertToTikkle} 시간 구매`; // 시간 -> 티끌
+      // 시간 -> 티끌
+      const tikkleValue = timeToConvertToTikkle * latestRate.timeToRank;
+      return `${tikkleValue} 티끌 구매`;
     }
-    return `${Math.floor(tikkleToConvertToTime / latestRate.timeToRank)} 티끌 구매`; // 티끌 -> 시간
+
+    // 티끌 -> 시간
+    const timeValue = Math.floor(tikkleToConvertToTime / latestRate.timeToRank);
+    return `${timeValue} 시간 구매`;
   };
 
   return (
@@ -201,11 +207,12 @@ export default function Exchange() {
             </div>
 
             <div className="text-sm text-warmGray500">
-              최대 {maxExchangeableTime}시간까지 환전 가능
+              최대 {accountData?.timeQnt || 0}시간까지 환전 가능
             </div>
           </div>
 
           {/* 티끌 -> 시간 */}
+
           <div className="flex flex-1 flex-col gap-10 rounded-12 border border-warmGray200 px-40 py-[30px]">
             <div className="flex items-center justify-between self-stretch pb-10">
               <div className="flex items-end font-semibold text-teal900">
@@ -225,42 +232,41 @@ export default function Exchange() {
             </div>
 
             <div className="flex flex-1 items-center justify-center gap-10">
+              {/* 왼쪽 인풋: 시간을 입력하면 오른쪽에 티끌이 계산됨 */}
               <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
                   value={tikkleToConvertToTime}
-                  onChange={(e) =>
-                    setTikkleToConvertToTime(
-                      Math.min(
-                        Number(e.target.value),
-                        accountData?.timeQnt || 0,
-                      ),
-                    )
-                  }
+                  onChange={(e) => {
+                    const inputTime = Math.min(
+                      Number(e.target.value),
+                      accountData?.timeQnt || 0,
+                    );
+                    setTikkleToConvertToTime(inputTime); // 입력된 시간을 업데이트
+                  }}
                 />
-                <div className="ml-4 whitespace-nowrap">티끌</div>
+                <div className="ml-4 whitespace-nowrap">시간</div>
               </div>
               <div>=</div>
+              {/* 오른쪽 인풋: 입력된 시간에 따른 티끌 값 계산 */}
               <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
                 <input
                   className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
                   type="number"
                   value={
                     latestRate
-                      ? Math.floor(
-                          tikkleToConvertToTime / latestRate.timeToRank,
-                        )
+                      ? tikkleToConvertToTime * latestRate.timeToRank
                       : 0
-                  } // 환전될 시간 값 계산
+                  } // 시간에 따른 티끌 계산
                   disabled
                 />
-                <div className="ml-4 whitespace-nowrap">시간</div>
+                <div className="ml-4 whitespace-nowrap">티끌</div>
               </div>
             </div>
 
             <div className="text-sm text-warmGray500">
-              최대 {accountData?.timeQnt || 0}시간까지 환전 가능
+              최대 {maxExchangeableTimeFromPoints}시간까지 환전 가능
             </div>
           </div>
         </div>
