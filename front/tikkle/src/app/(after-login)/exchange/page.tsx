@@ -50,13 +50,13 @@ export default function Exchange() {
     data: latestRate,
     isPending,
     error: fetchError,
-  } = useFetchRecentRate();
+  } = useFetchRecentRate(); // 최근 환율 조회
 
   const {
     data: accountData,
     isPending: isAccountPending,
     error: fetchAccountError,
-  } = useFetchAccount();
+  } = useFetchAccount(); // 계좌 정보 조회
 
   const maxExchangeableTimeFromPoints =
     latestRate && accountData
@@ -80,10 +80,13 @@ export default function Exchange() {
 
   return (
     <>
+      {/* title: 환전 */}
       <div className="text-40 font-bold text-teal900">환전</div>
 
       <div className="flex flex-col gap-10 px-40 py-20">
+        {/* 보유 재화 */}
         <div className="flex items-start justify-between gap-10 self-stretch px-12">
+          {/* 현재 환율 */}
           <div>
             <div className="flex items-center gap-10">
               <div className="text-20 text-teal900">현재 환율: </div>
@@ -108,6 +111,7 @@ export default function Exchange() {
             </div>
           </div>
 
+          {/* account 정보 */}
           <div className="flex">
             <div className="flex items-center justify-center gap-10 px-10">
               <div className="text-teal900">나의 보유 시간</div>
@@ -142,6 +146,7 @@ export default function Exchange() {
           </div>
         </div>
 
+        {/* 환전 인풋 */}
         <div className="flex h-[228px] gap-10 p-10">
           {/* 시간 -> 티끌 */}
           <div className="flex flex-1 flex-col gap-10 rounded-12 border border-warmGray200 px-40 py-[30px]">
@@ -219,6 +224,7 @@ export default function Exchange() {
           </div>
         </div>
 
+        {/* 환율 그래프 */}
         <div className="flex flex-1 flex-col items-center justify-center gap-10 rounded-10 border border-warmGray200 p-28">
           <Chart />
         </div>
