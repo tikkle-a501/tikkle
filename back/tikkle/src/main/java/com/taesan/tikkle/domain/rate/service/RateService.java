@@ -76,7 +76,7 @@ public class RateService {
 		if (rate.getId().equals(recentRate.getId())) {
 			return rate;
 		}
-		return recentRate;
+		throw new CustomException(ErrorCode.RATE_INVALID);
 	}
 
 	private LocalDateTime getOneHourAgo() {
