@@ -43,6 +43,7 @@ export default function Activity() {
                   boardId={post.boardId}
                   title={post.title}
                   status={post.status}
+                  writer=""
                   createdAt={post.createdAt}
                   time={post.time}
                   content={post.content}
@@ -67,6 +68,7 @@ export default function Activity() {
                   key={post.boardId}
                   boardId={post.boardId}
                   title={post.title}
+                  writer=""
                   status={post.status}
                   createdAt={post.createdAt}
                   time={post.time}
@@ -91,6 +93,7 @@ export default function Activity() {
                 <BoardCard
                   key={post.boardId}
                   boardId={post.boardId}
+                  writer=""
                   title={post.title}
                   status={post.status}
                   createdAt={post.createdAt}
