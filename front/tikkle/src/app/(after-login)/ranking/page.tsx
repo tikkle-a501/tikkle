@@ -70,7 +70,10 @@ function RankingComponent() {
   return (
     <>
       <div className="text-40 font-bold text-teal900">랭킹</div>
-      <div className="flex flex-col items-end justify-center">
+      <div className="flex items-end justify-between">
+        <div className="text-warmGray400">
+          * 랭킹 정보는 매 정각에 자동 갱신됩니다.
+        </div>
         <SearchInput
           width="410px"
           placeholder="사용자명을 입력하세요."
