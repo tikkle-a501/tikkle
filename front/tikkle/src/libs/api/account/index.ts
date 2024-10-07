@@ -1,5 +1,5 @@
 import {
-  AccountGetResponses,
+  AccountGetResponse,
   TradeSearchResponses,
   TradeGetResponses,
 } from "@/types";
@@ -7,7 +7,7 @@ import { handleApiRequest } from "../client";
 
 // 계좌 조회
 export const fetchAccount = async () => {
-  return handleApiRequest<AccountGetResponses, "get">("/account", "get");
+  return handleApiRequest<AccountGetResponse, "get">("/account", "get");
 };
 
 // 거래내역 조회
