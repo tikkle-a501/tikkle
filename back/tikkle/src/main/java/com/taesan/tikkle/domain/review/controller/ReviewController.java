@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.taesan.tikkle.domain.review.dto.request.CreateReviewRequest;
+import com.taesan.tikkle.domain.review.dto.response.ReviewIdResponse;
 import com.taesan.tikkle.domain.review.dto.response.ReviewListResponse;
 import com.taesan.tikkle.domain.review.service.ReviewService;
 import com.taesan.tikkle.global.annotations.AuthedUsername;
@@ -25,7 +26,7 @@ public class ReviewController {
 	private final ReviewService reviewService;
 
 	@PostMapping("")
-	public ResponseEntity<ApiResponse<UUID>> createReview(@RequestBody CreateReviewRequest request,
+	public ResponseEntity<ApiResponse<ReviewIdResponse>> createReview(@RequestBody CreateReviewRequest request,
 		@AuthedUsername UUID memberId) {
 		return ResponseEntity.ok(
 			ApiResponse.success("리뷰가 성공적으로 생성되었습니다.", reviewService.createReview(request, memberId)));
@@ -34,7 +35,8 @@ public class ReviewController {
 	// TODO : Get Review
 	@GetMapping("")
 	public ResponseEntity<ApiResponse<List<ReviewListResponse>>> getReviews(@AuthedUsername UUID memberId) {
-		ApiResponse<List<ReviewListResponse>> response = ApiResponse.success("리뷰 조회를 성공하였습니다.",reviewService.getReviews(memberId));
+		ApiResponse<List<ReviewListResponse>> response = ApiResponse.success("리뷰 조회를 성공하였습니다.",
+			reviewService.getReviews(memberId));
 		return ResponseEntity.ok(response);
 	}
 }
