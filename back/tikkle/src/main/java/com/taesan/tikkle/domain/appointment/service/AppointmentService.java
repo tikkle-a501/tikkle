@@ -44,7 +44,7 @@ public class AppointmentService {
 		// TODO : Board Status 무슨 String으로 설정할지 / 약속 삭제하지 않고 생성하기 호출할 땐 어떻게 해야하는가 / 삭제된 Board에 접근 시 예외 처리?
 		boardRepository.findById(chatroom.getBoard().getId())
 			.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND))
-			.setStatusActive();
+			.changeStatus("ACTIVE");
 		List<Appointment> appointments = chatroom.getAppointments();
 		appointments.get(appointments.size() - 1).softDelete();
 		return appointment.getId();
