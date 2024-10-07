@@ -147,7 +147,7 @@ export default function Exchange() {
         </div>
 
         {/* 환전 인풋 */}
-        <div className="flex h-[228px] gap-10 p-10">
+        <div className="flex gap-10 p-10">
           {/* 시간 -> 티끌 */}
           <div className="flex flex-1 flex-col gap-10 rounded-12 border border-warmGray200 px-40 py-[30px]">
             <div className="flex items-center justify-between self-stretch pb-10">
@@ -166,21 +166,35 @@ export default function Exchange() {
                 <span className="material-symbols-outlined">bubble_chart</span>
               </Button>
             </div>
+
+            <div className="flex flex-1 items-center justify-center gap-10">
+              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
+                <input
+                  className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
+                  type="number"
+                  value={timeToConvert}
+                  onChange={(e) =>
+                    setTimeToConvert(
+                      Math.min(Number(e.target.value), maxExchangeableTime),
+                    )
+                  }
+                />
+                <div className="ml-4 whitespace-nowrap">시간</div>
+              </div>
+              <div>=</div>
+              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
+                <input
+                  className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
+                  type="number"
+                  value={latestRate ? timeToConvert * latestRate.timeToRank : 0} // 환전될 티끌 값 계산
+                  disabled
+                />
+                <div className="ml-4 whitespace-nowrap">티끌</div>
+              </div>
+            </div>
+
             <div className="text-sm text-warmGray500">
               최대 {maxExchangeableTime}시간까지 환전 가능
-            </div>
-            <div className="flex flex-1 items-center justify-center gap-10">
-              <input
-                type="number"
-                value={timeToConvert}
-                onChange={(e) =>
-                  setTimeToConvert(
-                    Math.min(Number(e.target.value), maxExchangeableTime),
-                  )
-                }
-                className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
-              />
-              <div className="ml-4 whitespace-nowrap">시간</div>
             </div>
           </div>
 
@@ -202,24 +216,42 @@ export default function Exchange() {
                 <span className="material-symbols-outlined">access_time</span>
               </Button>
             </div>
+
+            <div className="flex flex-1 items-center justify-center gap-10">
+              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
+                <input
+                  className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
+                  type="number"
+                  value={timeToConvert}
+                  onChange={(e) =>
+                    setTimeToConvert(
+                      Math.min(
+                        Number(e.target.value),
+                        maxExchangeableTimeFromPoints,
+                      ),
+                    )
+                  }
+                />
+                <div className="ml-4 whitespace-nowrap">시간</div>
+              </div>
+              <div>=</div>
+              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
+                <input
+                  className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
+                  type="number"
+                  value={
+                    latestRate
+                      ? Math.floor(timeToConvert / latestRate.timeToRank)
+                      : 0
+                  } // 환전될 시간 값 계산
+                  disabled
+                />
+                <div className="ml-4 whitespace-nowrap">티끌</div>
+              </div>
+            </div>
+
             <div className="text-sm text-warmGray500">
               최대 {maxExchangeableTimeFromPoints}시간까지 환전 가능
-            </div>
-            <div className="flex flex-1 items-center justify-center gap-10">
-              <input
-                type="number"
-                value={timeToConvert}
-                onChange={(e) =>
-                  setTimeToConvert(
-                    Math.min(
-                      Number(e.target.value),
-                      maxExchangeableTimeFromPoints,
-                    ),
-                  )
-                }
-                className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
-              />
-              <div className="ml-4 whitespace-nowrap">시간</div>
             </div>
           </div>
         </div>
