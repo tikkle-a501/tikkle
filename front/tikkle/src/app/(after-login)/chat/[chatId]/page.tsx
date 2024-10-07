@@ -16,6 +16,7 @@ import { Chat } from "@/types/chat";
 import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppointmentByRoomId";
 import { useDeleteAppointmentById } from "@/hooks/appointment/useDeleteAppointmentById";
 import { useMypageStore } from "@/store/mypageStore";
+import { useFetchMypageMember } from "@/hooks";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -23,10 +24,26 @@ export default function ChatId() {
   // URL에서 roomId 추출 (예: '/chat/31000000-0000-0000-0000-000000000000')
   const roomId = pathname.split("/").pop()!; // 경로의 마지막 부분이 roomId, Non-null assertion 사용
 
-  // zustand에서 member 상태 가져오기
-  const member = useMypageStore((state) => state.member);
-  const memberId = member?.id; // member가 존재할 경우 memberId 가져오기
-  console.log("memberId: ", memberId);
+  const member = useMypageStore((state) => state.member); // zustand에서 현재 member 상태 가져오기
+  const setMember = useMypageStore((state) => state.setMember); // zustand에서 setMember 가져오기
+  const [fetchData, setFetchData] = useState(false); // API 호출 여부를 제어하기 위한 로컬 상태
+
+  useEffect(() => {
+    if (!member) {
+      setFetchData(true); // member가 없으면 데이터를 받아오도록 설정
+    }
+  }, [member]);
+
+  const { data: memberData, isLoading, error } = useFetchMypageMember(); // 인자 없이 호출
+
+  useEffect(() => {
+    if (memberData && !member && fetchData) {
+      setMember(memberData); // member 상태가 없을 때만 zustand에 저장
+      setFetchData(false); // 데이터를 받아온 후 다시 API 호출을 막기 위해 설정
+    }
+  }, [memberData, member, setMember, fetchData]);
+
+  console.log("zustand member state:", member);
 
   const {
     data: chatroomData,
@@ -98,7 +115,7 @@ export default function ChatId() {
     if (stompClientRef.current && inputValue.trim() !== "") {
       const chatMessage = {
         chatroomId: roomId,
-        senderId: memberId,
+        senderId: member?.id,
         content: inputValue,
       };
 
@@ -284,7 +301,7 @@ export default function ChatId() {
               content={chat.content}
               createdAt={chat.timestamp}
               senderId={chat.senderId}
-              isMine={chat.senderId === memberId}
+              isMine={chat.senderId === member?.id}
             />
           ))
         ) : (
