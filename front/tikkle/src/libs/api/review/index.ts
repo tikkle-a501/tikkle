@@ -4,7 +4,7 @@ import { handleApiRequest } from "../client";
 // 리뷰 작성
 export const createReview = async (data: ReviewCreateRequest) => {
   return handleApiRequest<void, "post", ReviewCreateRequest>(
-    "./review",
+    "/review",
     "post",
     data,
   );

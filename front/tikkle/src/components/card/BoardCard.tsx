@@ -6,7 +6,6 @@ interface BoardCardProps {
   boardId: string;
   title: string;
   status: string;
-  writer: string;
   createdAt: string;
   time: number;
   content: string;
@@ -16,11 +15,23 @@ const BoardCard: React.FC<BoardCardProps> = ({
   boardId,
   title,
   status,
-  writer,
   createdAt,
   time,
   content,
 }) => {
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "POSTED":
+        return "red";
+      case "ACTIVE":
+        return "yellow";
+      case "DONE":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
+
   return (
     <Link href={`/board/${boardId}`} passHref className="hover:scale-110">
       <div className="flex h-[219px] w-[307px] flex-col items-start gap-10 rounded-12 bg-warmGray100 p-28">
@@ -28,12 +39,11 @@ const BoardCard: React.FC<BoardCardProps> = ({
           <div className="truncate text-20 font-semibold text-teal600">
             {title}
           </div>
-          <Badge size="l" color="teal">
+          <Badge size="l" color={getBadgeColor(status)}>
             {status}
           </Badge>
         </div>
         <div className="flex w-full items-center justify-between text-12">
-          <div className="font-semibold text-warmGray600">{writer}</div>
           <div className="text-warmGray400">{createdAt}</div>
         </div>
         <div className="flex items-center justify-end gap-10 self-stretch text-13 text-warmGray700">
