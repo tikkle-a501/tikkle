@@ -10,6 +10,8 @@ import { useState } from "react";
 import Dropbox from "@/components/drop-down/Dropbox";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import Button from "@/components/button/Button";
+import { useMypageStore } from "@/store/mypageStore";
 // 동적으로 Viewer 컴포넌트를 로드
 const Viewer = dynamic(
   () => import("@toast-ui/react-editor").then((mod) => mod.Viewer),
@@ -17,6 +19,7 @@ const Viewer = dynamic(
 );
 
 export default function BoardDetail() {
+  const member = useMypageStore((state) => state.member); // zustand에서 현재 member 상태 가져오기
   const [isDropboxOpen, setIsDropboxOpen] = useState(false); // Dropbox 열림 상태 관리
 
   const toggleDropbox = () => {
@@ -66,7 +69,10 @@ export default function BoardDetail() {
   }
 
   // 가져온 데이터를 board로 사용
-
+  const isBoardOwner = member?.id === board.memberId; // 현재 사용자가 게시글 작성자인지 확인
+  console.log("member: " + member?.id);
+  console.log("board: " + board.memberId);
+  console.log("owner?: " + isBoardOwner);
   return (
     <>
       <div className="text-40 font-bold text-teal900">SSAFY의 티끌</div>
@@ -77,29 +83,39 @@ export default function BoardDetail() {
             {board.status}
           </Badge>
           <div className="flex flex-1 text-28 font-bold">{board.title}</div>
-          <div className="relative flex flex-col">
-            {/* relative 추가 */}
-            <span
-              className="material-symbols-outlined cursor-pointer"
-              onClick={toggleDropbox} // 클릭 시 드롭박스 열림 상태 토글
-            >
-              more_horiz
-            </span>
-            {isDropboxOpen && ( // 드롭박스 열림 상태에 따라 표시
-              <div className="absolute right-0 top-full z-10">
-                <Dropbox
-                  items={[
-                    {
-                      label: "수정하기",
-                      href: `/board/write?id=${board.boardId}`,
-                    }, // ID만 전달
-                    { label: "삭제하기" },
-                  ]}
-                  onClick={handleItemClick} // 각 항목 클릭 시 호출
-                />
-              </div>
-            )}
-          </div>
+          {/* 작성자만 more_horiz 버튼 표시 */}
+          {isBoardOwner ? (
+            <div className="relative flex flex-col">
+              <span
+                className="material-symbols-outlined cursor-pointer"
+                onClick={toggleDropbox}
+              >
+                more_horiz
+              </span>
+              {isDropboxOpen && (
+                <div className="absolute right-0 top-full z-10">
+                  <Dropbox
+                    items={[
+                      {
+                        label: "수정하기",
+                        href: `/board/write?id=${board.boardId}`,
+                      }, // 수정 페이지로 이동
+                      { label: "삭제하기" },
+                    ]}
+                    onClick={handleItemClick}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <Button
+              size="m"
+              variant="primary"
+              design="fill"
+              main="채팅하기"
+              onClick={() => router.push("/chat")}
+            />
+          )}
         </div>
 
         {/* 작성자, 작성일 */}
