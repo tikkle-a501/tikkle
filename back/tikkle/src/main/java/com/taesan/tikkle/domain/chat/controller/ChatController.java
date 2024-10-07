@@ -36,7 +36,7 @@ public class ChatController {
        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@" + chatMessage);
        // 로그로 메시지와 멤버 ID 출력
        logger.info("ChatMessage 형태 : {}", chatMessage);
-       logger.info("맴버 아이디 : {}", chatMessage.getMemberId());
+       logger.info("맴버 아이디 : {}", chatMessage.getSenderId());
        // 메시지 전송
        kafkaProducer.sendMessage(chatMessage);
    }
