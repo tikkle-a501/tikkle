@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.taesan.tikkle.domain.account.dto.request.ExchangeRequest;
 import com.taesan.tikkle.domain.account.dto.response.ExchangeLogFindAllResponse;
-import com.taesan.tikkle.domain.account.dto.response.ExchangeResponse;
 import com.taesan.tikkle.domain.account.service.ExchangeService;
 import com.taesan.tikkle.global.annotations.AuthedUsername;
 import com.taesan.tikkle.global.response.ApiResponse;
@@ -37,7 +36,7 @@ public class ExchangeController {
 	@PostMapping
 	public ResponseEntity<ApiResponse<?>> exchange(@AuthedUsername UUID username,
 		@RequestBody ExchangeRequest exchangeRequest) {
-		ExchangeResponse exchange = exchangeService.exchange(username, exchangeRequest);
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("환전을 성공했습니다.", exchange));
+		exchangeService.exchange(username, exchangeRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("환전을 성공했습니다.", null));
 	}
 }

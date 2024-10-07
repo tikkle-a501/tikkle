@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taesan.tikkle.domain.account.dto.request.ExchangeRequest;
 import com.taesan.tikkle.domain.account.dto.response.ExchangeLogFindAllResponse;
-import com.taesan.tikkle.domain.account.dto.response.ExchangeResponse;
 import com.taesan.tikkle.domain.account.entity.Account;
 import com.taesan.tikkle.domain.account.entity.ExchangeLog;
 import com.taesan.tikkle.domain.account.repository.ExchangeRepository;
@@ -30,15 +29,11 @@ public class ExchangeService {
 	}
 
 	@Transactional
-	public ExchangeResponse exchange(UUID memberId, ExchangeRequest exchangeRequest) {
+	public void exchange(UUID memberId, ExchangeRequest exchangeRequest) {
 		Rate rate = rateService.findByIdAndRecentRate(exchangeRequest.getRateId());
 		Account account = accountService.updateAccount(memberId, exchangeRequest.getExchangeType(),
 			rate.getTimeToRank(), exchangeRequest.getQuantity());
 		exchangeRepository.save(
 			ExchangeLog.of(rate, account, exchangeRequest.getExchangeType(), exchangeRequest.getQuantity()));
-		if (exchangeRequest.getRateId().equals(rate.getId())) {
-			return ExchangeResponse.from(false);
-		}
-		return ExchangeResponse.from(true);
 	}
 }
