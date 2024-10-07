@@ -120,6 +120,17 @@ export default function ChatId() {
 
   const combinedMessages = [...(chatroomData?.chats || []), ...messages];
 
+  ////////////////// 스크롤 로직
+  // Scroll container를 참조할 ref 생성
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // 컴포넌트가 렌더링되거나 messages가 업데이트될 때마다 스크롤을 아래로
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [combinedMessages]);
+
   ////////////////// 약속잡기 로직
   // TODO: 게시글 작성자만 약속을 잡을 수 있도록 하는 로직
   const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
@@ -259,7 +270,10 @@ export default function ChatId() {
       </div>
 
       {/* 채팅 내용 */}
-      <div className="scrollbar-custom flex flex-1 flex-col self-stretch overflow-y-auto">
+      <div
+        ref={scrollRef}
+        className="scrollbar-custom flex flex-1 flex-col self-stretch overflow-y-auto"
+      >
         {combinedMessages.length > 0 ? (
           combinedMessages.map((chat, index) => (
             <ChatList
