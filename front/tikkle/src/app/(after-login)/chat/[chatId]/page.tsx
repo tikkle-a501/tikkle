@@ -26,6 +26,7 @@ export default function ChatId() {
   // zustand에서 member 상태 가져오기
   const member = useMypageStore((state) => state.member);
   const memberId = member?.id; // member가 존재할 경우 memberId 가져오기
+  console.log("memberId: ", memberId);
 
   const {
     data: chatroomData,
