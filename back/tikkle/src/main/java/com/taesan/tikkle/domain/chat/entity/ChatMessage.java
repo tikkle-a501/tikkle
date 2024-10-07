@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,32 +14,28 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
-//@Setter
+@NoArgsConstructor
 //@AllArgsConstructor
-//@NoArgsConstructor
 public class ChatMessage {
-//    @JsonDeserialize(using = UUIDDeserializer.class)
-    private String chatroomId;
-    //	private UUID senderId;
-    private String content;
+	private String chatroomId;
+	private String memberId;
+	private String content;
 
-    @JsonCreator
-    public ChatMessage(
-            @JsonProperty("chatroomId") String chatroomId,
-            @JsonProperty("content") String content) {
-        this.chatroomId = chatroomId;
-        this.content = content;
-    }
+	@JsonCreator
+	public ChatMessage(
+		@JsonProperty("chatroomId") String chatroomId,
+		@JsonProperty("memberId") String memberId,
+		@JsonProperty("content") String content) {
+		this.chatroomId = chatroomId;
+		this.memberId = memberId;
+		this.content = content;
+	}
 
-//    public ChatMessage() {
-//
-//    }
-
-    @Override
-    public String toString() {
-        return "ChatMessage{" +
-                "chatroomId='" + chatroomId + '\'' +
-                ", content='" + content + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ChatMessage{" +
+			"chatroomId='" + chatroomId + '\'' +
+			", content='" + content + '\'' +
+			'}';
+	}
 }

@@ -31,25 +31,25 @@ public class ChatController {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @MessageMapping("/sendMessage")
-//    public void sendMessage(@Payload ChatMessage chatMessage, @AuthedUsername UUID memberId) {
-//        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@" + chatMessage);
-//        // 로그로 메시지와 멤버 ID 출력
-//        logger.info("ChatMessage 형태 : {}", chatMessage);
-//        logger.info("맴버 아이디 : {}", memberId);
-//        // 메시지 전송
-//        kafkaProducer.sendMessage(chatMessage, memberId);
-//    }
+   @MessageMapping("/sendMessage")
+   public void sendMessage(@Payload ChatMessage chatMessage) {
+       System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@" + chatMessage);
+       // 로그로 메시지와 멤버 ID 출력
+       logger.info("ChatMessage 형태 : {}", chatMessage);
+       logger.info("맴버 아이디 : {}", chatMessage.getMemberId());
+       // 메시지 전송
+       kafkaProducer.sendMessage(chatMessage);
+   }
 
-    @MessageMapping("/sendMessage")
-    public void sendMessage(Message<?> message) throws JsonProcessingException {
-        byte[] payloadBytes = (byte[]) message.getPayload();
-        String payload = new String(payloadBytes, StandardCharsets.UTF_8);
-        System.out.println("Received raw payload: " + payload);
-
-//        ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-
-        // 서비스 레이어로 메시지를 넘겨서 처리
-//        kafkaProducer.sendMessage(chatMessage, memberId);
-    }
+//     @MessageMapping("/sendMessage")
+//     public void sendMessage(Message<?> message) throws JsonProcessingException {
+//         byte[] payloadBytes = (byte[]) message.getPayload();
+//         String payload = new String(payloadBytes, StandardCharsets.UTF_8);
+//         System.out.println("Received raw payload: " + payload);
+//         kafkaProducer.sendMessage(message);
+//
+// //        ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+//
+//         // 서비스 레이어로 메시지를 넘겨서 처리
+//     }
 }
