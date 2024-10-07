@@ -27,12 +27,12 @@ public class ChatMessageResponse {
 		this.senderId = senderId;
 	}
 
-	@Override
-	public String toString() {
-		return "ChatMessageResponse{" +
-			"content='" + content + '\'' +
-			", timestamp='" + timestamp + '\'' +
-			", senderId='" + senderId + '\'' +
-			'}';
-	}
+	// @Override
+	// public String toString() {
+	// 	return "ChatMessageResponse{" +
+	// 		"content='" + content + '\'' +
+	// 		", timestamp='" + timestamp + '\'' +
+	// 		", senderId='" + senderId + '\'' +
+	// 		'}';
+	// }
 }
