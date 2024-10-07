@@ -2,15 +2,11 @@ package com.taesan.tikkle.domain.chat.dto.response;
 
 import java.time.LocalDateTime;
 
-import javax.naming.ldap.LdapContext;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -33,7 +29,7 @@ public class ChatMessageResponse {
 	public String toString() {
 		return "ChatMessageResponse{" +
 			"content='" + content + '\'' +
-			", timestamp=" + timestamp +
+			", timestamp='" + timestamp + '\'' +
 			", senderId='" + senderId + '\'' +
 			'}';
 	}
