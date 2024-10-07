@@ -12,7 +12,6 @@ export default function Activity() {
   useEffect(() => {
     if (data) {
       setActivity(data);
-      console.log("Activity:", data);
     }
   }, [data]);
 
@@ -22,8 +21,6 @@ export default function Activity() {
   const postedPosts = activity.postedPosts || [];
   const activePosts = activity.activePosts || [];
   const donePosts = activity.donePosts || [];
-
-  console.log(data);
 
   return (
     <div className="flex w-full flex-col gap-10">
