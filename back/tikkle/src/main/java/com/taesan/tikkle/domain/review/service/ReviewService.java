@@ -29,8 +29,9 @@ public class ReviewService {
 	private final MemberRepository memberRepository;
 
 	public UUID createReview(CreateReviewRequest request, UUID senderId) {
-		Appointment appointment = appointmentRepository.findById(request.getAppointmentId()).orElseThrow(
-			() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
+		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(request.getChatroomId())
+			.orElseThrow(
+				() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
 		Member performer = appointment.getRoom().getPerformer();
 		Member writer = appointment.getRoom().getWriter();
 		Member receiver = (senderId.equals(performer.getId()) ? writer : performer);
@@ -50,7 +51,6 @@ public class ReviewService {
 		// reviews를 List<ReviewListResponse>로 변환
 		return reviews.stream()
 			.map(review -> new ReviewListResponse(
-				review.getId(),
 				review.getType()
 			))
 			.collect(Collectors.toList());

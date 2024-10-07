@@ -3,14 +3,13 @@ package com.taesan.tikkle.domain.config;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.fasterxml.jackson.core.StreamReadFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class JacksonConfig {
@@ -24,7 +23,7 @@ public class JacksonConfig {
 		JavaTimeModule javaTimeModule = new JavaTimeModule();
 		javaTimeModule.addSerializer(LocalDateTime.class,
 			new com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer(
-				DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
+				DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
 		mapper.registerModule(javaTimeModule);
 

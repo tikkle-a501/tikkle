@@ -3,6 +3,7 @@ package com.taesan.tikkle.domain.appointment.service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ public class AppointmentService {
 			.changeStatus("ACTIVE");
 		List<Appointment> appointments = chatroom.getAppointments();
 		appointments.get(appointments.size() - 1).softDelete();
+		appointments.add(appointment);
 		return appointment.getId();
 	}
 
@@ -86,14 +88,15 @@ public class AppointmentService {
 	}
 
 	public BriefAppointmentResponse getAppointment(UUID roomId, UUID memberId) {
-		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(roomId);
-		if (appointment == null)
+		Optional<Appointment> appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(roomId);
+		if (appointment.isEmpty())
 			return new BriefAppointmentResponse();
-		if (!memberId.equals(appointment.getRoom().getWriter().getId()) && !memberId.equals(appointment.getRoom().getPerformer().getId())) {
+		if (!memberId.equals(appointment.get().getRoom().getWriter().getId()) && !memberId.equals(
+			appointment.get().getRoom().getPerformer().getId())) {
 			throw new CustomException(ErrorCode.APPOINTMENT_NOT_AUTHORIZED);
 		} else {
-			return new BriefAppointmentResponse(appointment.getId(), appointment.getApptTime(),
-				appointment.getTimeQnt());
+			return new BriefAppointmentResponse(appointment.get().getId(), appointment.get().getApptTime(),
+				appointment.get().getTimeQnt());
 		}
 	}
 
