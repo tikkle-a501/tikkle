@@ -3,9 +3,9 @@ import { handleSuccess, handleError } from "@/libs/utils";
 import { ExchangeCreateRequest } from "@/types";
 import { createExchange } from "@/libs";
 
-export const useCreateExchange = (data: ExchangeCreateRequest) => {
-  return useMutation<void, Error, { data: ExchangeCreateRequest }>({
-    mutationFn: () => createExchange(data),
+export const useCreateExchange = () => {
+  return useMutation<void, Error, ExchangeCreateRequest>({
+    mutationFn: (data: ExchangeCreateRequest) => createExchange(data),
     onSuccess: (data) => {
       handleSuccess("✅ Exchange created successfully", data);
     },

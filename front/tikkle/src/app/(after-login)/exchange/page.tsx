@@ -2,8 +2,14 @@
 
 import Button from "@/components/button/Button";
 import Chart from "@/components/chart/Chart";
-import { useFetchRecentRate, useCreateRate, useFetchAccount } from "@/hooks";
+import {
+  useFetchRecentRate,
+  useCreateRate,
+  useFetchAccount,
+  useCreateExchange,
+} from "@/hooks";
 import Loading from "@/components/loading/Loading";
+import { useState } from "react";
 
 export default function Exchange() {
   const {
@@ -12,8 +18,32 @@ export default function Exchange() {
     error: createError,
   } = useCreateRate();
 
+  const {
+    mutate: createExchangeMutation,
+    isPending: isExchanging,
+    error: exchangeError,
+  } = useCreateExchange();
+
+  const [timeToConvert, setTimeToConvert] = useState(0); // 환전할 시간
+
   const handleCreateRate = () => {
     createRateMutation(); // 테스트용 환율 생성 요청
+  };
+
+  const handleExchange = (exchangeType: "TTOR" | "RTOT") => {
+    if (!latestRate || !latestRate.rateId) {
+      console.error("환율 정보가 없습니다.");
+      return;
+    }
+
+    const exchangeData = {
+      rateId: latestRate?.rateId, // 최신 환율에서 rateId 가져오기
+      timeToRank: latestRate?.timeToRank || 0,
+      quantity: timeToConvert,
+      exchangeType,
+    };
+
+    createExchangeMutation(exchangeData);
   };
 
   const {
@@ -27,6 +57,26 @@ export default function Exchange() {
     isPending: isAccountPending,
     error: fetchAccountError,
   } = useFetchAccount(); // 계좌 정보 조회
+
+  const maxExchangeableTimeFromPoints =
+    latestRate && accountData
+      ? Math.floor(accountData.rankingPoint / latestRate.timeToRank)
+      : 0;
+
+  const maxExchangeableTime = accountData
+    ? Math.min(accountData.timeQnt, maxExchangeableTimeFromPoints)
+    : 0;
+
+  // 환전 버튼의 메인 텍스트 계산 함수
+  const getExchangeText = (exchangeType: "TTOR" | "RTOT") => {
+    if (!latestRate) {
+      return exchangeType === "TTOR" ? `시간 구매` : `티끌 구매`; // 기본 텍스트
+    }
+    if (exchangeType === "TTOR") {
+      return `${timeToConvert} 시간 구매`; // 시간 -> 티끌
+    }
+    return `${Math.floor(timeToConvert * latestRate.timeToRank)} 티끌 구매`; // 티끌 -> 시간
+  };
 
   return (
     <>
@@ -96,22 +146,6 @@ export default function Exchange() {
           </div>
         </div>
 
-        {/* 환율 생성 버튼 */}
-        {/* TODO: 추후 버튼 삭제 필요 */}
-        <div className="flex py-20">
-          <Button
-            size="l"
-            variant="primary"
-            design="fill"
-            main="환율 생성"
-            onClick={handleCreateRate}
-            disabled={isCreating}
-          />
-          {createError && (
-            <div className="text-red-500">Error: {createError.message}</div>
-          )}
-        </div>
-
         {/* 환전 인풋 */}
         <div className="flex h-[228px] gap-10 p-10">
           {/* 시간 -> 티끌 */}
@@ -121,20 +155,32 @@ export default function Exchange() {
                 시간을
                 <span className="text-24 font-bold">&nbsp;티끌로 바꾸기</span>
               </div>
-              <Button size="l" variant="primary" design="fill" main="환전하기">
+              <Button
+                size="l"
+                variant="primary"
+                design="fill"
+                main={getExchangeText("TTOR")} // 동적으로 텍스트 변경
+                onClick={() => handleExchange("TTOR")}
+                disabled={isExchanging}
+              >
                 <span className="material-symbols-outlined">bubble_chart</span>
               </Button>
             </div>
+            <div className="text-sm text-warmGray500">
+              최대 {maxExchangeableTime}시간까지 환전 가능
+            </div>
             <div className="flex flex-1 items-center justify-center gap-10">
-              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
-                <input className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none" />
-                <div className="ml-4 whitespace-nowrap">시간</div>
-              </div>
-              <div>=</div>
-              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
-                <input className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none" />
-                <div className="ml-4 whitespace-nowrap">티끌</div>
-              </div>
+              <input
+                type="number"
+                value={timeToConvert}
+                onChange={(e) =>
+                  setTimeToConvert(
+                    Math.min(Number(e.target.value), maxExchangeableTime),
+                  )
+                }
+                className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
+              />
+              <div className="ml-4 whitespace-nowrap">시간</div>
             </div>
           </div>
 
@@ -145,20 +191,35 @@ export default function Exchange() {
                 티끌을
                 <span className="text-24 font-bold">&nbsp;시간으로 바꾸기</span>
               </div>
-              <Button size="l" variant="primary" design="fill" main="환전하기">
+              <Button
+                size="l"
+                variant="primary"
+                design="fill"
+                main={getExchangeText("RTOT")} // 동적으로 텍스트 변경
+                onClick={() => handleExchange("RTOT")}
+                disabled={isExchanging}
+              >
                 <span className="material-symbols-outlined">access_time</span>
               </Button>
             </div>
+            <div className="text-sm text-warmGray500">
+              최대 {maxExchangeableTimeFromPoints}시간까지 환전 가능
+            </div>
             <div className="flex flex-1 items-center justify-center gap-10">
-              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
-                <input className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none" />
-                <div className="ml-4 whitespace-nowrap">티끌</div>
-              </div>
-              <div>=</div>
-              <div className="flex flex-1 flex-row items-end justify-end rounded-12 bg-warmGray200 px-20 py-14">
-                <input className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none" />
-                <div className="ml-4 whitespace-nowrap">시간</div>
-              </div>
+              <input
+                type="number"
+                value={timeToConvert}
+                onChange={(e) =>
+                  setTimeToConvert(
+                    Math.min(
+                      Number(e.target.value),
+                      maxExchangeableTimeFromPoints,
+                    ),
+                  )
+                }
+                className="max-w-[174px] flex-grow bg-warmGray200 text-right text-34 focus:outline-none"
+              />
+              <div className="ml-4 whitespace-nowrap">시간</div>
             </div>
           </div>
         </div>
