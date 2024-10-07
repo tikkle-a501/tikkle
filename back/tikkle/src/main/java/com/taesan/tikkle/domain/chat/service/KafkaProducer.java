@@ -30,7 +30,6 @@ public class KafkaProducer {
 	@Transactional
 	public void sendMessage(ChatMessage chatMessage) {
 		// Logger 생성
-
 		Chat chat = new Chat(chatMessage.getChatroomId(), chatMessage.getSenderId(), chatMessage.getContent());
 		chatRepository.save(chat);
 
