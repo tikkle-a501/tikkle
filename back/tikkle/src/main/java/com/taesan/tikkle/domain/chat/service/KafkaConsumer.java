@@ -22,13 +22,13 @@ public class KafkaConsumer {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@KafkaListener(topicPattern = "chatroom.*", groupId = "my-group")
-	public void consume(ConsumerRecord<String, String> record) {
-		// Kafka 메시지 내용은 이미 ChatMessageResponse 객체이므로 그대로 사용
-		ChatMessageResponse chatMessage = objectMapper.convertValue(record.value(), ChatMessageResponse.class);
-		// 로그 추가: Kafka 토픽과 메시지 확인
-		logger.info("채팅방 아이디 : {}, 메시지 내용 : {}", record.topic(), chatMessage);
-		// STOMP 메시지 전송
-		simpMessagingTemplate.convertAndSend("/topic/chatroom." + record.topic(), chatMessage);
-	}
+	// @KafkaListener(topicPattern = "chatroom.*", groupId = "my-group")
+	// public void consume(ConsumerRecord<String, String> record) {
+	// 	// Kafka 메시지 내용은 이미 ChatMessageResponse 객체이므로 그대로 사용
+	// 	ChatMessageResponse chatMessage = objectMapper.convertValue(record.value(), ChatMessageResponse.class);
+	// 	// 로그 추가: Kafka 토픽과 메시지 확인
+	// 	logger.info("채팅방 아이디 : {}, 메시지 내용 : {}", record.topic(), chatMessage);
+	// 	// STOMP 메시지 전송
+	// 	simpMessagingTemplate.convertAndSend("/topic/chatroom." + record.topic(), chatMessage);
+	// }
 }
