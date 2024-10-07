@@ -2,7 +2,7 @@ import Link from "next/link";
 import Badge from "../badge/Badge";
 import Image from "next/image";
 import Button from "../button/Button";
-import ReviewCard from "../card/ReviewCard";
+// import ReviewCard from "../card/ReviewCard";
 
 interface HistoryListProps {
   profileImg: string; // 프로필 이미지
@@ -35,7 +35,6 @@ const HistoryList: React.FC<HistoryListProps> = ({
   appointmentTime,
   time,
   boardId,
-  onButtonClick,
 }) => {
   return (
     <div className="inline-flex h-[61px] items-center px-10 text-18">
