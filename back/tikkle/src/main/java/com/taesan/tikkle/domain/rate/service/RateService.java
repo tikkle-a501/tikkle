@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RateService {
 
 	private final static int INITIAL_TIME_TO_RANK_POINT = 1000;
-	private final static double RATE_ADJUSTMENT_FACTOR = 0.1;
+	private final static double RATE_ADJUSTMENT_FACTOR = 0.03;
 
 	private final AccountService accountService;
 	private final RateRepository rateRepository;
