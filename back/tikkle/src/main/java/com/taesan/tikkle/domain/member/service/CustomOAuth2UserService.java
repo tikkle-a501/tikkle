@@ -104,10 +104,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	}
 
 	/*
-		TODO: 내부 Mattermost 서버 이용 코드이므로, 추후 여러 서버 기반으로 변경 필요
+		NOTE: Lazy Evaluation을 위한 orElseGet으로 수정
 	 */
 	private Organization getDefaultOrganization() {
-		return organizationRepository.findByName("DEFAULT").orElse(organizationRepository.save(
+		return organizationRepository.findByName("DEFAULT").orElseGet(() -> organizationRepository.save(
 			new Organization("FREE",
 				"j11a501.p.ssafy.io",
 				1,

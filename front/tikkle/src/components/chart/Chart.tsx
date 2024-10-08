@@ -52,7 +52,18 @@ const Chart: React.FC = () => {
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickSize(-height)) // x축 보조선 길이 설정
+      .call(
+        d3
+          .axisBottom(x)
+          .tickSize(-height)
+          .tickFormat((d) => {
+            // 날짜 데이터를 "월/일" 형식으로 짧게 변환
+            if (d instanceof Date) {
+              return `${d.getMonth() + 1}/${d.getDate()}`;
+            }
+            return d.toString(); // 숫자형 데이터는 그대로 표시
+          }),
+      )
       .style("font-family", "Pretendard")
       .style("font-style", "normal")
       .style("font-size", "0.75rem")
@@ -89,7 +100,7 @@ const Chart: React.FC = () => {
       .line<{ createdAt: string; timeToRank: number }>()
       .x((d) => x(new Date(d.createdAt)))
       .y((d) => y(d.timeToRank))
-      .curve(d3.curveCardinal); // 부드럽고 자연스러운 곡선, 포인트를 통과함
+      .curve(d3.curveLinear); // 직선으로 데이터를 연결
 
     svg
       .append("path")
@@ -176,8 +187,19 @@ const Chart: React.FC = () => {
         tooltip.style("opacity", 0);
         valueDot.style("opacity", 0); // 초록색 점 숨기기
       });
+
+    // y축 라벨 추가
+    svg
+      .append("text")
+      .attr("text-anchor", "middle") // 텍스트 가운데 정렬
+      .attr("transform", `rotate(-90)`) // 텍스트를 수직으로 회전
+      .attr("x", -height / 2) // 차트의 중앙에 맞게 x 좌표 설정
+      .attr("y", -margin.left + 10) // y축 왼쪽에 적당히 떨어지게 설정
+      .style("font-size", "0.7rem")
+      .style("font-family", "Pretendard")
+      .text("티끌");
   }, [exchangeRates, isLoading, isError]);
 
-  return <div id="chart" className="w-full"></div>;
+  return <div id="chart" className="flex w-full"></div>;
 };
 export default Chart;
