@@ -3,7 +3,7 @@ import { handleSuccess, handleError } from "@/libs/utils";
 import { ReviewCreateRequest } from "@/types";
 import { createReview } from "@/libs";
 
-export const useCreateReview = (data: ReviewCreateRequest) => {
+export const useCreateReview = () => {
   return useMutation<any, Error, ReviewCreateRequest>({
     mutationFn: (reviewData: ReviewCreateRequest) => createReview(reviewData),
     onSuccess: (data) => {

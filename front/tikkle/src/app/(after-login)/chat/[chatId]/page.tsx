@@ -17,6 +17,7 @@ import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppoint
 import { useDeleteAppointmentById } from "@/hooks/appointment/useDeleteAppointmentById";
 import { useMypageStore } from "@/store/mypageStore";
 import { useFetchMypageMember } from "@/hooks";
+import ReviewCard from "@/components/card/ReviewCard";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -176,7 +177,6 @@ export default function ChatId() {
     if (window.confirm("정말로 약속을 취소하시겠습니까?")) {
       deleteAppointmentMutation.mutate(appointmentId, {
         onSuccess: () => {
-          alert("약속이 성공적으로 취소되었습니다.");
           refetchAppointment();
         },
         onError: (error) => {
@@ -185,6 +185,13 @@ export default function ChatId() {
         },
       });
     }
+  };
+
+  // 거래 완료하기 로직
+  const [showReviewModal, setShowReviewModal] = useState(false); // ReviewCard 모달 표시 상태 관리
+
+  const handleReviewModalToggle = () => {
+    setShowReviewModal((prev) => !prev); // 모달 표시 상태 토글
   };
 
   ////////// 아래부터 컴포넌트
@@ -260,6 +267,21 @@ export default function ChatId() {
                   handleDeleteAppointment(appointmentData.appointmentId)
                 }
               />
+              <div>
+                <Button
+                  size="s"
+                  variant="primary"
+                  design="outline"
+                  main="거래 완료하기"
+                  onClick={handleReviewModalToggle}
+                />
+              </div>
+              {/* ReviewCard 모달 */}
+              {showReviewModal && (
+                <div className="mt-12">
+                  <ReviewCard />
+                </div>
+              )}
             </div>
           ) : (
             // 약속이 없을 때 '약속잡기' 버튼 표시
