@@ -178,6 +178,6 @@ const Chart: React.FC = () => {
       });
   }, [exchangeRates, isLoading, isError]);
 
-  return <div id="chart" className="w-full"></div>;
+  return <div id="chart" className="flex w-full"></div>;
 };
 export default Chart;

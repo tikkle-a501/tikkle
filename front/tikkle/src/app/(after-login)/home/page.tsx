@@ -8,9 +8,12 @@ import "swiper/css/scrollbar";
 import "./custom-swiper.css";
 import Chart from "@/components/chart/Chart";
 import RankList from "@/components/list/RankList";
+import TodoList from "@/components/list/TodoList";
 import { useFetchMypageMember } from "@/hooks";
 import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
 import { useFetchBoardList } from "@/hooks/board";
+import { useFetchRank } from "@/hooks"; // 랭킹 데이터를 가져오는 훅
+import Loading from "@/components/loading/Loading"; // 로딩 컴포넌트 추가
 
 export default function Home() {
   const member = useMypageStore((state) => state.member); // zustand에서 현재 member 상태 가져오기
@@ -23,7 +26,7 @@ export default function Home() {
     }
   }, [member]);
 
-  const { data: memberData, isLoading, error } = useFetchMypageMember(); // 인자 없이 호출
+  const { data: memberData } = useFetchMypageMember(); // 인자 없이 호출
 
   useEffect(() => {
     if (memberData && !member && fetchData) {
@@ -34,32 +37,17 @@ export default function Home() {
 
   console.log("zustand member state:", member);
 
-  const rankData = Array.from({ length: 10 }, (_, i) => {
-    const rankNumber = i + 1;
-    let rank: "first" | "second" | "third" | "others";
-    const size: "s" = "s";
-
-    if (rankNumber === 1) {
-      rank = "first";
-    } else if (rankNumber === 2) {
-      rank = "second";
-    } else if (rankNumber === 3) {
-      rank = "third";
-    } else {
-      rank = "others";
-    }
-
-    return {
-      size,
-      rank,
-      rankNumber,
-      name: `User ${rankNumber}`,
-      tikkle: Math.floor(Math.random() * 1000),
-      count: Math.floor(Math.random() * 500),
-    };
-  });
+  const {
+    data: rankData,
+    isLoading: isRankLoading,
+    isError: isRankError,
+  } = useFetchRank();
 
   const { data: boardList } = useFetchBoardList();
+
+  if (isRankLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
+  if (isRankError || !rankData) return <div>Error loading rank data</div>; // 에러 처리
+
   return (
     <div className="flex w-full flex-col items-start gap-10">
       <div className="w-full text-40 font-bold text-teal900">SSAFY의 티끌</div>
@@ -97,21 +85,34 @@ export default function Home() {
       <div className="flex h-[544px] w-full items-start gap-28 pt-16">
         {/* 랭킹 */}
         <div className="h-full w-1/5">
-          <div className="px-16 text-24 font-700 text-teal900">랭킹</div>
-          <div className="flex flex-col items-start justify-center gap-10 px-56 py-28">
-            {rankData.map((data) => (
-              <RankList
-                key={data.rankNumber}
-                size={data.size}
-                rank={data.rank}
-                rankNumber={data.rankNumber}
-                name={data.name}
-                tikkle={data.tikkle}
-                count={data.count}
-              />
-            ))}
+          <div className="text-24 font-700 text-teal900">랭킹</div>
+          <div className="flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
+            {rankData?.rankList?.length > 0 ? (
+              rankData.rankList.map((data) => (
+                <RankList
+                  key={data.order}
+                  size="s"
+                  rank={
+                    data.order === 1
+                      ? "first"
+                      : data.order === 2
+                        ? "second"
+                        : data.order === 3
+                          ? "third"
+                          : "others"
+                  }
+                  rankNumber={data.order}
+                  name={data.nickname}
+                  tikkle={data.rankingPoint}
+                  count={data.tradeCount}
+                />
+              ))
+            ) : (
+              <div>랭킹 데이터를 불러올 수 없습니다.</div>
+            )}
           </div>
         </div>
+
         {/* 환율 */}
         <div className="h-full w-2/5">
           <div className="px-16 text-24 font-700 text-teal900">환율</div>
@@ -119,11 +120,51 @@ export default function Home() {
         </div>
         {/* 마이페이지 */}
         <div className="h-full w-2/5">
-          <div className="h-1/2 px-16 text-24 font-700 text-teal900">
+          <div className="h-1/3 px-16 text-24 font-700 text-teal900">
             나의 타임 & 티끌
+            <div className="flex justify-center gap-[20px] rounded-[10px] border border-warmGray200 px-[56px] py-[28px]">
+              <div className="flex items-center gap-[10px]">
+                <span className="text-[48px] text-teal500">0</span>
+                <span className="text-[24px]">시간</span>
+              </div>
+              <div className="flex items-center gap-[10px]">
+                <span className="text-[48px] text-teal500">0</span>
+                <span className="text-[24px]">티끌</span>
+              </div>
+            </div>
           </div>
-          <div className="h-1/2 px-16 text-24 font-700 text-teal900">
+          <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
+            <div className="flex h-[300px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+            </div>
           </div>
         </div>
       </div>
