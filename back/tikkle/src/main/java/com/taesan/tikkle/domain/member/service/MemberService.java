@@ -62,7 +62,7 @@ public class MemberService {
 			switch (response.getStatus()) {
 				case "진행전" -> postedPosts.add(response);
 				case "진행중" -> activePosts.add(response);
-				case "완료" -> donePosts.add(response);
+				case "완료됨" -> donePosts.add(response);
 			}
 		}
 		return new AllMemberBoardResponse(postedPosts, activePosts, donePosts);

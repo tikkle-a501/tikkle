@@ -9,6 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
+import com.taesan.tikkle.domain.board.entity.Board;
+import com.taesan.tikkle.domain.board.repository.BoardRepository;
+import com.taesan.tikkle.domain.chat.entity.Chatroom;
+import com.taesan.tikkle.domain.chat.repository.ChatroomRepository;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.domain.review.dto.request.CreateReviewRequest;
@@ -28,6 +32,8 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final AppointmentRepository appointmentRepository;
 	private final MemberRepository memberRepository;
+	private final BoardRepository boardRepository;
+	private final ChatroomRepository chatroomRepository;
 
 	public ReviewIdResponse createReview(CreateReviewRequest request, UUID senderId) {
 		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(request.getChatroomId())
@@ -40,6 +46,9 @@ public class ReviewService {
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 		Review review = new Review(sender, receiver, request.getType());
 		reviewRepository.save(review);
+		Chatroom chatroom = chatroomRepository.findById(request.getChatroomId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+		Board board = boardRepository.findById(chatroom.getBoard().getId()).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+		board.changeStatus("완료됨");
 		return new ReviewIdResponse(review.getId());
 	}
 
