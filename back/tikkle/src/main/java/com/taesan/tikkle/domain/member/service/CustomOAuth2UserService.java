@@ -7,6 +7,14 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -15,6 +23,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.taesan.tikkle.domain.account.entity.Account;
 import com.taesan.tikkle.domain.account.repository.AccountRepository;
@@ -33,6 +42,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private final MemberRepository memberRepository;
 	private final OrganizationRepository organizationRepository;
 	private final AccountRepository accountRepository;
+	private final OAuth2AuthorizedClientService authorizedClientService;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -49,6 +59,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		// 사용자를 조회하거나 생성
 		Member member = saveOrUpdateMember(email, name, nickname);
+
+		String userId = oAuth2User.getAttribute("id");
+		getMemberProfileImage(userId);
 
 		Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
 		attributes.put("memberId", member.getId());
@@ -101,6 +114,42 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		existingMember.changeName(name);
 		existingMember.changeNickname(nickname);
 		return existingMember;
+	}
+
+	public void getMemberProfileImage(String userId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
+			"mattermost",
+			authentication.getName()
+		);
+
+		if (authorizedClient != null && authorizedClient.getAccessToken() != null) {
+			// Mattermost Access Token을 가져옴
+			String accessToken = authorizedClient.getAccessToken().getTokenValue();
+
+			// Access Token을 사용하여 Mattermost API 호출
+			callMattermostApi(accessToken, userId);
+		}
+	}
+
+	private void callMattermostApi(String accessToken, String userId) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + accessToken);
+
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> response = restTemplate.exchange(
+			"https://j11a501.p.ssafy.io/mattermost/api/v4/users/" + userId + "/image",
+			HttpMethod.GET,
+			entity,
+			String.class
+		);
+
+		// Mattermost API 응답 처리
+		String responseBody = response.getBody();
+		logger.debug("Mattermost User Profile: {}", responseBody);
 	}
 
 	/*
