@@ -52,6 +52,19 @@ export default function ChatId() {
     isLoading: isChatroomLoading,
   } = useFetchChatroomById(roomId!);
 
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "진행전":
+        return "red";
+      case "진행중":
+        return "yellow";
+      case "완료":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
+
   /////////////////// 채팅 로직
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -308,7 +321,7 @@ export default function ChatId() {
         </div>
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
-        <Badge size="l" color="yellow">
+        <Badge size="l" color={getBadgeColor(chatroomData!.status)}>
           {chatroomData?.status}
         </Badge>
         <Link href={`/board/${chatroomData?.boardId}`}>
