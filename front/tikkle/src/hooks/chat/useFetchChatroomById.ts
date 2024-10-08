@@ -8,5 +8,6 @@ export const useFetchChatroomById = (roomId: string) => {
     queryKey: ["chatroom", roomId], // roomId에 따라 캐시 관리
     queryFn: () => fetchChatroomById(roomId), // 데이터를 가져오는 함수
     enabled: !!roomId, // roomId가 있을 때만 호출
+    refetchOnWindowFocus: false, // 탭 활성화 시 refetch를 비활성화
   });
 };
