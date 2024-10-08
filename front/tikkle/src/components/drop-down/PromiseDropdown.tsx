@@ -8,9 +8,13 @@ import Loading from "../loading/Loading";
 
 interface PromiseDropdownProps {
   roomId: string;
+  refetchAppointment: () => void;
 }
 
-const PromiseDropdown: React.FC<PromiseDropdownProps> = ({ roomId }) => {
+const PromiseDropdown: React.FC<PromiseDropdownProps> = ({
+  roomId,
+  refetchAppointment,
+}) => {
   // 상태로 form 입력값 관리
   const [timeQnt, setTimeQnt] = useState<number>(0);
   const [month, setMonth] = useState<number>(0);
@@ -42,6 +46,7 @@ const PromiseDropdown: React.FC<PromiseDropdownProps> = ({ roomId }) => {
     mutate(appointmentData, {
       onSuccess: () => {
         console.log("Appointment created successfully");
+        refetchAppointment(); // 약속 생성 후 refetchAppointment 호출
       },
       onError: (error) => {
         console.error("Error creating appointment:", error);
