@@ -6,7 +6,11 @@ import Button from "../button/Button";
 import { useCreateReview } from "@/hooks";
 import { ReviewCreateRequest } from "@/types";
 
-const ReviewCard: React.FC = () => {
+interface ReviewCardProps {
+  chatroomId: string; // chatroomId를 prop으로 받음
+}
+
+const ReviewCard: React.FC<ReviewCardProps> = ({ chatroomId }) => {
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
 
   const {
@@ -28,6 +32,7 @@ const ReviewCard: React.FC = () => {
 
     // 리뷰 작성 요청 전송
     const reviewData: ReviewCreateRequest = {
+      chatroomId, // chatroomId를 함께 전송
       type: selectedBadge,
     };
 
