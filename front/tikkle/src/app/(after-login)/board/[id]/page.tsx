@@ -6,6 +6,7 @@ import Badge from "@/components/badge/Badge";
 import Chips from "@/components/chips/Chips";
 import { usePathname } from "next/navigation";
 import { useDeleteBoard, useFetchBoardDetail } from "@/hooks/board";
+import { useCreateChatroom } from "@/hooks";
 import { useState } from "react";
 import Dropbox from "@/components/drop-down/Dropbox";
 import { useRouter } from "next/navigation";
@@ -53,6 +54,22 @@ export default function BoardDetail() {
   // 콘솔 로그로 실제 데이터를 확인
   console.log("API Response:", board);
 
+  // 채팅하기 버튼을 눌렀을 때 실행되는 함수
+  const { mutate: createChatroom, isPending } = useCreateChatroom(); // 채팅방 생성 훅 사용
+
+  const handleCreateChatroom = () => {
+    createChatroom(boardId, {
+      onSuccess: (data) => {
+        const roomId = data.chatRoomId; // 성공 응답으로 받은 roomId 사용
+        router.push(`/chat/${roomId}`); // 채팅방으로 이동
+      },
+      onError: (error) => {
+        console.error("채팅방 생성 중 에러 발생:", error);
+      },
+      // TODO: 에러에서 이미 존재하는 채팅방일 경우 roomId를 받아와서 해당 채팅방으로 push
+    });
+  };
+
   // 로딩 상태 처리
   if (isLoading) {
     return <div>Loading...</div>;
@@ -73,6 +90,7 @@ export default function BoardDetail() {
   console.log("member: " + member?.id);
   console.log("board: " + board.memberId);
   console.log("owner?: " + isBoardOwner);
+
   return (
     <>
       <div className="text-40 font-bold text-teal900">SSAFY의 티끌</div>
@@ -113,7 +131,8 @@ export default function BoardDetail() {
               variant="primary"
               design="fill"
               main="채팅하기"
-              onClick={() => router.push("/chat")}
+              onClick={handleCreateChatroom}
+              disabled={isPending} // isPending일 때 버튼 비활성화
             />
           )}
         </div>

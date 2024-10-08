@@ -10,3 +10,14 @@ export const fetchChatroomsByUserId = async () => {
 export const fetchChatroomById = async (roomId: string) => {
   return handleApiRequest<ChatroomData, "get">(`/chatroom/${roomId}`, "get");
 };
+
+// 채팅방 생성 API (boardId를 파라미터로 받음)
+export const createChatroom = async (boardId: string) => {
+  return handleApiRequest<{ chatRoomId: string }, "post", { boardId: string }>(
+    `/chatroom`,
+    "post",
+    {
+      boardId,
+    },
+  );
+};
