@@ -86,18 +86,18 @@ public class ChatroomService {
 
 				// 대화 상대에 따라 performer와 writer 구분
 				String partnerName =
-					isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
+					isWriter ? chatroom.getPerformer().getName() : chatroom.getWriter().getName();
 
 				responses.add(new DetailChatroomResponse(
 					chatroom.getId(),
 					partnerName,
-					lastSender.getNickname(),
+					lastSender.getName(),
 					lastChat.getContent(),
 					lastChat.getTimestamp()
 				));
 			} else {
 				String partnerName =
-					isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
+					isWriter ? chatroom.getPerformer().getName() : chatroom.getWriter().getName();
 				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName));
 			}
 		}
