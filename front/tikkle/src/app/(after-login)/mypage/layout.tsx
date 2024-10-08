@@ -10,16 +10,7 @@ export default function MypageLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const testData = {
-    profileImg: "/profile.png",
-    name: "Jane Doe",
-    email: "jane.doe@example.com",
-    rate: 4.2,
-  };
-
   const [isMounted, setIsMounted] = useState(false);
-
-  const [isInfoBoxLoaded] = useState(true);
 
   const member = useMypageStore((state) => state.member);
   const setMember = useMypageStore((state) => state.setMember);
@@ -30,9 +21,9 @@ export default function MypageLayout({
     if (!member) {
       setMember({
         id: "1",
-        name: testData.name,
-        nickname: "jane_doe",
-        email: testData.email,
+        name: "Unknown",
+        nickname: "anonymous",
+        email: "unknown@example.com",
       });
     }
   }, [member, setMember]);
@@ -43,10 +34,10 @@ export default function MypageLayout({
       <div className="flex gap-56">
         {isMounted ? (
           <InfoBox
-            profileImg={testData.profileImg}
+            profileImg={"/profile.png"}
             name={member?.name ?? "이름 없음"}
-            email={member?.email ?? testData.email}
-            rate={3}
+            email={member?.email ?? "알 수 없음"}
+            rate={0}
           />
         ) : (
           <InfoBoxLoading />
