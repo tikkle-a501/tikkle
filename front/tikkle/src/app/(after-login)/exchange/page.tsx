@@ -75,6 +75,7 @@ export default function Exchange() {
       },
       onError: (error) => {
         alert(error);
+        refetchRate(); // 최신 환율 새로고침
         console.error("Error during exchange:", error);
       },
     });
