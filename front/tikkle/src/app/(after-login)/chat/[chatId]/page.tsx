@@ -164,9 +164,10 @@ export default function ChatId() {
     data: appointmentData,
     error: appointmentError,
     isLoading: isAppointmentLoading,
+    refetch: refetchAppointment,
   } = useFetchAppointmentByRoomId(roomId);
 
-  console.log(appointmentData);
+  // console.log(appointmentData);
 
   ////////////////// 약속삭제 로직
   const deleteAppointmentMutation = useDeleteAppointmentById();
@@ -176,6 +177,7 @@ export default function ChatId() {
       deleteAppointmentMutation.mutate(appointmentId, {
         onSuccess: () => {
           alert("약속이 성공적으로 취소되었습니다.");
+          refetchAppointment();
         },
         onError: (error) => {
           alert(error.response.data.message);
@@ -273,7 +275,10 @@ export default function ChatId() {
               {/* PromiseDropdown 버튼 아래 표시 */}
               {showPromiseDropdown && (
                 <div className="mt-12">
-                  <PromiseDropdown roomId={roomId} />
+                  <PromiseDropdown
+                    roomId={roomId}
+                    refetchAppointment={refetchAppointment}
+                  />
                 </div>
               )}
             </div>
