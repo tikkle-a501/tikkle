@@ -11,9 +11,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -60,8 +57,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		// 사용자를 조회하거나 생성
 		Member member = saveOrUpdateMember(email, name, nickname);
 
+		String accessToken = userRequest.getAccessToken().getTokenValue();
 		String userId = oAuth2User.getAttribute("id");
-		getMemberProfileImage(userId);
+		getMattermostProfileImage(accessToken, userId);
 
 		Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
 		attributes.put("memberId", member.getId());
@@ -116,24 +114,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		return existingMember;
 	}
 
-	public void getMemberProfileImage(String userId) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
-			"mattermost",
-			authentication.getName()
-		);
-
-		if (authorizedClient != null && authorizedClient.getAccessToken() != null) {
-			// Mattermost Access Token을 가져옴
-			String accessToken = authorizedClient.getAccessToken().getTokenValue();
-
-			// Access Token을 사용하여 Mattermost API 호출
-			callMattermostApi(accessToken, userId);
-		}
-	}
-
-	private void callMattermostApi(String accessToken, String userId) {
+	private void getMattermostProfileImage(String accessToken, String userId) {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + accessToken);
