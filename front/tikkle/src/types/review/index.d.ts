@@ -1,5 +1,6 @@
 // 리뷰 작성 요청
 export interface ReviewCreateRequest {
+  chatroomId: string;
   type: string;
 }
 

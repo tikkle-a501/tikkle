@@ -279,7 +279,7 @@ export default function ChatId() {
               {/* ReviewCard 모달 */}
               {showReviewModal && (
                 <div className="mt-12">
-                  <ReviewCard />
+                  <ReviewCard chatroomId={roomId} />
                 </div>
               )}
             </div>
