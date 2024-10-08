@@ -25,16 +25,28 @@ const TodoList: React.FC<TodoListProps> = ({
     hour12: true, // 12시간제로 오전/오후 표시
   });
 
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "진행전":
+        return "red";
+      case "진행중":
+        return "yellow";
+      case "완료":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
+
   return (
     <Link href={`/chat/${chatId}`} passHref>
       <div className="inline-flex cursor-pointer items-center gap-6 p-6 text-15">
-        <Badge size="l" color="teal">
-          {/* 추후 뱃지 컬러를 동적으로 받는 로직 작성 필요 */}
+        <Badge size="l" color={getBadgeColor(status)}>
           {status}
         </Badge>
         <div>{formattedTime}까지</div>
         <div>{nickname}님과의 약속</div>
-        <div className="truncate text-warmGray500">{title}</div>
+        <div className="truncate font-400 text-warmGray500">{title}</div>
       </div>
     </Link>
   );

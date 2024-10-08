@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import InfoBox from "@/components/box/InfoBox";
 import InfoBoxLoading from "@/components/loading/InfoBoxLoading";
 import { useMypageStore } from "@/store/mypageStore";
+import { useFetchMypageMember } from "@/hooks"; // API 훅 임포트
 
 export default function MypageLayout({
   children,
@@ -15,18 +16,17 @@ export default function MypageLayout({
   const member = useMypageStore((state) => state.member);
   const setMember = useMypageStore((state) => state.setMember);
 
+  const { data: memberData } = useFetchMypageMember();
+
   useEffect(() => {
     setIsMounted(true);
 
-    if (!member) {
-      setMember({
-        id: "1",
-        name: "Unknown",
-        nickname: "anonymous",
-        email: "unknown@example.com",
-      });
+    if (!member && memberData) {
+      setMember(memberData);
     }
-  }, [member, setMember]);
+  }, [member, memberData, setMember]);
+
+  console.log(member);
 
   return (
     <>

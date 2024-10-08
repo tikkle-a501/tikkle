@@ -18,7 +18,7 @@ const MenuList: React.FC<MenuListProps> = ({ href, icon, children }) => {
       href={`/mypage/${href}`}
       className={` ${isActive ? "font-semibold" : ""}`}
     >
-      <div className="flex h-48 items-center gap-20 p-10 text-20 text-warmGray900">
+      <div className="flex h-48 items-center gap-20 whitespace-nowrap p-10 text-20 text-warmGray900">
         <span className="material-symbols-outlined">{icon}</span>
         <div>{children}</div>
       </div>

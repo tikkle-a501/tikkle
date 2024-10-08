@@ -8,6 +8,7 @@ import "swiper/css/scrollbar";
 import "./custom-swiper.css";
 import Chart from "@/components/chart/Chart";
 import RankList from "@/components/list/RankList";
+import TodoList from "@/components/list/TodoList";
 import { useFetchMypageMember } from "@/hooks";
 import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
 import { useFetchBoardList } from "@/hooks/board";
@@ -84,8 +85,8 @@ export default function Home() {
       <div className="flex h-[544px] w-full items-start gap-28 pt-16">
         {/* 랭킹 */}
         <div className="h-full w-1/5">
-          <div className="px-16 text-24 font-700 text-teal900">랭킹</div>
-          <div className="flex flex-col items-start justify-center gap-10 rounded-[12px] border border-warmGray200 px-56 py-28">
+          <div className="text-24 font-700 text-teal900">랭킹</div>
+          <div className="flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
             {rankData?.rankList?.length > 0 ? (
               rankData.rankList.map((data) => (
                 <RankList
@@ -111,6 +112,7 @@ export default function Home() {
             )}
           </div>
         </div>
+
         {/* 환율 */}
         <div className="h-full w-2/5">
           <div className="px-16 text-24 font-700 text-teal900">환율</div>
@@ -118,13 +120,51 @@ export default function Home() {
         </div>
         {/* 마이페이지 */}
         <div className="h-full w-2/5">
-          <div className="h-1/2 px-16 text-24 font-700 text-teal900">
+          <div className="h-1/3 px-16 text-24 font-700 text-teal900">
             나의 타임 & 티끌
-            <div className="rounded-[12px] border border-warmGray200">dd</div>
+            <div className="flex justify-center gap-[20px] rounded-[10px] border border-warmGray200 px-[56px] py-[28px]">
+              <div className="flex items-center gap-[10px]">
+                <span className="text-[48px] text-teal500">0</span>
+                <span className="text-[24px]">시간</span>
+              </div>
+              <div className="flex items-center gap-[10px]">
+                <span className="text-[48px] text-teal500">0</span>
+                <span className="text-[24px]">티끌</span>
+              </div>
+            </div>
           </div>
-          <div className="h-1/2 px-16 text-24 font-700 text-teal900">
+          <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
-            <div className="rounded-[12px] border border-warmGray200">dd</div>
+            <div className="flex h-[300px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+              <TodoList
+                status="진행중"
+                appointmentTime="0000.00.00 00:00"
+                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
+                nickname="00"
+                chatId="000"
+              />
+            </div>
           </div>
         </div>
       </div>
