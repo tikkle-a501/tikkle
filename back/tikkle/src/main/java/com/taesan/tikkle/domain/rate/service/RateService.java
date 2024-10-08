@@ -29,6 +29,7 @@ public class RateService {
 
 	private final static int INITIAL_TIME_TO_RANK_POINT = 1000;
 	private final static double RATE_ADJUSTMENT_FACTOR = 0.01;
+	private final static int ZERO_PREVENTION = 2;
 
 	private final AccountService accountService;
 	private final RateRepository rateRepository;
@@ -100,7 +101,7 @@ public class RateService {
 			return previousRate;
 		}
 
-		//직전 환율의 10%만 변화
+		//직전 환율의 RATE_ADJUSTMENT_FACTOR%만 변화
 		double rateChangeLimit = previousRate * RATE_ADJUSTMENT_FACTOR;
 		int newRate;
 		int rateAdjustment;
@@ -126,7 +127,8 @@ public class RateService {
 		//거래량 비율 -> 분자와 분모의 차이가 커질 수록 한 쪽으로의 수요가 커지기 때문에 1을 빼서 반전
 		double demandDiscrepancyRatio = 1 - ((double)numerator / (double)denominator);
 		//거래량에 따른 가중치 값
-		double transactionVolumeImpact = Math.log(denominator) / Math.log(numerator + denominator);
+		double transactionVolumeImpact =
+			Math.log(denominator + ZERO_PREVENTION) / Math.log(numerator + denominator + ZERO_PREVENTION);
 
 		return (int)Math.round(rateChangeLimit * demandDiscrepancyRatio * transactionVolumeImpact);
 	}
