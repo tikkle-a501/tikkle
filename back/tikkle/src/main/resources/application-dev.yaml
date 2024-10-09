@@ -3,7 +3,7 @@ server:
 
 file:
   upload:
-    image-dir: ./temp/images/
+    image-dir: ./temp/images
 
 spring:
   datasource:
