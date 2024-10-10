@@ -4,6 +4,7 @@ SELECT @@global.time_zone, @@session.time_zone;
 DROP PROCEDURE IF EXISTS create_members_with_accounts;
 DROP PROCEDURE IF EXISTS InsertRateData;
 DROP PROCEDURE IF EXISTS InsertExchangeLogData;
+DROP PROCEDURE IF EXISTS InsertBoardData;
 --  organizations
 INSERT INTO organizations (id, created_at, payment_policy, provider, domain_addr, name)
 VALUES (UNHEX(REPLACE(UUID(), '-', '')), NOW(), 'FREE', 1, 'j11a501.p.ssafy.io',
@@ -147,6 +148,111 @@ END//
 
 DELIMITER ;
 
+-- 공고 생성
+DELIMITER //
+
+CREATE PROCEDURE InsertBoardData()
+BEGIN
+    DECLARE i INT DEFAULT 0;
+    DECLARE total_rows INT DEFAULT 100; -- 원하는 만큼의 데이터를 생성하려면 이 값을 조정하세요
+    DECLARE rand_member_id BINARY(16);
+    DECLARE rand_category VARCHAR(8);
+    DECLARE rand_content TEXT;
+    DECLARE rand_status VARCHAR(8);
+    DECLARE rand_time TINYINT UNSIGNED;
+    DECLARE rand_title VARCHAR(64);
+    DECLARE rand_view_count INT;
+    DECLARE rand_created_at DATETIME(6);
+    DECLARE rand_updated_at DATETIME(6);
+    DECLARE rand_deleted_at DATETIME(6);
+
+    WHILE i < total_rows
+        DO
+            -- members 테이블에서 member_id를 랜덤으로 선택
+            SELECT id INTO rand_member_id FROM members ORDER BY RAND() LIMIT 1;
+
+            -- 랜덤한 카테고리 설정 ('업무', '비업무')
+            SET rand_category = CASE FLOOR(RAND() * 2)
+                                    WHEN 0 THEN '업무'
+                                    WHEN 1 THEN '비업무'
+                END;
+
+            -- 랜덤한 상태 설정 ('진행중', '진행전', '완료됨')
+            SET rand_status = CASE FLOOR(RAND() * 3)
+                                  WHEN 0 THEN '진행중'
+                                  WHEN 1 THEN '진행전'
+                                  WHEN 2 THEN '완료됨'
+                END;
+
+            -- 랜덤 시간 설정 (1에서 10 사이)
+            SET rand_time = FLOOR(RAND() * 10) + 1;
+
+            -- 다양한 타이틀 설정
+            SET rand_title = CASE FLOOR(RAND() * 10)
+                                 WHEN 0 THEN '내일 회의 자료 출력 및 준비해주실 분!'
+                                 WHEN 1 THEN '간단한 회사 문서 복사 업무 도와주실 분!'
+                                 WHEN 2 THEN '팀 회의 준비 및 장비 세팅 도와주실 분 구합니다.'
+                                 WHEN 3 THEN '업무용 장비 청소 및 정리해주실 분을 찾고 있습니다.'
+                                 WHEN 4 THEN '사내 교육 자료 정리 및 프린트 도와주실 분!'
+                                 WHEN 5 THEN '사무실 인테리어 변경 도와주실 분 구해요.'
+                                 WHEN 6 THEN '문서 파일링 작업 도와줄 분을 찾습니다.'
+                                 WHEN 7 THEN '다음 주 이벤트 준비를 도와주실 분을 구합니다.'
+                                 WHEN 8 THEN '사무용 물품 정리 및 재고 확인할 분 구합니다.'
+                                 WHEN 9 THEN '사무실 내 비품 정리 및 관리 도와주실 분!'
+                END;
+
+            -- 다양한 게시글 내용 설정
+            SET rand_content = CASE FLOOR(RAND() * 10)
+                                   WHEN 0 THEN '내일 오전에 [회의 자료 출력 및 간단한 준비]를 도와주실 분을 찾고 있습니다. 1시간 정도 소요되며.'
+                                   WHEN 1 THEN '회사에서 내일 [간단한 문서 복사 및 정리]를 도와주실 분을 구하고 있습니다. 30분 정도 소요되며.'
+                                   WHEN 2 THEN '[팀 회의 준비 및 장비 세팅]을 도와줄 분을 찾고 있습니다. 2시간 정도 소요될 예정입니다.'
+                                   WHEN 3 THEN '업무용 장비 청소와 정리 작업을 진행할 예정입니다. 약 1시간 30분 정도 소요되며.'
+                                   WHEN 4 THEN '사내 교육 자료를 프린트하고 정리할 분을 찾습니다. 1시간 정도 걸릴 예정입니다.'
+                                   WHEN 5 THEN '[사무실 인테리어 변경 작업]을 도와주실 분을 구합니다. 시간은 2시간 정도입니다.'
+                                   WHEN 6 THEN '다음 주에 필요한 [문서 파일링 작업]을 도와주실 분을 찾습니다. 45분 정도 소요됩니다.'
+                                   WHEN 7 THEN '[이벤트 준비]를 도와줄 분을 찾고 있습니다. 1시간 반 정도 걸릴 예정입니다.'
+                                   WHEN 8 THEN '[사무용 물품 정리 및 재고 확인] 작업을 도와주실 분을 구합니다. 1시간 소요됩니다.'
+                                   WHEN 9 THEN '사무실 내 [비품 정리 및 관리]를 도와주실 분을 찾습니다. 약 2시간 소요됩니다.'
+                END;
+
+            -- 랜덤한 조회수 설정 (0에서 1000 사이)
+            SET rand_view_count = FLOOR(RAND() * 1000);
+
+            -- 랜덤한 생성 시간 (지난 한 달 동안의 임의의 시간)
+            SET rand_created_at = DATE_ADD(NOW(), INTERVAL -FLOOR(RAND() * 30) DAY);
+
+            -- rand_created_at 이후의 임의의 업데이트 시간
+            SET rand_updated_at = DATE_ADD(rand_created_at, INTERVAL FLOOR(RAND() * 100) SECOND);
+
+            -- 30% 확률로 삭제된 시간 설정, 나머지는 NULL
+            IF RAND() <= 0.3 THEN
+                SET rand_deleted_at = DATE_ADD(rand_updated_at, INTERVAL FLOOR(RAND() * 50) SECOND);
+            ELSE
+                SET rand_deleted_at = NULL;
+            END IF;
+
+            -- boards 테이블에 데이터 삽입
+            INSERT INTO boards (id, created_at, deleted_at, updated_at, category, content, status, time, title,
+                                view_count, member_id)
+            VALUES (UNHEX(REPLACE(UUID(), '-', '')),
+                    rand_created_at,
+                    rand_deleted_at,
+                    rand_updated_at,
+                    rand_category,
+                    rand_content,
+                    rand_status,
+                    rand_time,
+                    rand_title,
+                    rand_view_count,
+                    rand_member_id);
+
+            SET i = i + 1;
+        END WHILE;
+END//
+
+DELIMITER ;
+
 CALL create_members_with_accounts();
 CALL InsertRateData();
-call InsertExchangeLogData()
+CALL InsertExchangeLogData();
+CALL InsertBoardData();
