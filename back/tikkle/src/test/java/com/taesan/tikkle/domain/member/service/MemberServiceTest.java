@@ -34,7 +34,7 @@ public class MemberServiceTest {
 		String email = "taesan@tikkle.com";
 
 		MemberResponse memberResponse =
-			new MemberResponse(id, name, nickname, email);
+			new MemberResponse(id, name, nickname, email, null);
 		when(memberRepository.findById(id, MemberResponse.class))
 			.thenReturn(Optional.of(memberResponse));
 

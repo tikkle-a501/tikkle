@@ -1,5 +1,6 @@
 package com.taesan.tikkle.domain.chat.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,5 +19,6 @@ public class EnterChatroomResponse {
 	private String status;
 	private String boardTitle;
 	private UUID boardId;
-
+	private UUID writerId;
+	private boolean isDeleted;
 }

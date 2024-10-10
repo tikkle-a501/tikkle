@@ -5,6 +5,7 @@ export interface MypageMemberResponse {
   name: string;
   nickname: string;
   email: string;
+  image: string;
 }
 
 interface MypageState {
