@@ -14,6 +14,7 @@ export interface ChatroomData {
   partnerName: string;
   status: string;
   deleted: boolean;
+  writerId: string;
 }
 
 export interface ChatroomResponse {

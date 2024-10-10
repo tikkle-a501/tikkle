@@ -138,9 +138,6 @@ export default function ChatId() {
 
       const sendMessage = {
         destination: "/app/sendMessage",
-        // headers: {
-        //   'content-type': 'application/json; charset=UTF-8'  // 헤더 설정
-        // },
         body: JSON.stringify(chatMessage),
       };
       console.log("chatMessage는 말이죠 : ", chatMessage);
@@ -169,9 +166,8 @@ export default function ChatId() {
   }, [combinedMessages]);
 
   ////////////////// 약속잡기 로직
-  // TODO: 게시글 작성자만 약속을 잡을 수 있도록 하는 로직
+  // 약속잡기 버튼을 작성자에게만 렌더링
   const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
-  // "약속잡기" 버튼 클릭 시 상태 변경
   const handleTogglePromiseDropdown = () => {
     setShowPromiseDropdown((prevState) => !prevState);
   };
@@ -183,8 +179,6 @@ export default function ChatId() {
     isLoading: isAppointmentLoading,
     refetch: refetchAppointment,
   } = useFetchAppointmentByRoomId(roomId);
-
-  // console.log(appointmentData);
 
   ////////////////// 약속삭제 로직
   const deleteAppointmentMutation = useDeleteAppointmentById();
@@ -209,8 +203,6 @@ export default function ChatId() {
   const handleReviewModalToggle = () => {
     setShowReviewModal((prev) => !prev); // 모달 표시 상태 토글
   };
-
-  ////////// 아래부터 컴포넌트
 
   // 로딩 중일 때 보여줄 내용
   if (isChatroomLoading) {
@@ -276,56 +268,60 @@ export default function ChatId() {
                   {appointmentData?.timeQnt}시간
                 </div>
                 <div>약속</div>
-                {/* TODO: 게시글 작성자에게만 약속취소 버튼 표시 */}
-                <Button
-                  size="s"
-                  variant="primary"
-                  design="fill"
-                  main="약속취소"
-                  onClick={() =>
-                    handleDeleteAppointment(appointmentData.appointmentId)
-                  }
-                />
-                <div>
-                  <Button
-                    size="s"
-                    variant="primary"
-                    design="outline"
-                    main="거래 완료하기"
-                    onClick={handleReviewModalToggle}
-                  />
-                </div>
-                {/* ReviewCard 모달 */}
-                {showReviewModal && (
-                  <div className="mt-12">
-                    <ReviewCard
-                      chatroomId={roomId}
-                      refetchChatroom={refetchChatroom}
+                {/* 약속취소 , 거래완료 버튼을 작성자에게만 렌더링 */}
+                {chatroomData?.writerId === member?.id && (
+                  <>
+                    <Button
+                      size="s"
+                      variant="primary"
+                      design="fill"
+                      main="약속취소"
+                      onClick={() =>
+                        handleDeleteAppointment(appointmentData.appointmentId)
+                      }
                     />
-                  </div>
+                    <Button
+                      size="s"
+                      variant="primary"
+                      design="outline"
+                      main="거래 완료하기"
+                      onClick={handleReviewModalToggle}
+                    />
+                    {/* ReviewCard 모달 */}
+                    {showReviewModal && (
+                      <div className="mt-12">
+                        <ReviewCard
+                          chatroomId={roomId}
+                          refetchChatroom={refetchChatroom}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
-              // 약속이 없을 때 '약속잡기' 버튼 표시
-              // TODO: 게시글 작성자에게만 약속잡기 버튼 표시
-              <div>
-                <Button
-                  size="m"
-                  variant="primary"
-                  design="fill"
-                  main="약속잡기"
-                  onClick={handleTogglePromiseDropdown}
-                />
-                {/* PromiseDropdown 버튼 아래 표시 */}
-                {showPromiseDropdown && (
-                  <div className="mt-12">
-                    <PromiseDropdown
-                      roomId={roomId}
-                      refetchAppointment={refetchAppointment}
-                    />
-                  </div>
-                )}
-              </div>
+              // 약속이 없을 때 '약속잡기' 버튼을 작성자에게만 표시
+              chatroomData?.writerId === member?.id && (
+                <div>
+                  <Button
+                    size="m"
+                    variant="primary"
+                    design="fill"
+                    main="약속잡기"
+                    onClick={handleTogglePromiseDropdown}
+                  />
+                  {/* PromiseDropdown 버튼 아래 표시 */}
+                  {showPromiseDropdown && (
+                    <div className="mt-12">
+                      <PromiseDropdown
+                        roomId={roomId}
+                        refetchAppointment={refetchAppointment}
+                        refetchChatroom={refetchChatroom}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
             )}
           </div>
         )}
