@@ -15,6 +15,9 @@ import { Client } from "@stomp/stompjs";
 import { Chat } from "@/types/chat";
 import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppointmentByRoomId";
 import { useDeleteAppointmentById } from "@/hooks/appointment/useDeleteAppointmentById";
+import { useMypageStore } from "@/store/mypageStore";
+import { useFetchMypageMember } from "@/hooks";
+import ReviewCard from "@/components/card/ReviewCard";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -22,14 +25,45 @@ export default function ChatId() {
   // URL에서 roomId 추출 (예: '/chat/31000000-0000-0000-0000-000000000000')
   const roomId = pathname.split("/").pop()!; // 경로의 마지막 부분이 roomId, Non-null assertion 사용
 
-  // 특정 유저 ID 설정
-  // TODO: 하드코딩된 유저ID를 로그인된 유저ID 받아오는 로직
-  const memberId = "150e6552-807e-11ef-896d-0242ac120005";
+  const member = useMypageStore((state) => state.member); // zustand에서 현재 member 상태 가져오기
+  const setMember = useMypageStore((state) => state.setMember); // zustand에서 setMember 가져오기
+  const [fetchData, setFetchData] = useState(false); // API 호출 여부를 제어하기 위한 로컬 상태
+
+  useEffect(() => {
+    if (!member) {
+      setFetchData(true); // member가 없으면 데이터를 받아오도록 설정
+    }
+  }, [member]);
+
+  const { data: memberData, isLoading, error } = useFetchMypageMember(); // 인자 없이 호출
+
+  useEffect(() => {
+    if (memberData && !member && fetchData) {
+      setMember(memberData); // member 상태가 없을 때만 zustand에 저장
+      setFetchData(false); // 데이터를 받아온 후 다시 API 호출을 막기 위해 설정
+    }
+  }, [memberData, member, setMember, fetchData]);
+
+  console.log("zustand member state:", member);
+
   const {
     data: chatroomData,
     error: chatroomError,
     isLoading: isChatroomLoading,
   } = useFetchChatroomById(roomId!);
+
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "진행전":
+        return "red";
+      case "진행중":
+        return "yellow";
+      case "완료":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
 
   /////////////////// 채팅 로직
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +129,7 @@ export default function ChatId() {
     if (stompClientRef.current && inputValue.trim() !== "") {
       const chatMessage = {
         chatroomId: roomId,
-        senderId: memberId,
+        senderId: member?.id,
         content: inputValue,
       };
 
@@ -120,6 +154,17 @@ export default function ChatId() {
 
   const combinedMessages = [...(chatroomData?.chats || []), ...messages];
 
+  ////////////////// 스크롤 로직
+  // Scroll container를 참조할 ref 생성
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // 컴포넌트가 렌더링되거나 messages가 업데이트될 때마다 스크롤을 아래로
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [combinedMessages]);
+
   ////////////////// 약속잡기 로직
   // TODO: 게시글 작성자만 약속을 잡을 수 있도록 하는 로직
   const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
@@ -133,9 +178,10 @@ export default function ChatId() {
     data: appointmentData,
     error: appointmentError,
     isLoading: isAppointmentLoading,
+    refetch: refetchAppointment,
   } = useFetchAppointmentByRoomId(roomId);
 
-  console.log(appointmentData);
+  // console.log(appointmentData);
 
   ////////////////// 약속삭제 로직
   const deleteAppointmentMutation = useDeleteAppointmentById();
@@ -144,7 +190,7 @@ export default function ChatId() {
     if (window.confirm("정말로 약속을 취소하시겠습니까?")) {
       deleteAppointmentMutation.mutate(appointmentId, {
         onSuccess: () => {
-          alert("약속이 성공적으로 취소되었습니다.");
+          refetchAppointment();
         },
         onError: (error) => {
           alert(error.response.data.message);
@@ -152,6 +198,13 @@ export default function ChatId() {
         },
       });
     }
+  };
+
+  // 거래 완료하기 로직
+  const [showReviewModal, setShowReviewModal] = useState(false); // ReviewCard 모달 표시 상태 관리
+
+  const handleReviewModalToggle = () => {
+    setShowReviewModal((prev) => !prev); // 모달 표시 상태 토글
   };
 
   ////////// 아래부터 컴포넌트
@@ -227,6 +280,21 @@ export default function ChatId() {
                   handleDeleteAppointment(appointmentData.appointmentId)
                 }
               />
+              <div>
+                <Button
+                  size="s"
+                  variant="primary"
+                  design="outline"
+                  main="거래 완료하기"
+                  onClick={handleReviewModalToggle}
+                />
+              </div>
+              {/* ReviewCard 모달 */}
+              {showReviewModal && (
+                <div className="mt-12">
+                  <ReviewCard chatroomId={roomId} />
+                </div>
+              )}
             </div>
           ) : (
             // 약속이 없을 때 '약속잡기' 버튼 표시
@@ -242,7 +310,10 @@ export default function ChatId() {
               {/* PromiseDropdown 버튼 아래 표시 */}
               {showPromiseDropdown && (
                 <div className="mt-12">
-                  <PromiseDropdown roomId={roomId} />
+                  <PromiseDropdown
+                    roomId={roomId}
+                    refetchAppointment={refetchAppointment}
+                  />
                 </div>
               )}
             </div>
@@ -250,7 +321,7 @@ export default function ChatId() {
         </div>
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
-        <Badge size="l" color="yellow">
+        <Badge size="l" color={getBadgeColor(chatroomData!.status)}>
           {chatroomData?.status}
         </Badge>
         <Link href={`/board/${chatroomData?.boardId}`}>
@@ -259,7 +330,10 @@ export default function ChatId() {
       </div>
 
       {/* 채팅 내용 */}
-      <div className="scrollbar-custom flex flex-1 flex-col self-stretch overflow-y-auto">
+      <div
+        ref={scrollRef}
+        className="scrollbar-custom flex flex-1 flex-col self-stretch overflow-y-auto"
+      >
         {combinedMessages.length > 0 ? (
           combinedMessages.map((chat, index) => (
             <ChatList
@@ -267,7 +341,7 @@ export default function ChatId() {
               content={chat.content}
               createdAt={chat.timestamp}
               senderId={chat.senderId}
-              isMine={chat.senderId === memberId}
+              isMine={chat.senderId === member?.id}
             />
           ))
         ) : (

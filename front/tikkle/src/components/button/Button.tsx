@@ -38,9 +38,9 @@ const Button: React.FC<ButtonProps> = ({
   children,
 }) => {
   const sizeClasses = {
-    l: "flex justify-center items-center h-56 p-16 text-17 items-center gap-8 rounded-12",
-    m: "flex justify-center items-center h-48 p-16 text-16 items-center gap-8 rounded-10",
-    s: "flex justify-center items-center h-40 p-16 text-15 items-center gap-8 rounded-8",
+    l: "flex whitespace-nowrap justify-center items-center h-56 p-16 text-17 items-center gap-8 rounded-12",
+    m: "flex whitespace-nowrap justify-center items-center h-48 p-16 text-16 items-center gap-8 rounded-10",
+    s: "flex whitespace-nowrap justify-center items-center h-40 p-16 text-15 items-center gap-8 rounded-8",
   };
 
   const className = `${sizeClasses[size]} ${
