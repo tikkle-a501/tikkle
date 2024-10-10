@@ -48,7 +48,6 @@ export default function Home() {
 
   const { data: boardList } = useFetchBoardList();
 
-  // 할일 데이터를 가져오는 훅 사용
   const { data: todoAppointments, isError: isTodoError } =
     useFetchTodoAppointment();
 
