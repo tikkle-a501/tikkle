@@ -11,14 +11,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.service.RedisTokenService;
-import com.taesan.tikkle.global.response.ApiResponse;
 import com.taesan.tikkle.global.utils.JwtUtil;
 
 import jakarta.servlet.ServletException;
@@ -75,24 +72,24 @@ public class JwtOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandl
 		String redirectUrl = "https://j11a501.p.ssafy.io/home";
 		getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
-//		MemberResponse memberResponse = new MemberResponse(
-//			oAuth2User.getAttribute("memberId"),
-//			oAuth2User.getAttribute("username"),
-//			oAuth2User.getAttribute("nickname"),
-//			oAuth2User.getAttribute("email")
-//		);
-//
-//		// ApiResponse 객체 생성
-//		ApiResponse<MemberResponse> apiResponse
-//			= new ApiResponse<>(200, "회원 정보 불러오기에 성공했습니다.", memberResponse);
-//
-//		// 응답 헤더 설정
-//		response.setContentType("application/json");
-//		response.setCharacterEncoding("UTF-8");
-//		response.setStatus(HttpServletResponse.SC_OK);
-//
-//		// ObjectMapper를 사용해 ApiResponse 객체를 JSON으로 변환하여 응답으로 전송
-//		objectMapper.writeValue(response.getWriter(), apiResponse);
+		//		MemberResponse memberResponse = new MemberResponse(
+		//			oAuth2User.getAttribute("memberId"),
+		//			oAuth2User.getAttribute("username"),
+		//			oAuth2User.getAttribute("nickname"),
+		//			oAuth2User.getAttribute("email")
+		//		);
+		//
+		//		// ApiResponse 객체 생성
+		//		ApiResponse<MemberResponse> apiResponse
+		//			= new ApiResponse<>(200, "회원 정보 불러오기에 성공했습니다.", memberResponse);
+		//
+		//		// 응답 헤더 설정
+		//		response.setContentType("application/json");
+		//		response.setCharacterEncoding("UTF-8");
+		//		response.setStatus(HttpServletResponse.SC_OK);
+		//
+		//		// ObjectMapper를 사용해 ApiResponse 객체를 JSON으로 변환하여 응답으로 전송
+		//		objectMapper.writeValue(response.getWriter(), apiResponse);
 	}
 
 }
