@@ -12,7 +12,7 @@ import TodoList from "@/components/list/TodoList";
 import { useFetchMypageMember } from "@/hooks";
 import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
 import { useFetchBoardList } from "@/hooks/board";
-import { useFetchRank } from "@/hooks"; // 랭킹 데이터를 가져오는 훅
+import { useFetchRank, useFetchAccount } from "@/hooks"; // 랭킹 데이터를 가져오는 훅
 import Loading from "@/components/loading/Loading"; // 로딩 컴포넌트 추가
 
 export default function Home() {
@@ -44,6 +44,13 @@ export default function Home() {
   } = useFetchRank();
 
   const { data: boardList } = useFetchBoardList();
+
+  const {
+    data: accountData,
+    isPending: isAccountPending,
+    error: fetchAccountError,
+    refetch: refetchAccount,
+  } = useFetchAccount(); // 나의 시간 & 티끌
 
   if (isRankLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
   if (isRankError || !rankData) return <div>Error loading rank data</div>; // 에러 처리
@@ -121,16 +128,30 @@ export default function Home() {
         {/* 마이페이지 */}
         <div className="h-full w-2/5">
           <div className="h-1/3 px-16 text-24 font-700 text-teal900">
-            나의 타임 & 티끌
+            나의 시간 & 티끌
             <div className="flex justify-center gap-[20px] rounded-[10px] border border-warmGray200 px-[56px] py-[28px]">
-              <div className="flex items-center gap-[10px]">
-                <span className="text-[48px] text-teal500">0</span>
-                <span className="text-[24px]">시간</span>
-              </div>
-              <div className="flex items-center gap-[10px]">
-                <span className="text-[48px] text-teal500">0</span>
-                <span className="text-[24px]">티끌</span>
-              </div>
+              {isAccountPending ? (
+                <Loading />
+              ) : fetchAccountError ? (
+                <div className="text-red-500">
+                  Error: {fetchAccountError.message}
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-[10px]">
+                    <span className="text-[48px] text-teal500">
+                      {accountData?.timeQnt}
+                    </span>
+                    <span className="text-[24px]">시간</span>
+                  </div>
+                  <div className="flex items-center gap-[10px]">
+                    <span className="text-[48px] text-teal500">
+                      {accountData?.rankingPoint}
+                    </span>
+                    <span className="text-[24px]">티끌</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div className="h-2/3 px-16 text-24 font-700 text-teal900">
