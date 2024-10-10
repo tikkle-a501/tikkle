@@ -16,12 +16,12 @@ interface HistoryListProps {
 
 const getBadgeColor = (status: string) => {
   switch (status) {
-    case "POSTED":
+    case "진행전":
       return "red";
-    case "DONE":
-      return "gray";
-    case "ACTIVE":
+    case "진행중":
       return "yellow";
+    case "완료":
+      return "gray";
     default:
       return "red";
   }
