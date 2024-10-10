@@ -80,6 +80,9 @@ public class AppointmentService {
 			.orElseThrow(() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
 		if (memberId.equals(appointment.getRoom().getWriter().getId())) {
 			appointment.softDelete();
+			Chatroom chatroom = chatroomRepository.findById(appointment.getRoom().getId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+			Board board = boardRepository.findById(chatroom.getBoard().getId()).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+			board.changeStatus("진행전");
 			// 보증금 받기
 			Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
 				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
