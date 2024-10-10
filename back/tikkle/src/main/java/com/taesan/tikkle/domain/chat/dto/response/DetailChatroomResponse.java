@@ -27,4 +27,10 @@ public class DetailChatroomResponse {
 		this.roomId = roomId;
 		this.partner = partner;
 	}
+
+	public DetailChatroomResponse(UUID roomId, String partner, byte[] partnerImage) {
+		this.roomId = roomId;
+		this.partner = partner;
+		this.partnerImage = partnerImage;
+	}
 }
