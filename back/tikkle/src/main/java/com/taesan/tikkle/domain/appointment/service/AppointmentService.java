@@ -63,7 +63,7 @@ public class AppointmentService {
 				chatroom.getPerformer().getName();
 			response.add(
 				new TodoAppointmentResponse(appointment.getId(), board.getStatus(), partner, appointment.getApptTime(),
-					board.getTitle()));
+					board.getTitle(),chatroom.getId()));
 		}
 		return response;
 	}

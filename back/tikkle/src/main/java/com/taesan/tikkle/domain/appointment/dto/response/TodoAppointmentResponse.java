@@ -16,4 +16,5 @@ public class TodoAppointmentResponse {
 	private String partner;
 	private Timestamp startTime;
 	private String title;
+	private UUID chatroomId;
 }
