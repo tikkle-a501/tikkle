@@ -14,7 +14,7 @@ export interface BriefAppointment {
 
 // 내 할일 조회 응답
 export interface TodoAppointmentResponse {
-  appointmendId: string;
+  appointmentId: string;
   status: string;
   partner: string;
   startTime: string;
