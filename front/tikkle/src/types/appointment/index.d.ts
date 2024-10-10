@@ -1,3 +1,5 @@
+import { fetchTodoAppointment } from "@/libs";
+
 // 약속 생성 시 사용
 export interface AppointmentRequest {
   roomId: string; // 채팅방 ID (UUID 형식)
@@ -22,6 +24,4 @@ export interface TodoAppointmentResponse {
   chatroomId: string;
 }
 
-export interface TodoAppointmentResponses {
-  data: TodoAppointmentResponse[];
-}
+export type TodoAppointmentResponses = TodoAppointmentResponse[];
