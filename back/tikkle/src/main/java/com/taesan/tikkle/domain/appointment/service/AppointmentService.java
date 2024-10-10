@@ -51,12 +51,13 @@ public class AppointmentService {
 		List<Chatroom> performers = chatroomRepository.findByPerformerId(memberId);
 		List<Chatroom> writers = chatroomRepository.findByWriterId(memberId);
 		for (Chatroom chatroom : performers) {
-			if (!chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
+
+			if (!chatroom.getAppointments().isEmpty() && !chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
 				appointments.add(chatroom.getAppointments().get(chatroom.getAppointments().size() - 1));
 			}
 		}
 		for (Chatroom chatroom : writers) {
-			if (!chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
+			if (!chatroom.getAppointments().isEmpty() && !chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
 				appointments.add(chatroom.getAppointments().get(chatroom.getAppointments().size() - 1));
 			}
 		}
