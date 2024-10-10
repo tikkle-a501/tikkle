@@ -13,11 +13,13 @@ import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResp
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taesan.tikkle.domain.config.security.CustomLogoutFilter;
 import com.taesan.tikkle.domain.config.security.JwtAuthenticationFailureHandler;
 import com.taesan.tikkle.domain.config.security.JwtAuthenticationFilter;
 import com.taesan.tikkle.domain.config.security.JwtOAuth2SuccessHandler;
@@ -117,6 +119,13 @@ public class SecurityConfig {
 						.accessTokenResponseClient(accessTokenResponseClient())  // JWT 서명 검증 비활성화
 					)
 			)
+			.logout(logout -> logout
+				.logoutUrl("/api/v1/logout")
+				.clearAuthentication(true)
+				.invalidateHttpSession(true)
+				.deleteCookies("Authorization", "refresh_token") // 쿠키 삭제
+				.permitAll()
+			)
 			.cors((cors) -> cors.configurationSource(corsConfigurationSource))
 			.csrf((csrf) -> csrf.disable());
 
@@ -126,7 +135,8 @@ public class SecurityConfig {
 		http
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil,
 					customOAuth2UserService, customUserDetailsService, redisTokenService, objectMapper),
-				UsernamePasswordAuthenticationFilter.class);
+				UsernamePasswordAuthenticationFilter.class)
+			.addFilterAt(new CustomLogoutFilter(redisTokenService, jwtUtil), LogoutFilter.class);
 
 		return http.build();
 	}
