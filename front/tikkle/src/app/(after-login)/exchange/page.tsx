@@ -27,6 +27,19 @@ export default function Exchange() {
   const [timeToConvertToTikkle, setTimeToConvertToTikkle] = useState(0); // 시간 -> 티끌
   const [tikkleToConvertToTime, setTikkleToConvertToTime] = useState(0); // 티끌 -> 시간
 
+  const {
+    data: latestRate,
+    isPending,
+    error: fetchError,
+    refetch: refetchRate,
+  } = useFetchRecentRate();
+  const {
+    data: accountData,
+    isPending: isAccountPending,
+    error: fetchAccountError,
+    refetch: refetchAccount,
+  } = useFetchAccount();
+
   const handleCreateRate = () => {
     createRateMutation(); // 테스트용 환율 생성 요청
   };
@@ -57,26 +70,16 @@ export default function Exchange() {
     createExchangeMutation(exchangeData, {
       onSuccess: () => {
         alert("환전이 완료되었습니다.");
-        // window.location.reload();
+        refetchAccount(); // 계정 정보 새로고침
+        refetchRate(); // 최신 환율 새로고침
       },
       onError: (error) => {
-        alert("환전 중 오류가 발생했습니다. 다시 시도해주세요.");
+        alert(error);
+        refetchRate(); // 최신 환율 새로고침
         console.error("Error during exchange:", error);
       },
     });
   };
-
-  const {
-    data: latestRate,
-    isPending,
-    error: fetchError,
-  } = useFetchRecentRate();
-
-  const {
-    data: accountData,
-    isPending: isAccountPending,
-    error: fetchAccountError,
-  } = useFetchAccount();
 
   const maxExchangeableTimeFromPoints =
     latestRate && accountData

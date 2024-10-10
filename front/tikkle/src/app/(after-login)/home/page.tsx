@@ -52,8 +52,8 @@ export default function Home() {
   const { data: todoAppointments, isError: isTodoError } =
     useFetchTodoAppointment();
 
-  if (isRankError || !rankData || isTodoError || !todoAppointments)
-    return <div>Error loading data</div>;
+  if (isRankLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
+  if (isRankError || !rankData) return <div>Error loading rank data</div>; // 에러 처리
 
   return (
     <div className="flex w-full flex-col items-start gap-10">
@@ -128,16 +128,30 @@ export default function Home() {
         {/* 마이페이지 */}
         <div className="h-full w-2/5">
           <div className="h-1/3 px-16 text-24 font-700 text-teal900">
-            나의 타임 & 티끌
+            나의 시간 & 티끌
             <div className="flex justify-center gap-[20px] rounded-[10px] border border-warmGray200 px-[56px] py-[28px]">
-              <div className="flex items-center gap-[10px]">
-                <span className="text-[48px] text-teal500">0</span>
-                <span className="text-[24px]">시간</span>
-              </div>
-              <div className="flex items-center gap-[10px]">
-                <span className="text-[48px] text-teal500">0</span>
-                <span className="text-[24px]">티끌</span>
-              </div>
+              {isAccountPending ? (
+                <Loading />
+              ) : fetchAccountError ? (
+                <div className="text-red-500">
+                  Error: {fetchAccountError.message}
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-[10px]">
+                    <span className="text-[48px] text-teal500">
+                      {accountData?.timeQnt}
+                    </span>
+                    <span className="text-[24px]">시간</span>
+                  </div>
+                  <div className="flex items-center gap-[10px]">
+                    <span className="text-[48px] text-teal500">
+                      {accountData?.rankingPoint}
+                    </span>
+                    <span className="text-[24px]">티끌</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           {/* 내가 맡은 일 */}

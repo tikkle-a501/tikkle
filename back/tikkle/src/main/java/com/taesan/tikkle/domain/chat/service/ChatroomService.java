@@ -52,10 +52,11 @@ public class ChatroomService {
 		Member writer = board.getMember();
 		Member performer = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-		// TODO : writer performer 중복체크
 		if (chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(), writer.getId(),
 			performer.getId()).isPresent()) {
-			throw new CustomException(ErrorCode.CHATROOM_EXISTS);
+			return new CreateChatroomResponse(
+				chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(), writer.getId(),
+					performer.getId()).get().getId());
 		}
 		Chatroom chatroom = new Chatroom(board, performer, writer);
 		chatroomRepository.save(chatroom);
@@ -86,18 +87,18 @@ public class ChatroomService {
 
 				// 대화 상대에 따라 performer와 writer 구분
 				String partnerName =
-					isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
+					isWriter ? chatroom.getPerformer().getName() : chatroom.getWriter().getName();
 
 				responses.add(new DetailChatroomResponse(
 					chatroom.getId(),
 					partnerName,
-					lastSender.getNickname(),
+					lastSender.getName(),
 					lastChat.getContent(),
 					lastChat.getTimestamp()
 				));
 			} else {
 				String partnerName =
-					isWriter ? chatroom.getPerformer().getNickname() : chatroom.getWriter().getNickname();
+					isWriter ? chatroom.getPerformer().getName() : chatroom.getWriter().getName();
 				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName));
 			}
 		}
@@ -145,7 +146,8 @@ public class ChatroomService {
 		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
 			chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer().getName() :
 				chatroom.getWriter().getName(), chatroom.getBoard().getStatus(),
-			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
+			chatroom.getBoard().getTitle(), chatroom.getBoard().getId(), chatroom.getBoard().getMember().getId(),
+			chatroom.getBoard().isDeleted());
 	}
 
 }

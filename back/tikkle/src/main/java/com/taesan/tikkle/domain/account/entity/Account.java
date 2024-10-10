@@ -63,5 +63,9 @@ public class Account extends AuditableEntity {
 		if (timeQnt < 0 || rankingPoint < 0)
 			throw new CustomException(ErrorCode.ACCOUNT_INSUFFICIENT_BALANCE);
 	}
+
+	public void setBalance(Integer timeQnt) {
+		this.timeQnt = timeQnt;
+	}
 }
 
