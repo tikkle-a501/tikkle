@@ -63,6 +63,8 @@ export default function Home() {
     isError: isTodoError,
   } = useFetchTodoAppointment();
 
+  console.log("todo" + todoAppointments);
+
   if (isRankLoading || isTodoLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
   if (isRankError || isTodoError || !rankData || !todoAppointments)
     return <div>Error loading data</div>; // 에러 처리
