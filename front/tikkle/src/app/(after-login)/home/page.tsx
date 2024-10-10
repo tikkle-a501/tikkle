@@ -148,7 +148,7 @@ export default function Home() {
                 todoAppointments.data.map(
                   (appointment: TodoAppointmentResponse) => (
                     <TodoList
-                      key={appointment.appointmendId}
+                      key={appointment.appointmentId}
                       status={appointment.status}
                       appointmentTime={appointment.startTime}
                       title={appointment.title}
