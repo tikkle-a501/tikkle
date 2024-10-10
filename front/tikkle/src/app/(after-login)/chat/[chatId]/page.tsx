@@ -50,6 +50,7 @@ export default function ChatId() {
     data: chatroomData,
     error: chatroomError,
     isLoading: isChatroomLoading,
+    refetch: refetchChatroom,
   } = useFetchChatroomById(roomId!);
 
   console.log("fetched chatroom detail: ", chatroomData);
@@ -297,7 +298,10 @@ export default function ChatId() {
                 {/* ReviewCard 모달 */}
                 {showReviewModal && (
                   <div className="mt-12">
-                    <ReviewCard chatroomId={roomId} />
+                    <ReviewCard
+                      chatroomId={roomId}
+                      refetchChatroom={refetchChatroom}
+                    />
                   </div>
                 )}
               </div>
@@ -330,7 +334,7 @@ export default function ChatId() {
         <Badge size="l" color={getBadgeColor(chatroomData!.status)}>
           {chatroomData?.status}
         </Badge>
-        {chatroomData?.deletedAt ? (
+        {chatroomData?.deleted ? (
           <div className="text-15 text-coolGray500">
             {chatroomData?.boardTitle} (삭제된 게시글)
           </div>
