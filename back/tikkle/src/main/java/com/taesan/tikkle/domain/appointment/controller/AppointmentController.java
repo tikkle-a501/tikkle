@@ -62,7 +62,7 @@ public class AppointmentController {
 
 	@GetMapping("/todo")
 	public ResponseEntity<ApiResponse<List<TodoAppointmentResponse>>> getTodoAppointments(@AuthedUsername UUID memberId){
-		ApiResponse<List<TodoAppointmentResponse>> response = ApiResponse.success("",appointmentService.getTodoAppointments(memberId));
+		ApiResponse<List<TodoAppointmentResponse>> response = ApiResponse.success("내 할일 약속 조회에 성공했습니다.",appointmentService.getTodoAppointments(memberId));
 		return ResponseEntity.ok(response);
 	}
 }
