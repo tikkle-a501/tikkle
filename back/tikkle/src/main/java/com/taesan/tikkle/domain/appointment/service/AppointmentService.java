@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,17 +30,20 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class AppointmentService {
 
+	@Autowired
 	private AppointmentRepository appointmentRepository;
+	@Autowired
 	private ChatroomRepository chatroomRepository;
+	@Autowired
 	private BoardRepository boardRepository;
+	@Autowired
 	private AccountRepository accountRepository;
+	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
 	private FileService fileService;
 
 	public List<TodoAppointmentResponse> getTodoAppointments(UUID memberId) {
@@ -65,7 +69,7 @@ public class AppointmentService {
 				chatroom.getPerformer().getName();
 			response.add(
 				new TodoAppointmentResponse(appointment.getId(), board.getStatus(), partner, appointment.getApptTime(),
-					board.getTitle(),chatroom.getId()));
+					board.getTitle(), chatroom.getId()));
 		}
 		return response;
 	}
