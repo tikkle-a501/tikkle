@@ -146,7 +146,7 @@ public class ChatroomService {
 		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
 			chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer().getName() :
 				chatroom.getWriter().getName(), chatroom.getBoard().getStatus(),
-			chatroom.getBoard().getTitle(), chatroom.getBoard().getId());
+			chatroom.getBoard().getTitle(), chatroom.getBoard().getId(),chatroom.getBoard().isDeleted());
 	}
 
 }

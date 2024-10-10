@@ -29,4 +29,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 		"JOIN FETCH el.rate r " +
 		"WHERE a.member.id = :memberId")
 	List<ExchangeLog> findExchangeLogsByMemberId(@Param("memberId") UUID memberId);
+
+	Optional<Account> findByMemberIdAndDeletedAtIsNull(UUID id);
 }
