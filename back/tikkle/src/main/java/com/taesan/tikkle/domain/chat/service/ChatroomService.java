@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,18 +29,20 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ChatroomService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ChatroomService.class);
 
+	@Autowired
 	private ChatroomRepository chatroomRepository;
+	@Autowired
 	private ChatRepository chatRepository;
+	@Autowired
 	private BoardRepository boardRepository;
+	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
 	private FileService fileService;
 
 	@Transactional
