@@ -34,7 +34,7 @@ export default function MypageLayout({
       <div className="flex gap-56">
         {isMounted ? (
           <InfoBox
-            profileImg={"/profile.png"}
+            profileImg={`data:image/png;base64,${member?.image}`}
             name={member?.name ?? "이름 없음"}
             email={member?.email ?? "알 수 없음"}
             rate={0}
