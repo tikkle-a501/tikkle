@@ -17,6 +17,7 @@ public enum ErrorCode {
 	AUTH_ILL_REFRESH(HttpStatus.BAD_REQUEST, 1710, "올바르지 않은 Refresh Token 입니다."),
 	AUTH_JWT_EXPIRED(HttpStatus.BAD_REQUEST, 1711, "올바르지 않은 JWT 형식입니다."),
 	MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, 1704, "존재하지 않는 회원입니다."),
+	MEMBER_IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, 1720, "회원 프로필 이미지가 존재하지 않습니다."),
 	APPOINTMENT_NOT_AUTHORIZED(HttpStatus.BAD_REQUEST, 1200, "약속 참여자가 아닙니다."),
 	APPOINTMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, 1204, "약속이 존재하지 않습니다."),
 	CHATROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, 1404, "채팅방이 존재하지 않습니다."),

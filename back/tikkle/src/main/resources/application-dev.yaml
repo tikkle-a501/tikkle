@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+file:
+  upload:
+    image-dir: ./temp/images
+
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/tikkle

@@ -1,12 +1,19 @@
 package com.taesan.tikkle.domain.member.service;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -41,6 +48,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private final AccountRepository accountRepository;
 	private final OAuth2AuthorizedClientService authorizedClientService;
 
+	@Value("${file.upload.image-dir}")
+	private String imageUploadDir;
+
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		// 기본 OAuth2UserService 사용하여 사용자 정보를 가져옴
@@ -58,8 +68,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		Member member = saveOrUpdateMember(email, name, nickname);
 
 		String accessToken = userRequest.getAccessToken().getTokenValue();
-		String userId = oAuth2User.getAttribute("id");
-		getMattermostProfileImage(accessToken, userId);
+		String mmUserId = oAuth2User.getAttribute("id");
+		try {
+			getMattermostProfileImage(accessToken, mmUserId, member.getId());
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 
 		Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
 		attributes.put("memberId", member.getId());
@@ -114,23 +128,37 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		return existingMember;
 	}
 
-	private void getMattermostProfileImage(String accessToken, String userId) {
+	private void getMattermostProfileImage(String accessToken, String userId, UUID memberId) throws
+		FileNotFoundException {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + accessToken);
 
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
-		ResponseEntity<String> response = restTemplate.exchange(
+		ResponseEntity<byte[]> response = restTemplate.exchange(
 			"https://j11a501.p.ssafy.io/mattermost/api/v4/users/" + userId + "/image",
 			HttpMethod.GET,
 			entity,
-			String.class
+			byte[].class
 		);
 
-		// Mattermost API 응답 처리
-		String responseBody = response.getBody();
-		logger.debug("Mattermost User Profile: {}", responseBody);
+		if (response.getStatusCode().is2xxSuccessful()) {
+			byte[] imageBytes = response.getBody();
+
+			String fileName = "profiles-" + memberId.toString() + ".png";
+			Path filePath = Paths.get(imageUploadDir, fileName);
+
+			try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
+				fos.write(imageBytes);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			logger.debug("Profile image saved as: {}", filePath.toString());
+		} else {
+			logger.error("Failed to retrieve profile image from Mattermost");
+		}
 	}
 
 	/*
