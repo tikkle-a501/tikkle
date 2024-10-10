@@ -103,7 +103,7 @@ export default function Home() {
       {/* 랭킹, 환율, 마이페이지가 들어갈 하단 div */}
       <div className="flex h-[544px] w-full items-start gap-28 pt-16">
         {/* 랭킹 */}
-        <div className="h-full w-1/5">
+        <div className="h-full w-1/6">
           <div className="text-24 font-700 text-teal900">랭킹</div>
           <div className="scrollbar-hidden flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
             {rankData?.rankList?.length > 0 ? (
@@ -133,7 +133,7 @@ export default function Home() {
         </div>
 
         {/* 환율 */}
-        <div className="h-full w-2/5">
+        <div className="h-full w-2/6">
           <div className="px-16 text-24 font-700 text-teal900">환율</div>
           <Chart />
         </div>
