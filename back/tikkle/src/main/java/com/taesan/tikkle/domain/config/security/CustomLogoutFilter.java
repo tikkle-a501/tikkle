@@ -2,9 +2,7 @@ package com.taesan.tikkle.domain.config.security;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.UUID;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.taesan.tikkle.domain.member.service.RedisTokenService;
@@ -50,12 +48,10 @@ public class CustomLogoutFilter extends GenericFilterBean {
 			for (Cookie cookie : cookies) {
 				if ("refresh_token".equals(cookie.getName())) {
 					String refreshToken = cookie.getValue();
-					String username = SecurityContextHolder.getContext().getAuthentication().getName();
+					String username = jwtUtil.extractUsername(refreshToken);
 					String newRefreshToken = jwtUtil.generateRefreshToken(new HashMap<>(), username);
-					// Redis에서 Refresh Token을 무효화하고, 새로운 토큰을 발급
+					// Redis에서 Refresh Token을 무효화
 					redisTokenService.deleteRefreshToken(username);
-					redisTokenService.storeRefreshToken(UUID.fromString(username), newRefreshToken,
-						1000 * 60 * 60 * 24); // 회전
 				}
 			}
 
