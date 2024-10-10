@@ -44,8 +44,8 @@ const TodoList: React.FC<TodoListProps> = ({
         <Badge size="l" color={getBadgeColor(status)}>
           {status}
         </Badge>
-        <div>{formattedTime}까지</div>
-        <div className="w-[100px]">{nickname}님과의 약속</div>
+        <div className="w-[150px]">{formattedTime}까지</div>
+        <div className="w-[200px]">{nickname}님과의 약속</div>
         <div className="max-w-xs truncate font-400 text-warmGray500">
           {title}
         </div>
