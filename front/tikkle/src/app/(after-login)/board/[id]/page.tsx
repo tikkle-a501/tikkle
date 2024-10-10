@@ -95,7 +95,6 @@ export default function BoardDetail() {
         ? "삭제된 공고입니다."
         : `Error: ${error.message}`,
     );
-    return null; // 화면에 아무것도 렌더링하지 않도록 null 반환
   }
 
   // 데이터가 없을 경우 처리
