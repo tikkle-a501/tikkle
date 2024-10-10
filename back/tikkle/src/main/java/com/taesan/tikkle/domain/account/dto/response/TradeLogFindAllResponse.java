@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.member.dto.response.MemberBriefResponse;
+import com.taesan.tikkle.domain.member.entity.Member;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -50,6 +51,17 @@ public class TradeLogFindAllResponse {
 	public static TradeLogFindAllResponse from(Board board, byte[] partnerImage) {
 		return TradeLogFindAllResponse.builder()
 			.member(MemberBriefResponse.from(board.getMember()))
+			.partnerImage(partnerImage)
+			.title(board.getTitle())
+			.content(board.getContent())
+			.time(board.getTime())
+			.status(board.getStatus())
+			.createdAt(board.getCreatedAt()).build();
+	}
+
+	public static TradeLogFindAllResponse from(Board board, Member member, byte[] partnerImage) {
+		return TradeLogFindAllResponse.builder()
+			.member(MemberBriefResponse.from(member))
 			.partnerImage(partnerImage)
 			.title(board.getTitle())
 			.content(board.getContent())

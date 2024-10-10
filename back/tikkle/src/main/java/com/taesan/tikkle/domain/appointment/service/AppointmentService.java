@@ -175,9 +175,10 @@ public class AppointmentService {
 				UUID memberId = username.equals(appointment.getRoom().getWriter().getId()) ?
 					appointment.getRoom().getPerformer().getId() :
 					appointment.getRoom().getWriter().getId();
+				Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).get();
 				Board board = appointment.getRoom().getBoard();
 				byte[] partnerImage = fileService.getProfileImage(memberId);  // partnerImage 조회 로직 추가
-				return TradeLogFindAllResponse.from(board, partnerImage);
+				return TradeLogFindAllResponse.from(board, member, partnerImage);
 			})
 			.collect(Collectors.toList());
 	}
