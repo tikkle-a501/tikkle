@@ -168,7 +168,7 @@ export default function Home() {
           </div>
           <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
-            <div className="flex h-[300px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
+            <div className="flex h-[290px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
               {todoAppointments?.data?.length > 0 ? (
                 todoAppointments.data.map((appointment) => (
                   <TodoList
@@ -181,7 +181,7 @@ export default function Home() {
                   />
                 ))
               ) : (
-                <div>할일이 없습니다.</div>
+                <span className="text-warmGray300">할일이 없습니다.</span>
               )}
             </div>
           </div>
