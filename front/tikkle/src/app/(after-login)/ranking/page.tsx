@@ -127,7 +127,7 @@ function RankingComponent() {
                   count={rankData.myRank.tradeCount}
                 />
               ) : (
-                <div className="px-[64px] py-12">로그인 정보가 없습니다.</div>
+                <div className="px-[64px] py-12">랭킹 반영 전입니다.</div>
               )}
             </div>
           </div>

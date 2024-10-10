@@ -29,8 +29,8 @@ export default function AfterLoginLayout({
         />
       </Head>
       <div className={pretendard.className}>
-        {isNavigationLoaded ? <Navigation /> : <NavigationLoading />}
         <QueryProvider>
+          {isNavigationLoaded ? <Navigation /> : <NavigationLoading />}
           <div className="flex flex-col gap-[10px] pb-[40px] pl-[48px] pr-[48px] pt-[28px]">
             {children}
           </div>

@@ -21,7 +21,7 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
 		HttpServletResponse response,
 		AuthenticationException exception) throws IOException, ServletException {
 		logger.error("Authentication failed: {}", exception.getMessage(), exception);
-		response.sendRedirect("http://localhost:3000");
+		response.sendRedirect("https://j11a501.p.ssafy.io/");
 	}
 
 }

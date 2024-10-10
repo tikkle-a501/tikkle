@@ -17,6 +17,7 @@ import { useFetchAppointmentByRoomId } from "@/hooks/appointment/useFetchAppoint
 import { useDeleteAppointmentById } from "@/hooks/appointment/useDeleteAppointmentById";
 import { useMypageStore } from "@/store/mypageStore";
 import { useFetchMypageMember } from "@/hooks";
+import ReviewCard from "@/components/card/ReviewCard";
 
 export default function ChatId() {
   const pathname = usePathname();
@@ -49,7 +50,23 @@ export default function ChatId() {
     data: chatroomData,
     error: chatroomError,
     isLoading: isChatroomLoading,
+    refetch: refetchChatroom,
   } = useFetchChatroomById(roomId!);
+
+  console.log("fetched chatroom detail: ", chatroomData);
+
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "진행전":
+        return "red";
+      case "진행중":
+        return "yellow";
+      case "완료됨":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
 
   /////////////////// 채팅 로직
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,9 +138,6 @@ export default function ChatId() {
 
       const sendMessage = {
         destination: "/app/sendMessage",
-        // headers: {
-        //   'content-type': 'application/json; charset=UTF-8'  // 헤더 설정
-        // },
         body: JSON.stringify(chatMessage),
       };
       console.log("chatMessage는 말이죠 : ", chatMessage);
@@ -152,9 +166,8 @@ export default function ChatId() {
   }, [combinedMessages]);
 
   ////////////////// 약속잡기 로직
-  // TODO: 게시글 작성자만 약속을 잡을 수 있도록 하는 로직
+  // 약속잡기 버튼을 작성자에게만 렌더링
   const [showPromiseDropdown, setShowPromiseDropdown] = useState(false); // 약속 잡기 드롭다운 상태 관리
-  // "약속잡기" 버튼 클릭 시 상태 변경
   const handleTogglePromiseDropdown = () => {
     setShowPromiseDropdown((prevState) => !prevState);
   };
@@ -164,9 +177,8 @@ export default function ChatId() {
     data: appointmentData,
     error: appointmentError,
     isLoading: isAppointmentLoading,
+    refetch: refetchAppointment,
   } = useFetchAppointmentByRoomId(roomId);
-
-  console.log(appointmentData);
 
   ////////////////// 약속삭제 로직
   const deleteAppointmentMutation = useDeleteAppointmentById();
@@ -175,7 +187,7 @@ export default function ChatId() {
     if (window.confirm("정말로 약속을 취소하시겠습니까?")) {
       deleteAppointmentMutation.mutate(appointmentId, {
         onSuccess: () => {
-          alert("약속이 성공적으로 취소되었습니다.");
+          refetchAppointment();
         },
         onError: (error) => {
           alert(error.response.data.message);
@@ -185,7 +197,12 @@ export default function ChatId() {
     }
   };
 
-  ////////// 아래부터 컴포넌트
+  // 거래 완료하기 로직
+  const [showReviewModal, setShowReviewModal] = useState(false); // ReviewCard 모달 표시 상태 관리
+
+  const handleReviewModalToggle = () => {
+    setShowReviewModal((prev) => !prev); // 모달 표시 상태 토글
+  };
 
   // 로딩 중일 때 보여줄 내용
   if (isChatroomLoading) {
@@ -217,76 +234,111 @@ export default function ChatId() {
             {chatroomData?.partnerName}님과의 대화
           </div>
         </div>
-        <div className="relative flex h-full items-center justify-center">
-          {/* 약속 관련 로직 */}
-          {isAppointmentLoading ? (
-            // 로딩 중일 때
-            <div className="flex h-full w-full items-center justify-center">
-              <Loading />
-            </div>
-          ) : appointmentError ? (
-            // 에러가 있을 때
-            <p>Error: {appointmentError.message}</p>
-          ) : appointmentData?.appointmentId &&
-            appointmentData?.appointmentTime ? (
-            // 약속이 있을 때 (appointmentId와 appointmentTime이 null이 아닐 때)
-            <div className="flex items-center justify-end gap-6 self-stretch p-10">
-              <div>
-                {new Date(appointmentData?.appointmentTime).toLocaleString(
-                  "ko-KR",
-                  {
-                    month: "long", // 월을 '9월'과 같이 표시
-                    day: "numeric", // 일을 숫자로 표시
-                    hour: "2-digit", // 시간을 두 자리로 표시
-                    minute: "2-digit", // 분을 두 자리로 표시
-                    hour12: false, // 24시간 형식을 사용
-                  },
-                )}
-                에
+
+        {/* 상태가 완료됨 일 경우 아무것도 렌더링하지 않음 */}
+        {chatroomData?.status !== "완료됨" && (
+          <div className="relative flex h-full items-center justify-center">
+            {/* 약속 관련 로직 */}
+            {isAppointmentLoading ? (
+              // 로딩 중일 때
+              <div className="flex h-full w-full items-center justify-center">
+                <Loading />
               </div>
-              <div className="font-bold text-teal700">
-                {appointmentData?.timeQnt}시간
-              </div>
-              <div>약속</div>
-              {/* TODO: 게시글 작성자에게만 약속취소 버튼 표시 */}
-              <Button
-                size="s"
-                variant="primary"
-                design="fill"
-                main="약속취소"
-                onClick={() =>
-                  handleDeleteAppointment(appointmentData.appointmentId)
-                }
-              />
-            </div>
-          ) : (
-            // 약속이 없을 때 '약속잡기' 버튼 표시
-            // TODO: 게시글 작성자에게만 약속잡기 버튼 표시
-            <div>
-              <Button
-                size="m"
-                variant="primary"
-                design="fill"
-                main="약속잡기"
-                onClick={handleTogglePromiseDropdown}
-              />
-              {/* PromiseDropdown 버튼 아래 표시 */}
-              {showPromiseDropdown && (
-                <div className="mt-12">
-                  <PromiseDropdown roomId={roomId} />
+            ) : appointmentError ? (
+              // 에러가 있을 때
+              <p>Error: {appointmentError.message}</p>
+            ) : appointmentData?.appointmentId &&
+              appointmentData?.appointmentTime ? (
+              // 약속이 있을 때 (appointmentId와 appointmentTime이 null이 아닐 때)
+              <div className="flex items-center justify-end gap-6 self-stretch p-10">
+                <div>
+                  {new Date(appointmentData?.appointmentTime).toLocaleString(
+                    "ko-KR",
+                    {
+                      month: "long", // 월을 '9월'과 같이 표시
+                      day: "numeric", // 일을 숫자로 표시
+                      hour: "2-digit", // 시간을 두 자리로 표시
+                      minute: "2-digit", // 분을 두 자리로 표시
+                      hour12: false, // 24시간 형식을 사용
+                    },
+                  )}
+                  에
                 </div>
-              )}
-            </div>
-          )}
-        </div>
+                <div className="font-bold text-teal700">
+                  {appointmentData?.timeQnt}시간
+                </div>
+                <div>약속</div>
+                {/* 약속취소 , 거래완료 버튼을 작성자에게만 렌더링 */}
+                {chatroomData?.writerId === member?.id && (
+                  <>
+                    <Button
+                      size="s"
+                      variant="primary"
+                      design="fill"
+                      main="약속취소"
+                      onClick={() =>
+                        handleDeleteAppointment(appointmentData.appointmentId)
+                      }
+                    />
+                    <Button
+                      size="s"
+                      variant="primary"
+                      design="outline"
+                      main="거래 완료하기"
+                      onClick={handleReviewModalToggle}
+                    />
+                    {/* ReviewCard 모달 */}
+                    {showReviewModal && (
+                      <div className="mt-12">
+                        <ReviewCard
+                          chatroomId={roomId}
+                          refetchChatroom={refetchChatroom}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : (
+              // 약속이 없을 때 '약속잡기' 버튼을 작성자에게만 표시
+              chatroomData?.writerId === member?.id && (
+                <div>
+                  <Button
+                    size="m"
+                    variant="primary"
+                    design="fill"
+                    main="약속잡기"
+                    onClick={handleTogglePromiseDropdown}
+                  />
+                  {/* PromiseDropdown 버튼 아래 표시 */}
+                  {showPromiseDropdown && (
+                    <div className="mt-12">
+                      <PromiseDropdown
+                        roomId={roomId}
+                        refetchAppointment={refetchAppointment}
+                        refetchChatroom={refetchChatroom}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-6 self-stretch border-b border-b-coolGray300 p-10">
-        <Badge size="l" color="yellow">
+        <Badge size="l" color={getBadgeColor(chatroomData!.status)}>
           {chatroomData?.status}
         </Badge>
-        <Link href={`/board/${chatroomData?.boardId}`}>
-          <div className="text-15">{chatroomData?.boardTitle}</div>
-        </Link>
+        {chatroomData?.deleted ? (
+          <div className="text-15 text-coolGray500">
+            {chatroomData?.boardTitle} (삭제된 게시글)
+          </div>
+        ) : (
+          <Link href={`/board/${chatroomData?.boardId}`}>
+            <div className="text-15">{chatroomData?.boardTitle}</div>
+          </Link>
+        )}
       </div>
 
       {/* 채팅 내용 */}

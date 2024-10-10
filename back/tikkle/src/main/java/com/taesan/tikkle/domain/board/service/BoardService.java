@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.taesan.tikkle.global.errors.ErrorCode;
+import com.taesan.tikkle.global.exceptions.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,10 @@ public class BoardService {
 
 		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다: " + boardId));
+		if(board.getDeletedAt() != null){
+			throw  new CustomException(ErrorCode.Board_DELETED);
+		}
+
 		return new BoardResponse(board.getId(),
 			board.getMember().getId(),
 			board.getMember().getName(),
