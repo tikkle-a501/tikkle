@@ -1,6 +1,7 @@
 "use client";
 
 import MessageList from "@/components/chat/MessageList";
+import { useState, useEffect } from "react";
 import Loading from "@/components/loading/Loading";
 import { useFetchChatroomsByUserId } from "@/hooks/chat/useFetchChatroomsByUserId";
 import { Chatroom } from "@/types/chatroom";
@@ -10,11 +11,6 @@ export default function ChatLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // TODO: 하드코딩된 유저 ID를 로그인된 유저 아이디로 받아오는 로직
-  // 특정 유저 ID 설정
-  const memberId = "74657374-3200-0000-0000-000000000000";
-
-  // TODO: 매개변수에 유저ID 넣어야 함
   // useFetchChatroomsByUserId 훅을 사용하여 채팅 목록을 가져옴
   const { data, error, isLoading } = useFetchChatroomsByUserId();
 
@@ -46,7 +42,7 @@ export default function ChatLayout({
               <MessageList
                 key={index}
                 roomId={chatroom.roomId}
-                profileImage="/profile.png" // 기본 이미지 경로
+                profileImage={"/profile.png"} // 기본 이미지 경로
                 partner={chatroom.partner}
                 lastMsg={chatroom.lastMsg}
                 recentCreatedAt=""

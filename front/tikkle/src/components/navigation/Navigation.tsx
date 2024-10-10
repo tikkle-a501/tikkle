@@ -48,8 +48,11 @@ const Navigation = () => {
           <div className="flex items-center">
             <Link href="/mypage/activity">
               <Image
-                // TODO: 프로필 이미지 처리
-                src="/profile.png"
+                src={
+                  memberData.image
+                    ? `data:image/png;base64,${memberData.image}`
+                    : "/profile.png"
+                }
                 alt={memberData.name}
                 width={41}
                 height={41}
