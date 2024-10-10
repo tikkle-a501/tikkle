@@ -13,7 +13,7 @@ export interface ChatroomData {
   chats: Chat[];
   partnerName: string;
   status: string;
-  deletedAt: boolean;
+  deleted: boolean;
 }
 
 export interface ChatroomResponse {

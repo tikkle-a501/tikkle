@@ -8,9 +8,13 @@ import { ReviewCreateRequest } from "@/types";
 
 interface ReviewCardProps {
   chatroomId: string; // chatroomId를 prop으로 받음
+  refetchChatroom: () => void;
 }
 
-const ReviewCard: React.FC<ReviewCardProps> = ({ chatroomId }) => {
+const ReviewCard: React.FC<ReviewCardProps> = ({
+  chatroomId,
+  refetchChatroom,
+}) => {
   const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
 
   const {
@@ -36,7 +40,14 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ chatroomId }) => {
       type: selectedBadge,
     };
 
-    createReviewMutate(reviewData);
+    createReviewMutate(reviewData, {
+      onSuccess: () => {
+        // 성공 후 3초 후에 채팅방 데이터 새로 고침
+        setTimeout(() => {
+          refetchChatroom();
+        }, 3000);
+      },
+    });
   };
 
   return (
@@ -49,7 +60,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ chatroomId }) => {
         <ReviewBadge type="kindness" onClick={handleBadgeClick} />
         <ReviewBadge type="fastReply" onClick={handleBadgeClick} />
       </div>
-      {isSuccess && <p>리뷰 작성이 완료되었습니다.</p>} {/* 성공 상태 */}
+      {isSuccess && <p>리뷰 작성이 완료되었습니다. 3초 뒤 새로고침됩니다.</p>}{" "}
+      {/* 성공 상태 */}
       {isError && <p>리뷰 작성에 실패했습니다.</p>} {/* 에러 상태 */}
       <Button
         size="s"
