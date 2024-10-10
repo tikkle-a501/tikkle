@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +22,24 @@ import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.chat.entity.Chatroom;
 import com.taesan.tikkle.domain.chat.repository.ChatroomRepository;
+import com.taesan.tikkle.domain.file.service.FileService;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AppointmentService {
 
-	@Autowired
 	private AppointmentRepository appointmentRepository;
-
-	@Autowired
 	private ChatroomRepository chatroomRepository;
-
-	@Autowired
 	private BoardRepository boardRepository;
-
-	@Autowired
 	private AccountRepository accountRepository;
-	@Autowired
 	private MemberRepository memberRepository;
+	private FileService fileService;
 
 	@Transactional
 	public UUID createAppointment(CreateAppointmentRequest request, UUID memberId) {
@@ -80,8 +76,10 @@ public class AppointmentService {
 			.orElseThrow(() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
 		if (memberId.equals(appointment.getRoom().getWriter().getId())) {
 			appointment.softDelete();
-			Chatroom chatroom = chatroomRepository.findById(appointment.getRoom().getId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-			Board board = boardRepository.findById(chatroom.getBoard().getId()).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+			Chatroom chatroom = chatroomRepository.findById(appointment.getRoom().getId())
+				.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+			Board board = boardRepository.findById(chatroom.getBoard().getId())
+				.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 			board.changeStatus("진행전");
 			// 보증금 받기
 			Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
@@ -129,11 +127,18 @@ public class AppointmentService {
 
 	@Transactional(readOnly = true)
 	public List<TradeLogFindAllResponse> getAppointedBoardsByMemberId(UUID username) {
-		// 1. 먼저 Board 리스트를 가져옴
-		List<Board> boards = appointmentRepository.findBoardsByMemberId(username);
 
-		// 2. Board 리스트를 TradeLogResponse 리스트로 변환
-		return boards.stream().map(TradeLogFindAllResponse::from).collect(Collectors.toList());
+		List<Appointment> appointments = appointmentRepository.findAppointmentsWithBoardByMemberId(username);
+
+		return appointments.stream()
+			.map(appointment -> {
+				UUID memberId = username != appointment.getRoom().getWriter().getId() ? username :
+					appointment.getRoom().getPerformer().getId();
+				Board board = appointment.getRoom().getBoard();
+				byte[] partnerImage = fileService.getProfileImage(memberId);  // partnerImage 조회 로직 추가
+				return TradeLogFindAllResponse.from(board, partnerImage);
+			})
+			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)

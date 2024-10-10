@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +22,25 @@ import com.taesan.tikkle.domain.chat.entity.Chat;
 import com.taesan.tikkle.domain.chat.entity.Chatroom;
 import com.taesan.tikkle.domain.chat.repository.ChatRepository;
 import com.taesan.tikkle.domain.chat.repository.ChatroomRepository;
+import com.taesan.tikkle.domain.file.service.FileService;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ChatroomService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ChatroomService.class);
 
-	@Autowired
 	private ChatroomRepository chatroomRepository;
-
-	@Autowired
 	private ChatRepository chatRepository;
-
-	@Autowired
 	private BoardRepository boardRepository;
-
-	@Autowired
 	private MemberRepository memberRepository;
+	private FileService fileService;
 
 	@Transactional
 	public CreateChatroomResponse createChatroom(CreateChatroomRequest request, UUID memberId) {
@@ -85,13 +82,17 @@ public class ChatroomService {
 						(UUID.fromString(lastChat.getSenderId())))
 					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
+				Member partner = isWriter ? chatroom.getPerformer() : chatroom.getWriter();
+
 				// 대화 상대에 따라 performer와 writer 구분
-				String partnerName =
-					isWriter ? chatroom.getPerformer().getName() : chatroom.getWriter().getName();
+				String partnerName = partner.getName();
+
+				byte[] partnerImage = fileService.getProfileImage(partner.getId());
 
 				responses.add(new DetailChatroomResponse(
 					chatroom.getId(),
 					partnerName,
+					partnerImage,
 					lastSender.getName(),
 					lastChat.getContent(),
 					lastChat.getTimestamp()
@@ -143,9 +144,11 @@ public class ChatroomService {
 			logger.info("채팅 내역: {}", chats);
 		}
 
+		Member partner = chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer() :
+			chatroom.getWriter();
+
 		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
-			chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer().getName() :
-				chatroom.getWriter().getName(), chatroom.getBoard().getStatus(),
+			partner.getName(), fileService.getProfileImage(partner.getId()), chatroom.getBoard().getStatus(),
 			chatroom.getBoard().getTitle(), chatroom.getBoard().getId(), chatroom.getBoard().getMember().getId(),
 			chatroom.getBoard().isDeleted());
 	}
