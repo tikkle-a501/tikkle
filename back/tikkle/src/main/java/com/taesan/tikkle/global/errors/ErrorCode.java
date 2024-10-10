@@ -23,11 +23,12 @@ public enum ErrorCode {
 	CHATROOM_NOT_AUTHORIZED(HttpStatus.BAD_REQUEST, 1400, "채팅방 참여자가 아닙니다."),
 	CHATROOM_EXISTS(HttpStatus.BAD_REQUEST, 1409, "이미 존재한 채팅방입니다."),
 	BOARD_NOT_FOUND(HttpStatus.BAD_REQUEST, 1304, "게시글이 존재하지 않습니다."),
+	Board_DELETED(HttpStatus.BAD_REQUEST,1305,"삭제된 공고입니다."),
 	RATE_NOT_FOUND(HttpStatus.BAD_REQUEST, 2004, "정의되지 않은 환율입니다."),
 	RATE_NOT_EXIST(HttpStatus.BAD_REQUEST, 2005, "정의된 환율이 없습니다."),
 	ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, 1104, "사용자의 계좌가 없습니다."),
 	ACCOUNT_INSUFFICIENT_BALANCE(HttpStatus.BAD_REQUEST, 1105, "사용자의 잔고가 부족합니다.");
-
+;
 	private final HttpStatus status;
 	private final int code;
 	private final String message;
