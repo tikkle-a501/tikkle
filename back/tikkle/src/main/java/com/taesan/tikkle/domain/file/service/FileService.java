@@ -19,7 +19,7 @@ public class FileService {
 	private String imageUploadDir;
 
 	public byte[] getProfileImage(UUID memberId) {
-		String profileImagePath = imageUploadDir + "/profile-" + memberId.toString();
+		String profileImagePath = imageUploadDir + "/profile-" + memberId.toString() + ".png";
 		byte[] profileImage;
 		try {
 			Path path = Paths.get(profileImagePath);
