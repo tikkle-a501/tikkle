@@ -1,38 +1,66 @@
 use tikkle;
-
+SET time_zone = '+09:00';
+SELECT @@global.time_zone, @@session.time_zone;
+DROP PROCEDURE IF EXISTS create_members_with_accounts;
+DROP PROCEDURE IF EXISTS InsertRateData;
+DROP PROCEDURE IF EXISTS InsertExchangeLogData;
 --  organizations
 INSERT INTO organizations (id, created_at, payment_policy, provider, domain_addr, name)
 VALUES (UNHEX(REPLACE(UUID(), '-', '')), NOW(), 'FREE', 1, 'j11a501.p.ssafy.io',
         'DEFAULT');
 
--- member
-INSERT INTO members (id, organization_id, name, email, nickname, created_at)
-VALUES (UNHEX(REPLACE(UUID(), '-', '')),
-        (SELECT id FROM organizations WHERE name = 'DEFAULT'),
-        '허동민',
-        'herdongmin@gmail.com',
-        '허동크', now()),
-       (UNHEX(REPLACE(UUID(), '-', '')),
-        (SELECT id FROM organizations WHERE name = 'DEFAULT'),
-        '김성윤',
-        'atom@gmail.com',
-        '김프로', now());
+-- member and accounts
+DELIMITER //
 
--- accounts
-INSERT INTO accounts (id, member_id, time_qnt, ranking_point)
-VALUES (UNHEX(REPLACE(UUID(), '-', '')),
-        (SELECT id FROM members WHERE email = 'herdongmin@gmail.com'), 10, 0),
-       (UNHEX(REPLACE(UUID(), '-', '')),
-        (SELECT id FROM members WHERE email = 'atom@gmail.com'), 10, 0);
+CREATE PROCEDURE create_members_with_accounts()
+BEGIN
+    DECLARE i INT DEFAULT 0;
+    DECLARE org_id BINARY(16);
+    DECLARE member_id BINARY(16);
+    DECLARE random_time_qnt INT;
+    DECLARE random_ranking_point INT;
+
+    -- DEFAULT organization의 id를 가져옵니다.
+    SELECT id INTO org_id FROM organizations WHERE name = 'DEFAULT';
+
+    WHILE i < 100
+        DO
+            -- 새 멤버 ID 생성
+            SET member_id = UNHEX(REPLACE(UUID(), '-', ''));
+
+            -- 랜덤 값 생성
+            SET random_time_qnt = FLOOR(RAND() * 101); -- 0에서 100 사이의 랜덤 값 생성
+            SET random_ranking_point = FLOOR(RAND() * 10001);
+            -- 0에서 10,000 사이의 랜덤 값 생성
+
+            -- members 테이블에 데이터 삽입
+            INSERT INTO members (id, organization_id, name, email, nickname, created_at)
+            VALUES (member_id,
+                    org_id,
+                    CONCAT('Member', i),
+                    CONCAT('member', i, '@example.com'),
+                    CONCAT('Nickname', i),
+                    NOW());
+
+            -- accounts 테이블에 해당 멤버의 계정 데이터 삽입
+            INSERT INTO accounts (id, member_id, time_qnt, ranking_point)
+            VALUES (UNHEX(REPLACE(UUID(), '-', '')),
+                    member_id,
+                    random_time_qnt,
+                    random_ranking_point);
+
+            SET i = i + 1;
+        END WHILE;
+END//
+
+DELIMITER ;
 
 -- rates
-DROP PROCEDURE IF EXISTS InsertRateData;
-
 DELIMITER //
 
 CREATE PROCEDURE InsertRateData()
 BEGIN
-    DECLARE current_datetime DATETIME DEFAULT '2024-10-01 00:00:00';
+    DECLARE current_datetime DATETIME DEFAULT '2024-01-01 00:00:00';
     DECLARE end_datetime DATETIME DEFAULT DATE_SUB(NOW(), INTERVAL MINUTE(NOW()) MINUTE);
 
     DECLARE initial_time_to_rank INT DEFAULT 1000;
@@ -41,8 +69,10 @@ BEGIN
 
     WHILE current_datetime <= end_datetime
         DO
-            -- -3% ~ +3% 범위의 랜덤 변동 값을 생성
-            SET change_percentage = (RAND() * 0.06) - 0.03;
+            -- -1% ~ +1% 범위의 랜덤 변동 값을 생성
+            SET change_percentage = (RAND() * 0.02) - 0.01;
+            -- RAND() * 0.02로 0 ~ 0.02 사이의 값을 만들고, -0.01을 빼서 -0.01 ~ 0.01 사이로 설정
+
             SET time_to_rank = ROUND(initial_time_to_rank * (1 + change_percentage));
 
             -- 데이터 삽입
@@ -57,57 +87,59 @@ END//
 
 DELIMITER ;
 
-CALL InsertRateData();
-
 -- 환전 내역
-DROP PROCEDURE IF EXISTS InsertExchangelog;
-
 DELIMITER //
 
-CREATE PROCEDURE InsertExchangelog()
+CREATE PROCEDURE InsertExchangeLogData()
 BEGIN
     DECLARE i INT DEFAULT 0;
-    DECLARE quantity INT;
-    DECLARE account_id BINARY(16);
-    DECLARE rates_id BINARY(16);
-    DECLARE exchange_type ENUM ('TTOR', 'RTOT');
-    DECLARE random_time DATETIME;
-    DECLARE closest_rate_id BINARY(16);
+    DECLARE total_logs INT DEFAULT 100; -- 생성할 로그의 수 (원하는 대로 조정 가능)
+    DECLARE rand_account_id BINARY(16);
+    DECLARE rand_rates_id BINARY(16);
+    DECLARE rand_type VARCHAR(8);
+    DECLARE rand_quantity TINYINT UNSIGNED;
+    DECLARE rand_datetime DATETIME;
+    DECLARE truncated_datetime DATETIME;
 
-    -- 이메일을 기준으로 계좌 ID를 가져오기
-    SELECT a.id
-    INTO account_id
-    FROM accounts a
-             JOIN members m ON a.member_id = m.id
-    WHERE m.email = 'herdongmin@gmail.com'
-    LIMIT 1;
-
-    WHILE i < 500
+    WHILE i < total_logs
         DO
-            -- 랜덤으로 거래 유형과 수량을 설정
-            SET exchange_type = IF(RAND() < 0.5, 'TTOR', 'RTOT');
-            SET quantity = FLOOR(RAND() * 10) + 1;
-            -- 1부터 10 사이의 랜덤 수량
+            -- accounts 테이블에서 account_id를 랜덤으로 선택
+            SELECT id INTO rand_account_id FROM accounts ORDER BY RAND() LIMIT 1;
 
-            -- 랜덤으로 시간 설정 (0분~5000분 전까지, 대략 3.5일 이전까지)
-            SET random_time = DATE_SUB(NOW(), INTERVAL FLOOR(RAND() * 5000) MINUTE);
+            -- 수량을 1에서 25 사이로 랜덤 설정
+            SET rand_quantity = FLOOR(RAND() * 25) + 1;
 
-            -- 해당 시간에 가장 가까운 직전 정각에 있는 rates의 id를 가져옴
+            -- 70% 확률로 현재 시간 기준 1시간 전의 시간을 선택하고, 나머지 30%는 지난 1년 중 랜덤 시간 설정
+            IF RAND() <= 0.7 THEN
+                SET rand_datetime = DATE_SUB(NOW(), INTERVAL 1 HOUR);
+            ELSE
+                SET rand_datetime = DATE_ADD(NOW(), INTERVAL -FLOOR(RAND() * 365) DAY);
+            END IF;
+
+            -- rand_datetime에서 시간만 남기고 분과 초를 0으로 설정하여 정시로 맞춤
+            SET truncated_datetime = DATE_FORMAT(rand_datetime, '%Y-%m-%d %H:00:00');
+
+            -- rates 테이블에서 truncated_datetime에 해당하는 rates_id를 가져옴
             SELECT id
-            INTO closest_rate_id
+            INTO rand_rates_id
             FROM rates
-            WHERE created_at <= random_time
-            ORDER BY created_at DESC
+            WHERE created_at = truncated_datetime
             LIMIT 1;
 
-            -- 데이터 삽입
+            -- 거래 타입을 랜덤으로 설정 ('TTOR' 또는 'RTOT')
+            SET rand_type = CASE FLOOR(RAND() * 2)
+                                WHEN 0 THEN 'TTOR'
+                                WHEN 1 THEN 'RTOT'
+                END;
+
+            -- exchange_logs 테이블에 데이터 삽입
             INSERT INTO exchange_logs (id, created_at, type, quantity, account_id, rates_id)
             VALUES (UNHEX(REPLACE(UUID(), '-', '')),
-                    random_time,
-                    exchange_type,
-                    quantity,
-                    account_id,
-                    closest_rate_id);
+                    rand_datetime,
+                    rand_type,
+                    rand_quantity,
+                    rand_account_id,
+                    rand_rates_id);
 
             SET i = i + 1;
         END WHILE;
@@ -115,4 +147,6 @@ END//
 
 DELIMITER ;
 
-call InsertExchangelog()
+CALL create_members_with_accounts();
+CALL InsertRateData();
+call InsertExchangeLogData()
