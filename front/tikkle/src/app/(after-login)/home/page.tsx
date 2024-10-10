@@ -105,7 +105,7 @@ export default function Home() {
         {/* 랭킹 */}
         <div className="h-full w-1/5">
           <div className="text-24 font-700 text-teal900">랭킹</div>
-          <div className="flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
+          <div className="scrollbar-hidden flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
             {rankData?.rankList?.length > 0 ? (
               rankData.rankList.map((data) => (
                 <RankList
@@ -168,7 +168,7 @@ export default function Home() {
           </div>
           <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
-            <div className="flex h-[300px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
+            <div className="flex h-[290px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
               {todoAppointments?.data?.length > 0 ? (
                 todoAppointments.data.map((appointment) => (
                   <TodoList
@@ -181,7 +181,9 @@ export default function Home() {
                   />
                 ))
               ) : (
-                <div>할일이 없습니다.</div>
+                <span className="font-400 text-warmGray300">
+                  할일이 없습니다.
+                </span>
               )}
             </div>
           </div>

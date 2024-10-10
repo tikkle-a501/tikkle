@@ -42,7 +42,11 @@ export default function ChatLayout({
               <MessageList
                 key={index}
                 roomId={chatroom.roomId}
-                profileImage={"/profile.png"} // 기본 이미지 경로
+                profileImage={
+                  chatroom.partnerImage
+                    ? `data:image/png;base64,${chatroom.partnerImage}`
+                    : "/profile.png"
+                }
                 partner={chatroom.partner}
                 lastMsg={chatroom.lastMsg}
                 recentCreatedAt=""
