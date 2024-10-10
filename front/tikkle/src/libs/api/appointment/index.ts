@@ -33,7 +33,7 @@ export const deleteAppointmentById = async (appointmentId: string) => {
 };
 export const fetchTodoAppointment = async () => {
   return handleApiRequest<TodoAppointmentResponses, "get">(
-    `/appointment`,
+    `/appointment/todo`,
     "get",
   );
 };
