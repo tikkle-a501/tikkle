@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
+import com.taesan.tikkle.domain.file.service.FileService;
 import com.taesan.tikkle.domain.member.dto.response.AllMemberBoardResponse;
 import com.taesan.tikkle.domain.member.dto.response.MemberBoardResponse;
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
@@ -17,16 +18,15 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
-
-	MemberService(MemberRepository memberRepository, BoardRepository boardRepository) {
-		this.memberRepository = memberRepository;
-		this.boardRepository = boardRepository;
-	}
+	private final FileService fileService;
 
 	/*
 		TODO: 에러 코드 정리 필요
@@ -42,7 +42,10 @@ public class MemberService {
 		Member member =
 			memberRepository.findById(id)
 				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-		return MemberResponse.from(member);
+
+		byte[] profileImage = fileService.getProfileImage(member.getId());
+
+		return MemberResponse.from(member, profileImage);
 	}
 
 	public List<MemberRankResponse> findMemberRankings() {
