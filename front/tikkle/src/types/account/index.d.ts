@@ -13,6 +13,7 @@ export interface TradeMemberGetResponse {
 
 export interface TradeGetResponses {
   member: TradeMemberGetResponse;
+  partnerImage: string;
   title: string;
   content: string;
   time: number;
