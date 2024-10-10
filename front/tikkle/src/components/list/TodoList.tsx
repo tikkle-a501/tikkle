@@ -40,13 +40,15 @@ const TodoList: React.FC<TodoListProps> = ({
 
   return (
     <Link href={`/chat/${chatId}`} passHref>
-      <div className="inline-flex w-full cursor-pointer items-center gap-6 p-6 text-15">
-        <Badge size="l" color={getBadgeColor(status)}>
-          {status}
-        </Badge>
-        <div>{formattedTime}까지</div>
-        <div>{nickname}님과의 약속</div>
-        <div className="max-w-xs truncate font-400 text-warmGray500">
+      <div className="flex w-full cursor-pointer items-center gap-6 p-6 text-15">
+        <div className="w-16">
+          <Badge size="l" color={getBadgeColor(status)}>
+            {status}
+          </Badge>
+        </div>
+        <div className="w-24">{formattedTime}까지</div>
+        <div className="w-40">{nickname}님과의 약속</div>
+        <div className="max-w-xs flex-1 truncate font-400 text-warmGray500">
           {title}
         </div>
       </div>
