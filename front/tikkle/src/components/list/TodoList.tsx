@@ -40,7 +40,7 @@ const TodoList: React.FC<TodoListProps> = ({
 
   return (
     <Link href={`/chat/${chatId}`} passHref>
-      <div className="inline-flex cursor-pointer items-center gap-6 p-6 text-15">
+      <div className="inline-flex w-full cursor-pointer items-center gap-6 p-6 text-15">
         <Badge size="l" color={getBadgeColor(status)}>
           {status}
         </Badge>
