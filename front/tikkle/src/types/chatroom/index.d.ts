@@ -5,6 +5,7 @@ export interface Chatroom {
   partner: string;
   lastSender: string;
   lastMsg: string;
+  partnerImage: string;
 }
 
 export interface ChatroomData {
@@ -15,6 +16,7 @@ export interface ChatroomData {
   status: string;
   deleted: boolean;
   writerId: string;
+  partnerImage: string;
 }
 
 export interface ChatroomResponse {

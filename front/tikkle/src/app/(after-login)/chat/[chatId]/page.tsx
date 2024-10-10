@@ -224,7 +224,11 @@ export default function ChatId() {
       <div className="item flex items-start justify-between self-stretch px-10 pb-0 pt-10">
         <div className="flex items-center gap-10">
           <Image
-            src="/profile.png"
+            src={
+              chatroomData?.partnerImage
+                ? `data:image/png;base64,${chatroomData.partnerImage}`
+                : "/profile.png"
+            }
             alt={`${chatroomData?.partnerName} profile`}
             width={41}
             height={41}

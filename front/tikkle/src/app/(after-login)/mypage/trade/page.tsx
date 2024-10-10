@@ -110,7 +110,11 @@ export default function Trade() {
           filteredTrade.map((item, index) => (
             <HistoryList
               key={index}
-              profileImg={"/profile.png"}
+              profileImg={
+                item.partnerImage
+                  ? `data:image/png;base64,${item.partnerImage}`
+                  : "/profile.png"
+              }
               nickname={item.member.name}
               status={item.status}
               title={item.title}
