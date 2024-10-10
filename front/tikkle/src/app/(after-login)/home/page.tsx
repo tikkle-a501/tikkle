@@ -140,7 +140,7 @@ export default function Home() {
         {/* 마이페이지 */}
         <div className="h-full w-2/5">
           <div className="h-1/3 px-16 text-24 font-700 text-teal900">
-            나의 타임 & 티끌
+            나의 시간 & 티끌
             <div className="flex justify-center gap-[20px] rounded-[10px] border border-warmGray200 px-[56px] py-[28px]">
               {isAccountPending ? (
                 <Loading />

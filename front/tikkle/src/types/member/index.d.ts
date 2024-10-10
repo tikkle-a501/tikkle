@@ -4,8 +4,9 @@ export interface MypageMemberResponse {
   name: string;
   nickname: string;
   email: string;
+  image: string;
 }
 
 export interface MypageMemberResponses {
-  datat: MypageMemberResponse[];
+  data: MypageMemberResponse[];
 }

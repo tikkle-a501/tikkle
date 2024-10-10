@@ -38,3 +38,6 @@ out/
 
 application-prod.yaml
 docker-compose.prod.yml
+
+### temporary images for dev env ###
+/temp/
