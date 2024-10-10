@@ -181,7 +181,9 @@ export default function Home() {
                   />
                 ))
               ) : (
-                <span className="text-warmGray300">할일이 없습니다.</span>
+                <span className="font-400 text-warmGray300">
+                  할일이 없습니다.
+                </span>
               )}
             </div>
           </div>
