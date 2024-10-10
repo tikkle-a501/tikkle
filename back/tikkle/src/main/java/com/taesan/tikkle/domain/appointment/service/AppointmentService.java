@@ -46,12 +46,16 @@ public class AppointmentService {
 		List<Chatroom> writers = chatroomRepository.findByWriterId(memberId);
 		for (Chatroom chatroom : performers) {
 
-			if (!chatroom.getAppointments().isEmpty() && !chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
+			if (!chatroom.getAppointments().isEmpty() && !chatroom.getAppointments()
+				.get(chatroom.getAppointments().size() - 1)
+				.isDeleted()) {
 				appointments.add(chatroom.getAppointments().get(chatroom.getAppointments().size() - 1));
 			}
 		}
 		for (Chatroom chatroom : writers) {
-			if (!chatroom.getAppointments().isEmpty() && !chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
+			if (!chatroom.getAppointments().isEmpty() && !chatroom.getAppointments()
+				.get(chatroom.getAppointments().size() - 1)
+				.isDeleted()) {
 				appointments.add(chatroom.getAppointments().get(chatroom.getAppointments().size() - 1));
 			}
 		}
@@ -64,7 +68,7 @@ public class AppointmentService {
 				chatroom.getPerformer().getName();
 			response.add(
 				new TodoAppointmentResponse(appointment.getId(), board.getStatus(), partner, appointment.getApptTime(),
-					board.getTitle(),chatroom.getId()));
+					board.getTitle(), chatroom.getId()));
 		}
 		return response;
 	}
@@ -132,10 +136,12 @@ public class AppointmentService {
 
 	private void extractAppointmentFromChatroom(List<Chatroom> chatrooms, List<DetailAppointmentResponse> responses) {
 		for (Chatroom chatroom : chatrooms) {
-			Appointment appointment = chatroom.getAppointments().get(chatroom.getAppointments().size() - 1);
-			if (!appointment.isDeleted()) {
-				responses.add(new DetailAppointmentResponse(appointment.getId(), appointment.getApptTime(),
-					appointment.getTimeQnt(), appointment.getCreatedAt(), chatroom.getBoard().getTitle()));
+			if (!chatroom.getAppointments().isEmpty()) {
+				Appointment appointment = chatroom.getAppointments().get(chatroom.getAppointments().size() - 1);
+				if (!appointment.isDeleted()) {
+					responses.add(new DetailAppointmentResponse(appointment.getId(), appointment.getApptTime(),
+						appointment.getTimeQnt(), appointment.getCreatedAt(), chatroom.getBoard().getTitle()));
+				}
 			}
 		}
 	}
