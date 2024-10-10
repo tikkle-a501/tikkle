@@ -63,8 +63,6 @@ export default function Home() {
     isError: isTodoError,
   } = useFetchTodoAppointment();
 
-  console.log(todoAppointments);
-
   if (isRankLoading || isTodoLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
   if (isRankError || isTodoError || !rankData || !todoAppointments)
     return <div>Error loading data</div>; // 에러 처리
@@ -171,8 +169,8 @@ export default function Home() {
           <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
             <div className="flex h-[290px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
-              {todoAppointments?.data?.length > 0 ? (
-                todoAppointments.data.map((appointment) => (
+              {todoAppointments?.length > 0 ? (
+                todoAppointments.map((appointment) => (
                   <TodoList
                     key={appointment.appointmentId}
                     status={appointment.status}
