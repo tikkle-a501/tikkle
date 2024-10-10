@@ -13,7 +13,7 @@ import { useFetchMypageMember } from "@/hooks";
 import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
 import { useFetchBoardList } from "@/hooks/board";
 import { useFetchRank } from "@/hooks"; // 랭킹 데이터를 가져오는 훅
-import { useFetchTodoAppointment } from "@/hooks";
+import { useFetchTodoAppointment } from "@/hooks"; // 훅을 올바르게 임포트
 import { TodoAppointmentResponse } from "@/types";
 import Loading from "@/components/loading/Loading"; // 로딩 컴포넌트 추가
 
@@ -48,6 +48,7 @@ export default function Home() {
 
   const { data: boardList } = useFetchBoardList();
 
+  // 할일 데이터를 가져오는 훅 사용
   const { data: todoAppointments, isError: isTodoError } =
     useFetchTodoAppointment();
 
