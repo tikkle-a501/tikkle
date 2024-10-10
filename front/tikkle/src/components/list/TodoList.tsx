@@ -46,7 +46,9 @@ const TodoList: React.FC<TodoListProps> = ({
         </Badge>
         <div>{formattedTime}까지</div>
         <div>{nickname}님과의 약속</div>
-        <div className="truncate font-400 text-warmGray500">{title}</div>
+        <div className="max-w-xs truncate font-400 text-warmGray500">
+          {title}
+        </div>
       </div>
     </Link>
   );
