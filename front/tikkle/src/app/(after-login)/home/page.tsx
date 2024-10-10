@@ -168,7 +168,7 @@ export default function Home() {
           </div>
           <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
-            <div className="flex h-[290px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
+            <div className="flex h-[290px] flex-col gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
               {todoAppointments?.length > 0 ? (
                 todoAppointments.map((appointment) => (
                   <TodoList
