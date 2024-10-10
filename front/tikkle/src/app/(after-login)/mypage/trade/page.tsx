@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useFetchTrade } from "@/hooks";
+import { useFetchTrade, useFetchAccount } from "@/hooks";
 import Chips from "@/components/chips/Chips";
 import SearchInput from "@/components/input/SearchInput";
 import HistoryList from "@/components/list/HistoryList";
 import { TradeGetResponses } from "@/types";
+import Loading from "@/components/loading/Loading";
 
 export default function Trade() {
   const { data, isLoading, error } = useFetchTrade();
@@ -28,6 +29,12 @@ export default function Trade() {
     setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
   };
 
+  const {
+    data: accountData,
+    isPending: isAccountPending,
+    error: fetchAccountError,
+  } = useFetchAccount();
+
   return (
     <div className="relative flex w-full flex-col gap-10">
       <span className="py-6 text-28 font-bold leading-34 text-teal-900">
@@ -35,22 +42,27 @@ export default function Trade() {
       </span>
 
       <div className="flex flex-row justify-between pt-24">
-        <div className="flex items-center gap-10 px-10">
-          <span className="text-18 font-600 leading-23 text-teal-900">
-            +0시간
-          </span>
-          <span className="text-18 font-600 leading-23 text-teal-900">
-            -0시간
-          </span>
-        </div>
-        <div className="flex items-center gap-10 px-10">
+        <div className="flex items-center gap-10">
           <span className="text-18 leading-23 text-teal-900">
             나의 보유 시간
           </span>
-          <span className="text-34 font-700 leading-41 text-teal-500">0</span>
-          <span className="text-34 leading-41 text-teal-900">시간</span>
+          {isAccountPending ? (
+            <Loading />
+          ) : fetchAccountError ? (
+            <span className="text-red-500">
+              Error: {fetchAccountError.message}
+            </span>
+          ) : (
+            <>
+              <span className="text-34 font-700 leading-41 text-teal-500">
+                {accountData?.timeQnt ?? 0}
+              </span>
+              <span className="text-34 leading-41 text-teal-900">시간</span>
+            </>
+          )}
         </div>
       </div>
+
       <div className="flex items-center justify-between py-10">
         <div className="flex gap-10">
           <Chips
@@ -92,6 +104,7 @@ export default function Trade() {
           width="23.25rem"
         />
       </div>
+
       <div className="scrollbar-custom flex h-[41rem] flex-col overflow-y-auto border-t border-t-warmGray200 py-10">
         {filteredTrade.length > 0 ? (
           filteredTrade.map((item, index) => (
