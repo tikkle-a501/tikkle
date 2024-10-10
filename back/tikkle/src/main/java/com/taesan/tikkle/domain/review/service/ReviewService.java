@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taesan.tikkle.domain.account.entity.Account;
+import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -34,6 +36,7 @@ public class ReviewService {
 	private final MemberRepository memberRepository;
 	private final BoardRepository boardRepository;
 	private final ChatroomRepository chatroomRepository;
+	private final AccountRepository accountRepository;
 
 	public ReviewIdResponse createReview(CreateReviewRequest request, UUID senderId) {
 		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(request.getChatroomId())
@@ -46,9 +49,15 @@ public class ReviewService {
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 		Review review = new Review(sender, receiver, request.getType());
 		reviewRepository.save(review);
-		Chatroom chatroom = chatroomRepository.findById(request.getChatroomId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-		Board board = boardRepository.findById(chatroom.getBoard().getId()).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+		Chatroom chatroom = chatroomRepository.findById(request.getChatroomId())
+			.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+		Board board = boardRepository.findById(chatroom.getBoard().getId())
+			.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 		board.changeStatus("완료됨");
+		// 보증금 받기
+		Account account = accountRepository.findByMemberIdAndDeletedAtIsNull(performer.getId())
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+		account.setBalance(account.getTimeQnt() + appointment.getTimeQnt());
 		return new ReviewIdResponse(review.getId());
 	}
 
