@@ -20,7 +20,7 @@ const getBadgeColor = (status: string) => {
       return "red";
     case "진행중":
       return "yellow";
-    case "완료":
+    case "완료됨":
       return "gray";
     default:
       return "red";
