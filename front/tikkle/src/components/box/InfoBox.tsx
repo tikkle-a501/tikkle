@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import MenuList from "../list/MenuList";
+import { useLogOut } from "@/hooks/member/index";
 
 interface InfoBoxProps {
   profileImg: string;
@@ -32,6 +33,11 @@ const renderStars = (rate: number) => {
 };
 
 const InfoBox: React.FC<InfoBoxProps> = ({ profileImg, name, email, rate }) => {
+  const { mutate: logOut } = useLogOut(); // useLogOut 훅에서 mutate 함수 가져오기
+
+  const handleLogOut = () => {
+    logOut(); // 로그아웃 함수 호출
+  };
   return (
     <div className="flex h-[793px] w-[298px] flex-col items-center gap-10 rounded-12 border border-warmGray200 px-20 py-40 text-20">
       <div className="flex-shrink-0">
@@ -67,7 +73,9 @@ const InfoBox: React.FC<InfoBoxProps> = ({ profileImg, name, email, rate }) => {
       </div>
 
       <div className="flex flex-[1_0_0] flex-col items-center justify-end self-stretch text-15 text-warmGray300">
-        <button className="cursor-pointer">로그아웃</button>
+        <button className="cursor-pointer" onClick={handleLogOut}>
+          로그아웃
+        </button>
       </div>
     </div>
   );
