@@ -79,18 +79,17 @@ public class ChatroomService {
 		boolean isWriter) {
 		for (Chatroom chatroom : chatrooms) {
 			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
-			// logger.debug("lastChat senderId, timestamp: {}, {}", lastChat.getSenderId(), lastChat.getTimestamp());
+			Member partner = isWriter ? chatroom.getPerformer() : chatroom.getWriter();
+			String partnerName = partner.getName();
+
+			byte[] partnerImage = fileService.getProfileImage(partner.getId());
+
 			if (lastChat != null) {
 				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(
 						(UUID.fromString(lastChat.getSenderId())))
 					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-				Member partner = isWriter ? chatroom.getPerformer() : chatroom.getWriter();
-
 				// 대화 상대에 따라 performer와 writer 구분
-				String partnerName = partner.getName();
-
-				byte[] partnerImage = fileService.getProfileImage(partner.getId());
 
 				responses.add(new DetailChatroomResponse(
 					chatroom.getId(),
@@ -101,9 +100,7 @@ public class ChatroomService {
 					lastChat.getTimestamp()
 				));
 			} else {
-				String partnerName =
-					isWriter ? chatroom.getPerformer().getName() : chatroom.getWriter().getName();
-				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName));
+				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage));
 			}
 		}
 	}
