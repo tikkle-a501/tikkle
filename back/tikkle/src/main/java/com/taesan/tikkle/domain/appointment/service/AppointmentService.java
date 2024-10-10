@@ -172,8 +172,9 @@ public class AppointmentService {
 
 		return appointments.stream()
 			.map(appointment -> {
-				UUID memberId = username != appointment.getRoom().getWriter().getId() ? username :
-					appointment.getRoom().getPerformer().getId();
+				UUID memberId = username.equals(appointment.getRoom().getWriter().getId()) ?
+					appointment.getRoom().getPerformer().getId() :
+					appointment.getRoom().getWriter().getId();
 				Board board = appointment.getRoom().getBoard();
 				byte[] partnerImage = fileService.getProfileImage(memberId);  // partnerImage 조회 로직 추가
 				return TradeLogFindAllResponse.from(board, partnerImage);
