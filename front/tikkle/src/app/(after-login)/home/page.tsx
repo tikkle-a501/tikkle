@@ -46,12 +46,8 @@ export default function Home() {
 
   const { data: boardList } = useFetchBoardList();
 
-  const {
-    data: accountData,
-    isPending: isAccountPending,
-    error: fetchAccountError,
-    refetch: refetchAccount,
-  } = useFetchAccount(); // 나의 시간 & 티끌
+  const { data: todoAppointments, isError: isTodoError } =
+    useFetchTodoAppointment();
 
   if (isRankLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
   if (isRankError || !rankData) return <div>Error loading rank data</div>; // 에러 처리
