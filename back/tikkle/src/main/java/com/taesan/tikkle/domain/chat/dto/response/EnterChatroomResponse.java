@@ -19,5 +19,6 @@ public class EnterChatroomResponse {
 	private String status;
 	private String boardTitle;
 	private UUID boardId;
+	private UUID writerId;
 	private boolean isDeleted;
 }
