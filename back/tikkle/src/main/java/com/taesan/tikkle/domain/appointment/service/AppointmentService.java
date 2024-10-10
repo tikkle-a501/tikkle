@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +16,7 @@ import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.appointment.dto.request.CreateAppointmentRequest;
 import com.taesan.tikkle.domain.appointment.dto.response.BriefAppointmentResponse;
 import com.taesan.tikkle.domain.appointment.dto.response.DetailAppointmentResponse;
+import com.taesan.tikkle.domain.appointment.dto.response.TodoAppointmentResponse;
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -28,22 +28,45 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AppointmentService {
 
-	@Autowired
 	private AppointmentRepository appointmentRepository;
-
-	@Autowired
 	private ChatroomRepository chatroomRepository;
-
-	@Autowired
 	private BoardRepository boardRepository;
-
-	@Autowired
 	private AccountRepository accountRepository;
-	@Autowired
 	private MemberRepository memberRepository;
+
+	public List<TodoAppointmentResponse> getTodoAppointments(UUID memberId) {
+		List<Appointment> appointments = new ArrayList<>();
+		List<Chatroom> performers = chatroomRepository.findByPerformerId(memberId);
+		List<Chatroom> writers = chatroomRepository.findByWriterId(memberId);
+		for (Chatroom chatroom : performers) {
+			if (!chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
+				appointments.add(chatroom.getAppointments().get(chatroom.getAppointments().size() - 1));
+			}
+		}
+		for (Chatroom chatroom : writers) {
+			if (!chatroom.getAppointments().get(chatroom.getAppointments().size() - 1).isDeleted()) {
+				appointments.add(chatroom.getAppointments().get(chatroom.getAppointments().size() - 1));
+			}
+		}
+		List<TodoAppointmentResponse> response = new ArrayList<>();
+		for (Appointment appointment : appointments) {
+			Chatroom chatroom = appointment.getRoom();
+			Board board = boardRepository.findById(chatroom.getBoard().getId())
+				.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+			String partner = chatroom.getPerformer().getId().equals(memberId) ? chatroom.getWriter().getName() :
+				chatroom.getPerformer().getName();
+			response.add(
+				new TodoAppointmentResponse(appointment.getId(), board.getStatus(), partner, appointment.getApptTime(),
+					board.getTitle()));
+		}
+		return response;
+	}
 
 	@Transactional
 	public UUID createAppointment(CreateAppointmentRequest request, UUID memberId) {
@@ -80,8 +103,10 @@ public class AppointmentService {
 			.orElseThrow(() -> new CustomException(ErrorCode.APPOINTMENT_NOT_FOUND));
 		if (memberId.equals(appointment.getRoom().getWriter().getId())) {
 			appointment.softDelete();
-			Chatroom chatroom = chatroomRepository.findById(appointment.getRoom().getId()).orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
-			Board board = boardRepository.findById(chatroom.getBoard().getId()).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+			Chatroom chatroom = chatroomRepository.findById(appointment.getRoom().getId())
+				.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+			Board board = boardRepository.findById(chatroom.getBoard().getId())
+				.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 			board.changeStatus("진행전");
 			// 보증금 받기
 			Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
@@ -145,4 +170,5 @@ public class AppointmentService {
 		return boards.stream().map(TradeLogFindAllResponse::from)  // Board -> TradeLogFindAllResponse 변환
 			.collect(Collectors.toList());
 	}
+
 }
