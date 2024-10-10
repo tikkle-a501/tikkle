@@ -31,7 +31,6 @@ export default function BoardDetail() {
   const queryClient = useQueryClient(); // react-query의 QueryClient를 가져옴
   // URL에서 boardId 추출
   const boardId = pathname.split("/").pop()!; // 경로의 마지막 부분이 boardId
-  console.log(boardId);
   const { mutate: deleteBoard } = useDeleteBoard(boardId);
 
   const handleItemClick = (item: string) => {
@@ -48,9 +47,23 @@ export default function BoardDetail() {
       });
     }
   };
+
   // useFetchBoardDetail 훅을 통해 boardId로 데이터를 가져옴
   const { data: board, isLoading, error } = useFetchBoardDetail(boardId);
 
+  //badge 색
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "진행전":
+        return "red";
+      case "진행중":
+        return "yellow";
+      case "완료됨":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
   // 콘솔 로그로 실제 데이터를 확인
   console.log("API Response:", board);
 
@@ -77,7 +90,12 @@ export default function BoardDetail() {
 
   // 에러 상태 처리
   if (error) {
-    return <div>Error: {error.message}</div>;
+    alert(
+      error.message === "삭제된 공고입니다."
+        ? "삭제된 공고입니다."
+        : `Error: ${error.message}`,
+    );
+    return null; // 화면에 아무것도 렌더링하지 않도록 null 반환
   }
 
   // 데이터가 없을 경우 처리
@@ -87,17 +105,13 @@ export default function BoardDetail() {
 
   // 가져온 데이터를 board로 사용
   const isBoardOwner = member?.id === board.memberId; // 현재 사용자가 게시글 작성자인지 확인
-  console.log("member: " + member?.id);
-  console.log("board: " + board.memberId);
-  console.log("owner?: " + isBoardOwner);
-
   return (
     <>
       <div className="text-40 font-bold text-teal900">SSAFY의 티끌</div>
       <div className="flex flex-1 flex-col gap-12 self-stretch rounded-12 border border-warmGray200 px-40 py-36">
         {/* 제목 영역 */}
         <div className="flex items-center gap-20">
-          <Badge size="l" color="teal">
+          <Badge size="l" color={getBadgeColor(board.status)}>
             {board.status}
           </Badge>
           <div className="flex flex-1 text-28 font-bold">{board.title}</div>
