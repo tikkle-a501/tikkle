@@ -46,9 +46,23 @@ export default function BoardDetail() {
       });
     }
   };
+
   // useFetchBoardDetail 훅을 통해 boardId로 데이터를 가져옴
   const { data: board, isLoading, error } = useFetchBoardDetail(boardId);
 
+  //badge 색
+  const getBadgeColor = (status: string) => {
+    switch (status) {
+      case "진행전":
+        return "red";
+      case "진행중":
+        return "yellow";
+      case "완료됨":
+        return "gray";
+      default:
+        return "red";
+    }
+  };
   // 콘솔 로그로 실제 데이터를 확인
   console.log("API Response:", board);
 
@@ -80,7 +94,7 @@ export default function BoardDetail() {
       <div className="flex flex-1 flex-col gap-12 self-stretch rounded-12 border border-warmGray200 px-40 py-36">
         {/* 제목 영역 */}
         <div className="flex items-center gap-20">
-          <Badge size="l" color="teal">
+          <Badge size="l" color={getBadgeColor(board.status)}>
             {board.status}
           </Badge>
           <div className="flex flex-1 text-28 font-bold">{board.title}</div>
