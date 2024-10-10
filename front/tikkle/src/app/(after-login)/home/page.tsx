@@ -90,36 +90,37 @@ export default function Home() {
       </div>
       {/* 랭킹, 환율, 마이페이지가 들어갈 하단 div */}
       <div className="flex h-[544px] w-full items-start gap-28 pt-16">
-        {/* 랭킹 */}
+        {/* 랭킹 */}y
         <div className="h-full w-1/5">
           <div className="text-24 font-700 text-teal900">랭킹</div>
-          <div className="flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
-            {rankData?.rankList?.length > 0 ? (
-              rankData.rankList.map((data) => (
-                <RankList
-                  key={data.order}
-                  size="s"
-                  rank={
-                    data.order === 1
-                      ? "first"
-                      : data.order === 2
-                        ? "second"
-                        : data.order === 3
-                          ? "third"
-                          : "others"
-                  }
-                  rankNumber={data.order}
-                  name={data.nickname}
-                  tikkle={data.rankingPoint}
-                  count={data.tradeCount}
-                />
-              ))
+          <div className="scrollbar-hidden flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
+            {rankData?.rankList?.slice(0, 10).length > 0 ? (
+              rankData.rankList
+                .slice(0, 10)
+                .map((data) => (
+                  <RankList
+                    key={data.order}
+                    size="s"
+                    rank={
+                      data.order === 1
+                        ? "first"
+                        : data.order === 2
+                          ? "second"
+                          : data.order === 3
+                            ? "third"
+                            : "others"
+                    }
+                    rankNumber={data.order}
+                    name={data.nickname}
+                    tikkle={data.rankingPoint}
+                    count={data.tradeCount}
+                  />
+                ))
             ) : (
               <div>랭킹 데이터를 불러올 수 없습니다.</div>
             )}
           </div>
         </div>
-
         {/* 환율 */}
         <div className="h-full w-2/5">
           <div className="px-16 text-24 font-700 text-teal900">환율</div>
