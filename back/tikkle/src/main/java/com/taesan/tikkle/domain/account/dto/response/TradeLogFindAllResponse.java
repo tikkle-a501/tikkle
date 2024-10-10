@@ -15,10 +15,12 @@ import lombok.NoArgsConstructor;
 public class TradeLogFindAllResponse {
 
 	@Builder
-	public TradeLogFindAllResponse(MemberBriefResponse member, String title, String content, Integer time,
+	public TradeLogFindAllResponse(MemberBriefResponse member, byte[] partnerImage, String title, String content,
+		Integer time,
 		String status,
 		LocalDateTime createdAt) {
 		this.member = member;
+		this.partnerImage = partnerImage;
 		this.title = title;
 		this.content = content;
 		this.time = time;
@@ -27,6 +29,7 @@ public class TradeLogFindAllResponse {
 	}
 
 	private MemberBriefResponse member;
+	private byte[] partnerImage;
 	private String title;
 	private String content;
 	private Integer time;
@@ -37,6 +40,17 @@ public class TradeLogFindAllResponse {
 	public static TradeLogFindAllResponse from(Board board) {
 		return TradeLogFindAllResponse.builder()
 			.member(MemberBriefResponse.from(board.getMember()))
+			.title(board.getTitle())
+			.content(board.getContent())
+			.time(board.getTime())
+			.status(board.getStatus())
+			.createdAt(board.getCreatedAt()).build();
+	}
+
+	public static TradeLogFindAllResponse from(Board board, byte[] partnerImage) {
+		return TradeLogFindAllResponse.builder()
+			.member(MemberBriefResponse.from(board.getMember()))
+			.partnerImage(partnerImage)
 			.title(board.getTitle())
 			.content(board.getContent())
 			.time(board.getTime())

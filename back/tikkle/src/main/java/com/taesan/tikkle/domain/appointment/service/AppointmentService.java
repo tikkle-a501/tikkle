@@ -23,6 +23,7 @@ import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.chat.entity.Chatroom;
 import com.taesan.tikkle.domain.chat.repository.ChatroomRepository;
+import com.taesan.tikkle.domain.file.service.FileService;
 import com.taesan.tikkle.domain.member.entity.Member;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
@@ -39,6 +40,7 @@ public class AppointmentService {
 	private BoardRepository boardRepository;
 	private AccountRepository accountRepository;
 	private MemberRepository memberRepository;
+	private FileService fileService;
 
 	public List<TodoAppointmentResponse> getTodoAppointments(UUID memberId) {
 		List<Appointment> appointments = new ArrayList<>();
@@ -154,11 +156,18 @@ public class AppointmentService {
 
 	@Transactional(readOnly = true)
 	public List<TradeLogFindAllResponse> getAppointedBoardsByMemberId(UUID username) {
-		// 1. 먼저 Board 리스트를 가져옴
-		List<Board> boards = appointmentRepository.findBoardsByMemberId(username);
 
-		// 2. Board 리스트를 TradeLogResponse 리스트로 변환
-		return boards.stream().map(TradeLogFindAllResponse::from).collect(Collectors.toList());
+		List<Appointment> appointments = appointmentRepository.findAppointmentsWithBoardByMemberId(username);
+
+		return appointments.stream()
+			.map(appointment -> {
+				UUID memberId = username != appointment.getRoom().getWriter().getId() ? username :
+					appointment.getRoom().getPerformer().getId();
+				Board board = appointment.getRoom().getBoard();
+				byte[] partnerImage = fileService.getProfileImage(memberId);  // partnerImage 조회 로직 추가
+				return TradeLogFindAllResponse.from(board, partnerImage);
+			})
+			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)

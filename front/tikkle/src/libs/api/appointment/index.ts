@@ -1,4 +1,8 @@
-import { AppointmentRequest, BriefAppointment } from "@/types/appointment";
+import {
+  AppointmentRequest,
+  BriefAppointment,
+  TodoAppointmentResponses,
+} from "@/types/appointment";
 import { handleApiRequest } from "../client";
 
 // 약속 생성 API
@@ -25,5 +29,11 @@ export const deleteAppointmentById = async (appointmentId: string) => {
   return handleApiRequest<void, "delete">(
     `/appointment/${appointmentId}`,
     "delete",
+  );
+};
+export const fetchTodoAppointment = async () => {
+  return handleApiRequest<TodoAppointmentResponses, "get">(
+    `/appointment`,
+    "get",
   );
 };

@@ -11,3 +11,17 @@ export interface BriefAppointment {
   appointmentTime: string; // 약속 시간
   timeQnt: number; // 약속에 사용할 시간(재화) 수량
 }
+
+// 내 할일 조회 응답
+export interface TodoAppointmentResponse {
+  appointmentId: string;
+  status: string;
+  partner: string;
+  startTime: string;
+  title: string;
+  chatroomId: string;
+}
+
+export interface TodoAppointmentResponses {
+  data: TodoAppointmentResponse[];
+}

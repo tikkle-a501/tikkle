@@ -10,9 +10,13 @@ import Chart from "@/components/chart/Chart";
 import RankList from "@/components/list/RankList";
 import TodoList from "@/components/list/TodoList";
 import { useFetchMypageMember } from "@/hooks";
-import { useMypageStore } from "@/store/mypageStore"; // zustand 스토어 임포트
+import { useMypageStore } from "@/store/mypageStore";
 import { useFetchBoardList } from "@/hooks/board";
-import { useFetchRank, useFetchAccount } from "@/hooks"; // 랭킹 데이터를 가져오는 훅
+import {
+  useFetchRank,
+  useFetchAccount,
+  useFetchTodoAppointment,
+} from "@/hooks"; // useFetchTodoAppointment 추가
 import Loading from "@/components/loading/Loading"; // 로딩 컴포넌트 추가
 
 export default function Home() {
@@ -52,8 +56,16 @@ export default function Home() {
     refetch: refetchAccount,
   } = useFetchAccount(); // 나의 시간 & 티끌
 
-  if (isRankLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
-  if (isRankError || !rankData) return <div>Error loading rank data</div>; // 에러 처리
+  // 내가 맡은 일을 가져오는 훅
+  const {
+    data: todoAppointments,
+    isLoading: isTodoLoading,
+    isError: isTodoError,
+  } = useFetchTodoAppointment();
+
+  if (isRankLoading || isTodoLoading) return <Loading />; // 로딩 중일 때 로딩 컴포넌트 표시
+  if (isRankError || isTodoError || !rankData || !todoAppointments)
+    return <div>Error loading data</div>; // 에러 처리
 
   return (
     <div className="flex w-full flex-col items-start gap-10">
@@ -93,34 +105,33 @@ export default function Home() {
         {/* 랭킹 */}
         <div className="h-full w-1/5">
           <div className="text-24 font-700 text-teal900">랭킹</div>
-          <div className="scrollbar-hidden flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
-            {rankData?.rankList?.slice(0, 10).length > 0 ? (
-              rankData.rankList
-                .slice(0, 10)
-                .map((data) => (
-                  <RankList
-                    key={data.order}
-                    size="s"
-                    rank={
-                      data.order === 1
-                        ? "first"
-                        : data.order === 2
-                          ? "second"
-                          : data.order === 3
-                            ? "third"
-                            : "others"
-                    }
-                    rankNumber={data.order}
-                    name={data.nickname}
-                    tikkle={data.rankingPoint}
-                    count={data.tradeCount}
-                  />
-                ))
+          <div className="flex h-[465px] flex-col items-start gap-10 overflow-y-auto rounded-[12px] border border-warmGray200 px-56 py-28">
+            {rankData?.rankList?.length > 0 ? (
+              rankData.rankList.map((data) => (
+                <RankList
+                  key={data.order}
+                  size="s"
+                  rank={
+                    data.order === 1
+                      ? "first"
+                      : data.order === 2
+                        ? "second"
+                        : data.order === 3
+                          ? "third"
+                          : "others"
+                  }
+                  rankNumber={data.order}
+                  name={data.nickname}
+                  tikkle={data.rankingPoint}
+                  count={data.tradeCount}
+                />
+              ))
             ) : (
               <div>랭킹 데이터를 불러올 수 없습니다.</div>
             )}
           </div>
         </div>
+
         {/* 환율 */}
         <div className="h-full w-2/5">
           <div className="px-16 text-24 font-700 text-teal900">환율</div>
@@ -158,34 +169,20 @@ export default function Home() {
           <div className="h-2/3 px-16 text-24 font-700 text-teal900">
             내가 맡은 일
             <div className="flex h-[300px] flex-col items-center gap-[10px] rounded-[10px] border border-warmGray200 p-[20px]">
-              <TodoList
-                status="진행중"
-                appointmentTime="0000.00.00 00:00"
-                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
-                nickname="00"
-                chatId="000"
-              />
-              <TodoList
-                status="진행중"
-                appointmentTime="0000.00.00 00:00"
-                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
-                nickname="00"
-                chatId="000"
-              />
-              <TodoList
-                status="진행중"
-                appointmentTime="0000.00.00 00:00"
-                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
-                nickname="00"
-                chatId="000"
-              />
-              <TodoList
-                status="진행중"
-                appointmentTime="0000.00.00 00:00"
-                title="어쩌구어쩌구어쩌구어쩌구어쩌구"
-                nickname="00"
-                chatId="000"
-              />
+              {todoAppointments?.data?.length > 0 ? (
+                todoAppointments.data.map((appointment) => (
+                  <TodoList
+                    key={appointment.appointmentId}
+                    status={appointment.status}
+                    appointmentTime={appointment.startTime}
+                    title={appointment.title}
+                    nickname={appointment.partner}
+                    chatId={appointment.chatroomId}
+                  />
+                ))
+              ) : (
+                <div>할일이 없습니다.</div>
+              )}
             </div>
           </div>
         </div>

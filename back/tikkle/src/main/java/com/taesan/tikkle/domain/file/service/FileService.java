@@ -9,9 +9,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.taesan.tikkle.global.errors.ErrorCode;
-import com.taesan.tikkle.global.exceptions.CustomException;
-
 @Service
 public class FileService {
 
@@ -25,7 +22,7 @@ public class FileService {
 			Path path = Paths.get(profileImagePath);
 			profileImage = Files.readAllBytes(path);
 		} catch (IOException e) {
-			throw new CustomException(ErrorCode.MEMBER_IMAGE_NOT_FOUND);
+			profileImage = null;
 		}
 		return profileImage;
 	}

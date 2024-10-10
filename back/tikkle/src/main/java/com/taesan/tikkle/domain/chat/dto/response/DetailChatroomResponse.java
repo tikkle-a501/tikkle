@@ -14,6 +14,8 @@ public class DetailChatroomResponse {
 	private UUID roomId;
 	// 대화 상대 이름
 	private String partner;
+	// 상대방 이미지
+	private byte[] partnerImage;
 	// 마지막 메시지 보낸 사람
 	private String lastSender;
 	// 마지막 메시지 미리보기(MongoDB)
