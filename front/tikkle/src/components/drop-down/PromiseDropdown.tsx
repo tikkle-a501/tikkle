@@ -49,7 +49,7 @@ const PromiseDropdown: React.FC<PromiseDropdownProps> = ({
       onSuccess: () => {
         console.log("Appointment created successfully");
         refetchAppointment(); // 약속 생성 후 refetchAppointment 호출
-        refetchChatroom();
+        // refetchChatroom();
       },
       onError: (error) => {
         console.error("Error creating appointment:", error);
