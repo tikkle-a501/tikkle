@@ -18,12 +18,6 @@ export default function Landing() {
           <LoginButton title="Mattermost"></LoginButton>
         </div>
       </div>
-      <div className="flex h-[90vh] flex-col items-center justify-center">
-        시간이 곧 기회!
-      </div>
-      <div className="flex h-[90vh] flex-col items-center justify-center">
-        랭킹과 보상!
-      </div>
     </>
   );
 }
