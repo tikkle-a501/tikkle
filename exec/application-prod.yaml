@@ -1,0 +1,78 @@
+server:
+  port: 8080
+
+file:
+  upload:
+    image-dir: /home/ubuntu/tikkle-resources/images/profiles
+
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:3306/tikkle
+    username: myuser
+    password: ${mariadb-password}
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MariaDBDialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          mattermost:
+            client-id: ${client-id}
+            client-secret: ${client-secret}
+            scope: profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: "https://j11a501.p.ssafy.io/login/oauth2/code/mattermost"
+            # client-name: Mattermost
+            client-authentication-method: client_secret_post
+        provider:
+          mattermost:
+            authorization-uri: https://j11a501.p.ssafy.io/oauth/authorize
+            token-uri: https://j11a501.p.ssafy.io/mattermost/oauth/access_token
+            user-info-uri: https://j11a501.p.ssafy.io/mattermost/api/v4/users/me
+            user-name-attribute: id
+
+
+  data:
+    mongodb:
+      uri: mongodb://mongoadmin:${mongodb-password}@127.0.0.1:27017/mymongodb?authSource=admin
+    redis:
+      host: localhost
+      port: 6379
+      password: '' # 비밀번호 설정 필요 시 추가
+  kafka:
+    bootstrap-servers: 127.0.0.1:8092
+    consumer:
+      group-id: my-group
+      properties:
+        spring.json.trusted.packages: "*"
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        linger.ms: 1 # 네트워크 과부하 시 해당 값을 올려 배치 처리량을 늘림
+logging:
+  level:
+    root: INFO
+    com:
+      taesan:
+        tikkle: DEBUG
+      fasterxml.jackson.databind: DEBUG
+      # org.apache.kafka: DEBUG
+      # kafka: DEBUG
+      # org.springframework.kafka: DEBUG
+      # kafka.server.KafkaConfig: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.mongodb.core.MongoOperations: DEBUG

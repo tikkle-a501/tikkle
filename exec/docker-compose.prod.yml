@@ -1,0 +1,123 @@
+services:
+  mariadb:
+    image: mariadb:10.5
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${your-password}
+      MARIADB_DATABASE: tikkle
+      MARIADB_USER: myuser
+      MARIADB_PASSWORD: ${your-password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - tikkle-backend
+
+  mm-db:
+    image: mariadb:10.5
+    container_name: mm-db
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${your-password}
+      MARIADB_DATABASE: mattermost
+      MARIADB_USER: mmuser
+      MARIADB_PASSWORD: ${your-password}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mm_db_data:/var/lib/mysql
+    networks:
+      - tikkle-backend
+
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: ${your-password}
+      MONGO_INITDB_DATABASE: mymongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - /home/ubuntu/mongodb_data:/data/db
+      - ./mongod.conf:/etc/mongod.conf.orig
+    networks:
+      - tikkle-backend
+
+  redis:
+    image: redis:6.0
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - tikkle-backend
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.2.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 42181
+      ZOOKEEPER_TICK_TIME: 500
+    ports:
+      - "42181:42181"
+    networks:
+      - tikkle-backend
+
+  kafka:
+    image: confluentinc/cp-kafka:7.2.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "8092:8092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:42181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:8092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=DEBUG,kafka.producer.async.DefaultEventHandler=DEBUG,state.change.logger=TRACE"
+    networks:
+      - tikkle-backend
+
+  mattermost:
+    image: mattermost/mattermost-team-edition:latest
+    restart: unless-stopped
+    container_name: mattermost
+    ports:
+      - "8065:8065"
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME=mysql
+      - MM_SQLSETTINGS_DATASOURCE=mmuser:7e1O0zQD11FFJ4n9dCli7GAc@tcp(mm-db:3306)/mattermost?charset=utf8mb4&readTimeout=30s&writeTimeout=30s
+      - MM_SERVICESETTINGS_SITEURL=${site-url}
+      - MM_SERVICESETTINGS_ENABLEOUTGOINGWEBHOOKS=true
+      - MM_SERVICESETTINGS_ENABLEINCOMINGWEBHOOKS=true
+      - MM_SERVICESETTINGS_ENABLESIGNUPWITHEMAIL=true
+      - MM_SERVICESETTINGS_ENABLEAPIv4=true
+      - MM_SERVICESETTINGS_ENABLECUSTOMEMOJI=true
+      - MM_SERVICESETTINGS_ENABLEPOSTUSERNAMEOVERRIDE=true
+      - MM_SERVICESETTINGS_ENABLEPOSTICONOVERRIDE=true
+      - MM_PLUGINSETTINGS_ENABLE=true
+      - MM_PLUGINSETTINGS_ENABLEUPLOADS=true
+    volumes:
+      - mattermost-volume:/mattermost/data
+    depends_on:
+      - mm-db
+    networks:
+      - tikkle-backend
+
+networks:
+  tikkle-backend:
+    name: tikkle-backend
+    driver: bridge
+
+volumes:
+  mariadb_data:
+  mm_db_data:
+  mongodb_data:
+  mattermost-volume:
+
+
