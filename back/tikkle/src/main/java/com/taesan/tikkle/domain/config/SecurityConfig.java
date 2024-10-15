@@ -63,7 +63,7 @@ public class SecurityConfig {
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> {
 			web.ignoring()
-				.requestMatchers("/favicon.ico", "/error"); // 필터를 타면 안되는 경로
+				.requestMatchers("/favicon.ico", "/error", "/"); // 필터를 타면 안되는 경로
 		};
 	}
 
@@ -99,8 +99,12 @@ public class SecurityConfig {
 			.formLogin((auth) -> auth.disable());
 
 		// TODO: 개발 환경을 위한 패턴이므로 추후 작성 필요
+//		String[] requestMatcherPatterns = new String[] {
+//			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**", "/home"
+//		};
+
 		String[] requestMatcherPatterns = new String[] {
-			"/api/v1/**", "/ws/**", "/oauth2/**", "/", "/login/**", "/static/**", "/home"
+				"/api/v1/login", "/oauth2/**", "/login/**", "/static/**"
 		};
 
 		http
