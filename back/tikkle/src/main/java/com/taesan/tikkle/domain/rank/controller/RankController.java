@@ -17,14 +17,23 @@ import com.taesan.tikkle.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/rank")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class RankController {
 	private final RankService rankService;
 
-	@GetMapping
+	@GetMapping("/v1/rank")
 	public ResponseEntity<ApiResponse<RankBaseResponse>> getMemberRanking(@AuthedUsername UUID username) {
-		ApiResponse<RankBaseResponse> response = ApiResponse.success("랭킹 조회에 성공했습니다.", rankService.getRankList(username));
+		ApiResponse<RankBaseResponse> response = ApiResponse.success("랭킹 조회에 성공했습니다.",
+			rankService.getRankList(username));
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/v2/rank")
+	public ResponseEntity<ApiResponse<RankBaseResponse>> getMemberRanking(@AuthedUsername UUID username,
+		@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+		ApiResponse<RankBaseResponse> response = ApiResponse.success("랭킹 조회에 성공했습니다.",
+			rankService.getRankList(username, page, size));
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 

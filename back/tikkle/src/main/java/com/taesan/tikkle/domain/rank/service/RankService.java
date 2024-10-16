@@ -5,6 +5,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,6 +41,11 @@ public class RankService {
 		MemberRankResponse myRank = findMyRank(rankList, username);
 
 		return RankResponse.of(rankList, myRank);
+	}
+
+	public RankBaseResponse getRankList(UUID username, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("ranking_point").descending());
+		return RankResponse.of(memberService.findMemberRankings(pageable), null);
 	}
 
 	public RankBaseResponse getSearchRankList(String keyword) {
@@ -88,9 +96,9 @@ public class RankService {
 		}
 	}
 
-	private MemberRankResponse findMyRank(List<MemberRankResponse> rankList, UUID username){
+	private MemberRankResponse findMyRank(List<MemberRankResponse> rankList, UUID username) {
 		for (MemberRankResponse member : rankList) {
-			if(member.getMemberId().equals(username)){
+			if (member.getMemberId().equals(username)) {
 				return member;
 			}
 		}

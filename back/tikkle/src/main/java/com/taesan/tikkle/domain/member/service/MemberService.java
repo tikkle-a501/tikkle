@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -50,6 +51,10 @@ public class MemberService {
 
 	public List<MemberRankResponse> findMemberRankings() {
 		return memberRepository.findMemberRankings();
+	}
+
+	public List<MemberRankResponse> findMemberRankings(Pageable pageable) {
+		return memberRepository.findMemberRankings(pageable);
 	}
 
 	public AllMemberBoardResponse getMemberBoard(UUID username) {
