@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taesan.tikkle.domain.account.entity.Account;
+import com.taesan.tikkle.domain.account.entity.TradeLog;
 import com.taesan.tikkle.domain.account.repository.AccountRepository;
+import com.taesan.tikkle.domain.account.repository.TradeLogRepository;
 import com.taesan.tikkle.domain.appointment.entity.Appointment;
 import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -37,6 +39,7 @@ public class ReviewService {
 	private final BoardRepository boardRepository;
 	private final ChatroomRepository chatroomRepository;
 	private final AccountRepository accountRepository;
+	private final TradeLogRepository tradeLogRepository;
 
 	public ReviewIdResponse createReview(CreateReviewRequest request, UUID senderId) {
 		Appointment appointment = appointmentRepository.findByRoomIdAndDeletedAtIsNull(request.getChatroomId())
@@ -55,9 +58,15 @@ public class ReviewService {
 			.orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 		board.changeStatus("완료됨");
 		// 보증금 받기
-		Account account = accountRepository.findByMemberIdAndDeletedAtIsNull(performer.getId())
+		Account recAccount = accountRepository.findByMemberIdAndDeletedAtIsNull(performer.getId())
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
-		account.setBalance(account.getTimeQnt() + appointment.getTimeQnt());
+		recAccount.setBalance(recAccount.getTimeQnt() + appointment.getTimeQnt());
+
+		Account reqAccount = accountRepository.findByMemberIdAndDeletedAtIsNull(writer.getId())
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+		TradeLog tradeLog = TradeLog.from(board, recAccount, reqAccount, appointment.getTimeQnt());
+		tradeLogRepository.save(tradeLog);
 		return new ReviewIdResponse(review.getId());
 	}
 

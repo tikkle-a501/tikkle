@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TradeLog extends BaseEntity {
+
 	@Id
 	@Column(columnDefinition = "BINARY(16)")
 	private UUID id = UlidCreator.getMonotonicUlid().toUuid();
@@ -37,6 +38,15 @@ public class TradeLog extends BaseEntity {
 	@JoinColumn(name = "req_account_id")
 	private Account reqAccount;
 
-	private Float quantity;
+	private Integer quantity;
+
+	public static TradeLog from(Board board, Account recAccount, Account reqAccount, Integer quantity) {
+		TradeLog tradeLog = new TradeLog();
+		tradeLog.board = board;
+		tradeLog.recAccount = recAccount;
+		tradeLog.reqAccount = reqAccount;
+		tradeLog.quantity = quantity;
+		return tradeLog;
+	}
 }
 
