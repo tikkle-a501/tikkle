@@ -137,7 +137,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<byte[]> response = restTemplate.exchange(
-			"https://j11a501.p.ssafy.io/mattermost/api/v4/users/" + userId + "/image",
+			// "https://j11a501.p.ssafy.io/mattermost/api/v4/users/" + userId + "/image",
+			"http://localhost:8065/api/v4/users/" + userId + "/image",
 			HttpMethod.GET,
 			entity,
 			byte[].class
