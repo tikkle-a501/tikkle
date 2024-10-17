@@ -69,7 +69,7 @@ public class JwtOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandl
 
 		redisTokenService.storeRefreshToken(memberId, refreshToken, 1000 * 60 * 60 * 24);
 
-		String redirectUrl = "https://j11a501.p.ssafy.io/home";
+		String redirectUrl = "http://localhost:3000/home";
 		getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
 		//		MemberResponse memberResponse = new MemberResponse(
