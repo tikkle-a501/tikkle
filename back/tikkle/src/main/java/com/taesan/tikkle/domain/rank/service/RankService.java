@@ -5,15 +5,13 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taesan.tikkle.domain.member.dto.response.MemberRankProjection;
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 import com.taesan.tikkle.domain.member.service.MemberService;
 import com.taesan.tikkle.domain.rank.dto.response.RankBaseResponse;
@@ -33,6 +31,7 @@ public class RankService {
 
 	private static final String RANKING_KEY = "ranking";
 
+	//1. jpql 조인 전체 데이터 + 레디스 sorted set
 	public RankBaseResponse getRankList(UUID username) {
 		ZSetOperations<String, Object> stringObjectZSetOperations = redisTemplate.opsForZSet();
 		Long existingCount = checkAndUpdateCache(stringObjectZSetOperations);
@@ -43,9 +42,9 @@ public class RankService {
 		return RankResponse.of(rankList, myRank);
 	}
 
-	public RankBaseResponse getRankList(UUID username, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by("ranking_point").descending());
-		return RankResponse.of(memberService.findMemberRankings(pageable), null);
+	//2. nativeQuery를 활용해 limit, order by 활용해 데이터 조회
+	public List<MemberRankProjection> getRankList(int limit, int offset){
+		return memberService.findMemberRankings(limit,offset);
 	}
 
 	public RankBaseResponse getSearchRankList(String keyword) {
@@ -56,7 +55,7 @@ public class RankService {
 			.filter(member -> member.getNickname().contains(keyword))
 			.collect(Collectors.toList());
 
-		return RankBaseResponse.from(rankList);
+		return RankBaseResponse.from(rankList, 0);
 	}
 
 	private Long checkAndUpdateCache(ZSetOperations<String, Object> stringObjectZSetOperations) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -12,6 +11,7 @@ import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.file.service.FileService;
 import com.taesan.tikkle.domain.member.dto.response.AllMemberBoardResponse;
 import com.taesan.tikkle.domain.member.dto.response.MemberBoardResponse;
+import com.taesan.tikkle.domain.member.dto.response.MemberRankProjection;
 import com.taesan.tikkle.domain.member.dto.response.MemberRankResponse;
 import com.taesan.tikkle.domain.member.dto.response.MemberResponse;
 import com.taesan.tikkle.domain.member.entity.Member;
@@ -49,12 +49,14 @@ public class MemberService {
 		return MemberResponse.from(member, profileImage);
 	}
 
+	//1. jpql 조인 전체 데이터 + 레디스 sorted set
 	public List<MemberRankResponse> findMemberRankings() {
 		return memberRepository.findMemberRankings();
 	}
 
-	public List<MemberRankResponse> findMemberRankings(Pageable pageable) {
-		return memberRepository.findMemberRankings(pageable);
+	//2. nativeQuery를 활용해 limit, order by 활용해 데이터 조회
+	public List<MemberRankProjection> findMemberRankings(int limit, int offset) {
+		return memberRepository.findMemberRankings(limit, offset);
 	}
 
 	public AllMemberBoardResponse getMemberBoard(UUID username) {
