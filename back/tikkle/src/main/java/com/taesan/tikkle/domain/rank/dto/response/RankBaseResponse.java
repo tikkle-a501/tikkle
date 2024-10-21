@@ -15,11 +15,17 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class RankBaseResponse {
 
-	public List<MemberRankResponse> rankList;
+	private static final int SIZE = 20;
 
-	public static RankBaseResponse from(List<MemberRankResponse> rankList){
+	public List<MemberRankResponse> rankList;
+	public int totalPages;
+	public int currentPage;
+
+	public static RankBaseResponse from(List<MemberRankResponse> rankList, int offset){
 		return RankBaseResponse.builder()
 			.rankList(rankList)
+			.totalPages(rankList.size() / SIZE == 0 ? rankList.size() / SIZE : rankList.size() / SIZE + 1)
+			.currentPage(offset)
 			.build();
 	}
 }
