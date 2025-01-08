@@ -64,7 +64,6 @@ public class KafkaProducer {
 		} catch (JsonProcessingException e) {
 			// 로그: 직렬화 오류 발생
 			logger.error("JSON 직렬화 중 오류 발생: {}", e.getMessage());
-			e.printStackTrace();
 		}
 	}
 }
