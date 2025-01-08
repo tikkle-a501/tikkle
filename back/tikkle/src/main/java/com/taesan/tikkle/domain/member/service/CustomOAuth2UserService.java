@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.taesan.tikkle.domain.member.entity.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -102,6 +103,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 				.name(name)
 				.nickname(nickname)
 				.email(email)
+				.role(Role.ROLE_USER)
 				.build();
 
 			Member savedMember = memberRepository.save(newMember);
