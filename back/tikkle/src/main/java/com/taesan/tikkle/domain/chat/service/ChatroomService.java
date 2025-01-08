@@ -100,6 +100,7 @@ public class ChatroomService {
 		}
 	}
 
+
 	@Transactional
 	public EnterChatroomResponse enterChatroom(UUID roomId, UUID memberId) {
 		// roomId에 따른 chatroom 찾기
