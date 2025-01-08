@@ -1,17 +1,5 @@
 package com.taesan.tikkle.domain.chat.service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.chat.dto.request.CreateChatroomRequest;
@@ -29,21 +17,31 @@ import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.global.errors.ErrorCode;
 import com.taesan.tikkle.global.exceptions.CustomException;
 
+import lombok.RequiredArgsConstructor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
+@RequiredArgsConstructor
 public class ChatroomService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ChatroomService.class);
 
-	@Autowired
-	private ChatroomRepository chatroomRepository;
-	@Autowired
-	private ChatRepository chatRepository;
-	@Autowired
-	private BoardRepository boardRepository;
-	@Autowired
-	private MemberRepository memberRepository;
-	@Autowired
-	private FileService fileService;
+	private final ChatroomRepository chatroomRepository;
+
+	private final ChatRepository chatRepository;
+
+	private final BoardRepository boardRepository;
+
+	private final MemberRepository memberRepository;
+
+	private final FileService fileService;
 
 	@Transactional
 	public CreateChatroomResponse createChatroom(CreateChatroomRequest request, UUID memberId) {
@@ -52,12 +50,14 @@ public class ChatroomService {
 		Member writer = board.getMember();
 		Member performer = memberRepository.findById(memberId)
 			.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-		if (chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(), writer.getId(),
-			performer.getId()).isPresent()) {
-			return new CreateChatroomResponse(
-				chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(request.getBoardId(), writer.getId(),
-					performer.getId()).get().getId());
+
+		Optional<Chatroom> existingChatroom = chatroomRepository.findByBoardIdAndWriterIdAndPerformerId(
+			request.getBoardId(), writer.getId(), performer.getId());
+
+		if (existingChatroom.isPresent()) {
+			return new CreateChatroomResponse(existingChatroom.get().getId());
 		}
+
 		Chatroom chatroom = new Chatroom(board, performer, writer);
 		chatroomRepository.save(chatroom);
 		return new CreateChatroomResponse(chatroom.getId());
@@ -91,14 +91,9 @@ public class ChatroomService {
 
 				// 대화 상대에 따라 performer와 writer 구분
 
-				responses.add(new DetailChatroomResponse(
-					chatroom.getId(),
-					partnerName,
-					partnerImage,
-					lastSender.getName(),
-					lastChat.getContent(),
-					lastChat.getTimestamp()
-				));
+				responses.add(
+					new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage, lastSender.getName(),
+						lastChat.getContent(), lastChat.getTimestamp()));
 			} else {
 				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage));
 			}
@@ -107,50 +102,60 @@ public class ChatroomService {
 
 	@Transactional
 	public EnterChatroomResponse enterChatroom(UUID roomId, UUID memberId) {
-		Logger logger = LoggerFactory.getLogger(this.getClass());
+		// roomId에 따른 chatroom 찾기
+		Chatroom chatroom = findChatroomById(roomId, memberId);
 
-		// 로그: roomId와 memberId 출력
+		// 채팅방에 들어올 수 있는 회원인지 조회
+		validateMemberAccess(chatroom, memberId);
+
+		// 채팅 내역 조회 및 변환
+		List<ChatResponse> chats = getChatHistory(roomId);
+
+		// 상대방 정보 조회
+		Member partner = getChatPartner(chatroom, memberId);
+
+		return EnterChatroomResponse.from(chats, chatroom, partner, fileService.getProfileImage(partner.getId()));
+	}
+
+	private Chatroom findChatroomById(UUID roomId, UUID memberId) {
 		logger.info("채팅방 입장 시도 - roomId: {}, memberId: {}", roomId, memberId);
-
-		Chatroom chatroom = chatroomRepository.findById(roomId)
+		return chatroomRepository.findById(roomId)
+			.map(chatroom -> {
+				logger.info("채팅방 찾음 - roomId: {}, 작성자: {}, 참가자: {}",
+					roomId, chatroom.getWriter().getId(), chatroom.getPerformer().getId());
+				return chatroom;
+			})
 			.orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
+	}
 
-		// 로그: chatroom 정보 출력
-		logger.info("채팅방 찾음 - roomId: {}, 작성자: {}, 참가자: {}", roomId, chatroom.getWriter().getId(),
-			chatroom.getPerformer().getId());
+	private Member getChatPartner(Chatroom chatroom, UUID memberId) {
+		return chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer() : chatroom.getWriter();
+	}
 
+	private void validateMemberAccess(Chatroom chatroom, UUID memberId) {
 		if (!memberId.equals(chatroom.getWriter().getId()) && !memberId.equals(chatroom.getPerformer().getId())) {
 			logger.warn("채팅방 입장 권한 없음 - memberId: {}", memberId);
 			throw new CustomException(ErrorCode.CHATROOM_NOT_AUTHORIZED);
 		}
+	}
 
-		// 로그: 채팅 조회 시도
+	private List<ChatResponse> getChatHistory(UUID roomId) {
+		// 채팅 내역 조회
 		logger.info("채팅 내역 조회 시도 - roomId: {}", roomId);
-		List<Chat> cs = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString());
-		logger.info("변환 전 Chats : {} ", cs);
-		List<ChatResponse> chats = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString())
-			.stream()
-			.map(
-				chat -> new ChatResponse((UUID.fromString(chat.getSenderId())), chat.getContent(), chat.getTimestamp()))
-			.collect(Collectors.toList());
 
-		// 로그: 조회된 채팅 목록의 크기 출력
-		logger.info("조회된 채팅 수: {}", chats.size());
+		List<Chat> chatList = chatRepository.findByChatroomIdOrderByTimestampAsc(roomId.toString());
 
-		// 로그: 채팅 데이터가 비어 있을 때 경고 로그 출력
-		if (chats.isEmpty()) {
+		// 채팅 데이터 변환
+		if (chatList.isEmpty()) {
 			logger.warn("채팅 내역이 없습니다 - roomId: {}", roomId);
-		} else {
-			logger.info("채팅 내역: {}", chats);
+			return Collections.emptyList();
 		}
 
-		Member partner = chatroom.getWriter().getId().equals(memberId) ? chatroom.getPerformer() :
-			chatroom.getWriter();
+		logger.info("조회된 채팅 수: {}", chatList.size());
 
-		return new EnterChatroomResponse(chats, chatroom.getBoard().getMember().getId(),
-			partner.getName(), fileService.getProfileImage(partner.getId()), chatroom.getBoard().getStatus(),
-			chatroom.getBoard().getTitle(), chatroom.getBoard().getId(), chatroom.getBoard().getMember().getId(),
-			chatroom.getBoard().isDeleted());
+		return chatList.stream()
+			.map(chat -> new ChatResponse(UUID.fromString(chat.getSenderId()), chat.getContent(), chat.getTimestamp()))
+			.collect(Collectors.toList());
 	}
 
 }
