@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -71,41 +72,87 @@ public class ChatroomService {
 		return new CreateChatroomResponse(chatroom.getId());
 	}
 
+	// @Transactional(readOnly = true)
+	// public List<DetailChatroomResponse> getChatrooms(UUID memberId) {
+	// 	List<DetailChatroomResponse> responses = new ArrayList<>();
+	// 	// 공통 메서드를 사용하여 writerRooms와 performerRooms 처리
+	// 	extractChatroomDetails(chatroomRepository.findByWriterId(memberId), responses, true);
+	// 	extractChatroomDetails(chatroomRepository.findByPerformerId(memberId), responses, false);
+	// 	// 가장 최신인 메세지를 갖는 채팅방을 앞으로
+	// 	responses.sort(Comparator.comparing(DetailChatroomResponse::getLastMsgTime,
+	// 		Comparator.nullsLast(Comparator.reverseOrder())));
+	// 	return responses;
+	// }
+	//
+	// private void extractChatroomDetails(List<Chatroom> chatrooms, List<DetailChatroomResponse> responses,
+	// 	boolean isWriter) {
+	// 	for (Chatroom chatroom : chatrooms) {
+	// 		Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
+	// 		Member partner = isWriter ? chatroom.getPerformer() : chatroom.getWriter();
+	// 		String partnerName = partner.getName();
+	//
+	// 		byte[] partnerImage = fileService.getProfileImage(partner.getId());
+	//
+	// 		if (lastChat != null) {
+	// 			Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(
+	// 					(UUID.fromString(lastChat.getSenderId())))
+	// 				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+	//
+	// 			// 대화 상대에 따라 performer와 writer 구분
+	//
+	// 			responses.add(
+	// 				new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage, lastSender.getName(),
+	// 					lastChat.getContent(), lastChat.getTimestamp()));
+	// 		} else {
+	// 			responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage));
+	// 		}
+	// 	}
+	// }
+
 	@Transactional(readOnly = true)
 	public List<DetailChatroomResponse> getChatrooms(UUID memberId) {
-		List<DetailChatroomResponse> responses = new ArrayList<>();
-		// 공통 메서드를 사용하여 writerRooms와 performerRooms 처리
-		extractChatroomDetails(chatroomRepository.findByWriterId(memberId), responses, true);
-		extractChatroomDetails(chatroomRepository.findByPerformerId(memberId), responses, false);
-		// 가장 최신인 메세지를 갖는 채팅방을 앞으로
-		responses.sort(Comparator.comparing(DetailChatroomResponse::getLastMsgTime,
-			Comparator.nullsLast(Comparator.reverseOrder())));
+		// writerRooms와 performerRooms를 동시에 처리
+		List<Chatroom> writerRooms = chatroomRepository.findByWriterId(memberId);
+		List<Chatroom> performerRooms = chatroomRepository.findByPerformerId(memberId);
+
+		// 두 목록을 통합 처리
+		List<DetailChatroomResponse> responses = Stream.concat(
+				processChatrooms(writerRooms, true),
+				processChatrooms(performerRooms, false)
+			).sorted(Comparator.comparing(DetailChatroomResponse::getLastMsgTime,
+				Comparator.nullsLast(Comparator.reverseOrder())))
+			.collect(Collectors.toList());
+
 		return responses;
 	}
 
-	private void extractChatroomDetails(List<Chatroom> chatrooms, List<DetailChatroomResponse> responses,
-		boolean isWriter) {
-		for (Chatroom chatroom : chatrooms) {
-			Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
-			Member partner = isWriter ? chatroom.getPerformer() : chatroom.getWriter();
-			String partnerName = partner.getName();
+	private Stream<DetailChatroomResponse> processChatrooms(List<Chatroom> chatrooms, boolean isWriter) {
+		return chatrooms.stream()
+			.map(chatroom -> createChatroomDetailResponse(chatroom, isWriter));
+	}
 
-			byte[] partnerImage = fileService.getProfileImage(partner.getId());
+	private DetailChatroomResponse createChatroomDetailResponse(Chatroom chatroom, boolean isWriter) {
+		Chat lastChat = chatRepository.findTopByChatroomIdOrderByTimestampDesc(chatroom.getId().toString());
+		Member partner = isWriter ? chatroom.getPerformer() : chatroom.getWriter();
+		String partnerName = partner.getName();
+		byte[] partnerImage = fileService.getProfileImage(partner.getId());
 
-			if (lastChat != null) {
-				Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(
-						(UUID.fromString(lastChat.getSenderId())))
-					.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+		if (lastChat != null) {
+			Member lastSender = memberRepository.findByIdAndDeletedAtIsNull(
+					UUID.fromString(lastChat.getSenderId()))
+				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-				// 대화 상대에 따라 performer와 writer 구분
-
-				responses.add(
-					new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage, lastSender.getName(),
-						lastChat.getContent(), lastChat.getTimestamp()));
-			} else {
-				responses.add(new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage));
-			}
+			return new DetailChatroomResponse(
+				chatroom.getId(),
+				partnerName,
+				partnerImage,
+				lastSender.getName(),
+				lastChat.getContent(),
+				lastChat.getTimestamp()
+			);
 		}
+
+		return new DetailChatroomResponse(chatroom.getId(), partnerName, partnerImage);
 	}
 
 
