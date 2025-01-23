@@ -52,6 +52,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	@Value("${file.upload.image-dir}")
 	private String imageUploadDir;
 
+	@Value("${tikkle.mm-domain}")
+	private String mattermostDomain;
+
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		// 기본 OAuth2UserService 사용하여 사용자 정보를 가져옴
@@ -139,7 +142,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<byte[]> response = restTemplate.exchange(
-			"https://j11a501.p.ssafy.io/mattermost/api/v4/users/" + userId + "/image",
+			mattermostDomain + "/mattermost/api/v4/users/" + userId + "/image",
 			HttpMethod.GET,
 			entity,
 			byte[].class
