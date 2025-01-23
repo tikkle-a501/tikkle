@@ -5,6 +5,10 @@ file:
   upload:
     image-dir: ./temp/images
 
+tikkle:
+  mm-domain: http://localhost:8065
+  redirect: http://localhost:3000
+
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/tikkle
@@ -22,8 +26,8 @@ spring:
       client:
         registration:
           mattermost:
-            client-id: ${ MM_CLIENT_ID }
-            client-secret: ${ MM_CLIENT_SECRET }
+            client-id: ${MM_CLIENT_ID}
+            client-secret: ${MM_CLIENT_SECRET}
             scope: profile,email
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:8080/login/oauth2/code/mattermost"
