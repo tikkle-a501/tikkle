@@ -27,36 +27,46 @@ public class KafkaConsumer {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	// STOMP 메시지 전송을 위한 비동기 실행 스레드 풀 생성 (한번에 5개씩 비동기 처리)
-	@Autowired
-	private ExecutorService stompExecutor = Executors.newFixedThreadPool(5);
+	// STOMP 메시지 전송을 위한 비동기 실행 스레드 풀 생성 (한 번에 5개씩 비동기 처리)
+	private final ExecutorService stompExecutor = Executors.newFixedThreadPool(5);
 
-	@KafkaListener(topicPattern = "chatroom.*", groupId = "chat-consumer-group", concurrency = "3")
+	@KafkaListener(topicPattern = "chatroom.*", groupId = "chat-consumer-group", concurrency = "3") // 스레드 3개 사용
 	public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
 		// chatroomId와 message 추출
 		String topic = record.topic();
 		String message = record.value();
+
 		// message 비어있는지 확인
 		if (message == null || message.isBlank()) {
 			logger.warn("수신한 메시지가 비어 있거나 공백입니다. Topic: {}", topic);
-			// 메시지 정상 처리 완료 후 Kafka Offset 커밋
-			ack.acknowledge();
+			ack.acknowledge(); // Kafka Offset 커밋
 			return;
 		}
-		// Kafka에 직렬화를 하고 message를 send 하였으므로 이를 다시 역직렬화하는 과정이 필요하다.
 		try {
 			// ObjectMapper를 사용하여 JSON 메시지를 ChatMessageResponse 객체로 변환
 			ChatMessageResponse response = objectMapper.readValue(message, ChatMessageResponse.class);
-			// 로그: 수신한 메시지 출력
 			logger.info("수신한 ChatMessageResponse: {}", response);
+
 			// chatroomId 추출
 			String chatroomId = topic.replace("chatroom.", "");
+
 			// STOMP 전송을 비동기적으로 실행
-			stompExecutor.submit(() -> sendMessageToStomp(chatroomId, response));
-			// Kafka Offset 커밋 (메시지 정상 처리 완료)
-			ack.acknowledge();
+			stompExecutor.submit(() -> {
+				try {
+					sendMessageToStomp(chatroomId, response);
+				} catch (Exception e) {
+					logger.error("STOMP 전송 중 오류 발생: {}", e.getMessage());
+				}
+			});
 		} catch (JsonProcessingException e) {
-			logger.error("JSON 직렬화 중 오류 발생: {}", e.getMessage());
+			logger.error("JSON 역직렬화 중 오류 발생: {}, Topic: {}", e.getMessage(), topic);
+			// TODO : DLQ로 메시지 이동 가능 (Kafka Dead Letter Queue 설정 필요)
+			// kafkaTemplate.send("dead-letter-queue", message);
+		} catch (Exception e) {
+			logger.error("Kafka Consumer 처리 중 예외 발생: {}", e.getMessage());
+		} finally {
+			// ✅ 메시지 정상 처리 후 Kafka Offset 커밋 (중복 방지)
+			ack.acknowledge();
 		}
 	}
 
