@@ -54,7 +54,7 @@ spring:
     consumer:
       group-id: my-group
       auto-offset-reset: earliest
-      enable-auto-commit: true
+      enable-auto-commit: false # 메시지 유실을 방지하기 위하여 auto commit 비활성화
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
