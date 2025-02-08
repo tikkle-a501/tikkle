@@ -33,7 +33,7 @@ public class KafkaProducer {
 
 	@Transactional
 	public void sendMessage(ChatMessage chatMessage) {
-		// Logger 생성
+		// mongoDB에 chat 저장
 		Chat chat = new Chat(chatMessage.getChatroomId(), chatMessage.getSenderId(), chatMessage.getContent());
 		chatRepository.save(chat);
 
@@ -60,7 +60,7 @@ public class KafkaProducer {
 
 			// 로그: Kafka 메시지 전송 완료
 			logger.info("Kafka 메시지 전송 완료. 토픽: chatroom.{}", chatMessage.getChatroomId());
-			simpMessagingTemplate.convertAndSend("/topic/chatroom." + chatMessage.getChatroomId(), response);
+			// simpMessagingTemplate.convertAndSend("/topic/chatroom." + chatMessage.getChatroomId(), response);
 		} catch (JsonProcessingException e) {
 			// 로그: 직렬화 오류 발생
 			logger.error("JSON 직렬화 중 오류 발생: {}", e.getMessage());
