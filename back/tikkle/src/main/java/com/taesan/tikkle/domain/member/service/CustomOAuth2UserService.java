@@ -142,7 +142,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<byte[]> response = restTemplate.exchange(
-			mattermostDomain + "/mattermost/api/v4/users/" + userId + "/image",
+			mattermostDomain + "/api/v4/users/" + userId + "/image",
 			HttpMethod.GET,
 			entity,
 			byte[].class
