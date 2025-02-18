@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 /*
  *  TODO: 정산 후 BalanceSnapshot 엔티티 생성 메서드 필요
- * 
+ *
  */
 @Service
 @RequiredArgsConstructor
@@ -69,8 +69,6 @@ public class SettlementService {
 
             for (ExchangeLog log : accountLogs) {
                 if (log.getExchangeType() == ExchangeType.TTOR) {
-                    historicalTQ -= log.getQuantity();
-                    historicalRP += log.getQuantity() * log.getRate().getTimeToRank();
                 } else if (log.getExchangeType() == ExchangeType.RTOT) {
                     historicalTQ += log.getQuantity();
                     historicalRP -= log.getQuantity() * log.getRate().getTimeToRank();
@@ -90,7 +88,6 @@ public class SettlementService {
                         account.getTimeQnt(), account.getRankingPoint());
                 isFlawless = false;
             }
-
         }
 
         return isFlawless;
