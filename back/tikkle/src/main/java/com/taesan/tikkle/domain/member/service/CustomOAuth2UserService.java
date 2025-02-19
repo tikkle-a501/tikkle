@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
+import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.member.entity.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	private final OrganizationRepository organizationRepository;
 	private final AccountRepository accountRepository;
 	private final OAuth2AuthorizedClientService authorizedClientService;
+	private final BalanceSnapshotRepository balanceSnapshotRepository;
 
 	@Value("${file.upload.image-dir}")
 	private String imageUploadDir;
@@ -119,6 +122,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 			// Account 저장
 			accountRepository.save(account);
+
+			BalanceSnapshot snapshot = BalanceSnapshot.builder()
+					.accountId(account.getId())
+					.balance(account.getTimeQnt())
+					.build();
+
+			balanceSnapshotRepository.save(snapshot);
 
 			return savedMember;
 
