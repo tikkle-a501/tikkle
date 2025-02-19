@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "account_balance_snapshot")
+@Table(name = "balance_snapshot")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AccountBalanceSnapshot extends BaseEntity {
+public class BalanceSnapshot extends BaseEntity {
 
     @Id
     private UUID id;
