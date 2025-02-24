@@ -39,10 +39,4 @@ public class BalanceSnapshot extends BaseEntity {
         this.rankingPoint = rankingPoint;
     }
 
-    @Builder
-    private BalanceSnapshot(UUID accountId, int balance) {
-        this.accountId = accountId;
-        this.balance = balance;
-    }
-
 }
