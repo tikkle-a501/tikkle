@@ -125,7 +125,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 			BalanceSnapshot snapshot = BalanceSnapshot.builder()
 					.accountId(account.getId())
-					.balance(account.getTimeQnt())
+					.timeQnt(account.getTimeQnt())
+					.rankingPoint(account.getRankingPoint())
 					.build();
 
 			balanceSnapshotRepository.save(snapshot);
