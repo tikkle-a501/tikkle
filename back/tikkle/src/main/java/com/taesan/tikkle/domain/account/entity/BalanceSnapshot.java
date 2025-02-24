@@ -27,12 +27,16 @@ public class BalanceSnapshot extends BaseEntity {
     private UUID accountId;
 
     @Column(nullable = false)
-    private int balance;
+    private int timeQnt;
+
+    @Column(nullable = false)
+    private int rankingPoint;
 
     @Builder
-    private BalanceSnapshot(UUID accountId, int balance) {
+    private BalanceSnapshot(UUID accountId, int timeQnt, int rankingPoint) {
         this.accountId = accountId;
-        this.balance = balance;
+        this.timeQnt = timeQnt;
+        this.rankingPoint = rankingPoint;
     }
 
 }
