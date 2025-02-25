@@ -25,7 +25,7 @@ import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 
 /*
- *  TODO: 랭킹 포인트 검증 로직 추가 필요
+ *  TODO: 정산 후 BalanceSnapshot 엔티티 생성 메서드 필요
  * 
  */
 @Service
