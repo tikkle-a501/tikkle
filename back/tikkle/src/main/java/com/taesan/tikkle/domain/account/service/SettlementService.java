@@ -88,6 +88,7 @@ public class SettlementService {
                         account.getTimeQnt(), account.getRankingPoint());
                 isFlawless = false;
             }
+
         }
 
         return isFlawless;
