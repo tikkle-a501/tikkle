@@ -87,7 +87,7 @@ public class SettlementService {
             if (account.getRankingPoint() != historicalRP) {
                 logger.error("Account balance mismatch for accountId {}: expected (RankingPoint={}, ), actual (timeQnt={}, rankingPoint={})",
                         account.getId(), historicalRP,
-                        account.getRankingPoint(), account.getRankingPoint());
+                        account.getTimeQnt(), account.getRankingPoint());
                 isFlawless = false;
             }
 
