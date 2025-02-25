@@ -70,10 +70,10 @@ public class SettlementService {
             for (ExchangeLog log : accountLogs) {
                 if (log.getExchangeType() == ExchangeType.TTOR) {
                     historicalTQ -= log.getQuantity();
-                    historicalRP += log.getQuantity();
+                    historicalRP += log.getQuantity() * log.getRate().getTimeToRank();
                 } else if (log.getExchangeType() == ExchangeType.RTOT) {
                     historicalTQ += log.getQuantity();
-                    historicalRP -= log.getQuantity();
+                    historicalRP -= log.getQuantity() * log.getRate().getTimeToRank();
                 }
             }
 
