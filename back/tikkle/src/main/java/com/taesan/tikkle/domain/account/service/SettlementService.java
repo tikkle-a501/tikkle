@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
+import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
+import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.config.security.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ public class SettlementService {
 
     private final AccountRepository accountRepository;
     private final ExchangeRepository exchangeRepository;
+    private final BalanceSnapshotRepository balanceSnapshotRepository;
     private static final Logger logger = LoggerFactory.getLogger(SettlementService.class);
 
 
@@ -57,21 +60,37 @@ public class SettlementService {
                 continue;
             }
 
-            int expectedTimeQnt = account.getTimeQnt();  // 예상되는 잔액
+            BalanceSnapshot snapshot = balanceSnapshotRepository
+                    .findFirstByAccountIdOrderByCreatedAtDesc(account.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("No such snapshots from the accountId."));
+
+            int historicalTQ = snapshot.getTimeQnt();
+            int historicalRP = snapshot.getRankingPoint();
+
             for (ExchangeLog log : accountLogs) {
                 if (log.getExchangeType() == ExchangeType.TTOR) {
-                    expectedTimeQnt -= log.getQuantity();
+                    historicalTQ -= log.getQuantity();
+                    historicalRP += log.getQuantity();
                 } else if (log.getExchangeType() == ExchangeType.RTOT) {
-                    expectedTimeQnt += log.getQuantity();
+                    historicalTQ += log.getQuantity();
+                    historicalRP -= log.getQuantity();
                 }
             }
 
-            if (account.getTimeQnt() != expectedTimeQnt) {
+            if (account.getTimeQnt() != historicalTQ) {
                 logger.error("Account balance mismatch for accountId {}: expected (timeQnt={}, ), actual (timeQnt={}, rankingPoint={})",
-                        account.getId(), expectedTimeQnt,
+                        account.getId(), historicalTQ,
                         account.getTimeQnt(), account.getRankingPoint());
                 isFlawless = false;
             }
+
+            if (account.getRankingPoint() != historicalRP) {
+                logger.error("Account balance mismatch for accountId {}: expected (RankingPoint={}, ), actual (timeQnt={}, rankingPoint={})",
+                        account.getId(), historicalRP,
+                        account.getRankingPoint(), account.getRankingPoint());
+                isFlawless = false;
+            }
+
         }
 
         return isFlawless;
