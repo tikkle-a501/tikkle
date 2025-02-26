@@ -11,6 +11,7 @@ import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.config.security.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,6 +102,7 @@ public class SettlementService {
     }
 
     @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
     public void createSnapshots() {
         List<Account> accounts = accountRepository.findAll();
         List<BalanceSnapshot> snapshots = accounts.stream()
