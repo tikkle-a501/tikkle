@@ -84,19 +84,23 @@ public class SettlementService {
             int historicalTQ = snapshot.getTimeQnt();
             int historicalRP = snapshot.getRankingPoint();
 
-            for (ExchangeLog log : accountLogs) {
-                if (log.getExchangeType() == ExchangeType.TTOR) {
-                    historicalTQ -= log.getQuantity();
-                    historicalRP += log.getQuantity() * log.getRate().getTimeToRank();
-                } else if (log.getExchangeType() == ExchangeType.RTOT) {
-                    historicalTQ += log.getQuantity();
-                    historicalRP -= log.getQuantity() * log.getRate().getTimeToRank();
+            if (accountLogs != null) {
+                for (ExchangeLog log : accountLogs) {
+                    if (log.getExchangeType() == ExchangeType.TTOR) {
+                        historicalTQ -= log.getQuantity();
+                        historicalRP += log.getQuantity() * log.getRate().getTimeToRank();
+                    } else if (log.getExchangeType() == ExchangeType.RTOT) {
+                        historicalTQ += log.getQuantity();
+                        historicalRP -= log.getQuantity() * log.getRate().getTimeToRank();
+                    }
                 }
             }
 
-            // 진행 중인 게시글은 모두 보증금 취급
-            for (Board board: activeBoards) {
-                historicalTQ += board.getTime();
+            if (activeBoards != null) {
+                // 진행 중인 게시글은 모두 보증금 취급
+                for (Board board: activeBoards) {
+                    historicalTQ += board.getTime();
+                }
             }
 
             if (account.getTimeQnt() != historicalTQ) {
