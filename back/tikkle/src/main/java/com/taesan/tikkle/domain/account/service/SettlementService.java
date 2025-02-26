@@ -2,10 +2,7 @@ package com.taesan.tikkle.domain.account.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
@@ -60,9 +57,16 @@ public class SettlementService {
                 continue;
             }
 
-            BalanceSnapshot snapshot = balanceSnapshotRepository
-                    .findFirstByAccountIdOrderByCreatedAtDesc(account.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("No such snapshots from the accountId."));
+            Optional<BalanceSnapshot> optSnapshot = balanceSnapshotRepository
+                    .findFirstByAccountIdOrderByCreatedAtDesc(account.getId());
+
+            // 해당 계좌 스냅샷이 없더라도 예외를 던지면 안됨
+            if (optSnapshot.isEmpty()) {
+                logger.error("No BalanceSnapshot found for accountId {}", account.getId());
+                continue;
+            }
+
+            BalanceSnapshot snapshot = optSnapshot.get();
 
             int historicalTQ = snapshot.getTimeQnt();
             int historicalRP = snapshot.getRankingPoint();
@@ -90,8 +94,8 @@ public class SettlementService {
                         account.getTimeQnt(), account.getRankingPoint());
                 isFlawless = false;
             }
-
         }
+
 
         return isFlawless;
     }
