@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +38,14 @@ public class TradeLog extends BaseEntity {
 	@JoinColumn(name = "req_account_id")
 	private Account reqAccount;
 
-	private Float quantity;
+	private Integer quantity;
+
+	@Builder
+	public TradeLog(Board board, Account recAccount, Account reqAccount, Integer quantity) {
+		this.board = board;
+		this.recAccount = recAccount;
+		this.reqAccount = reqAccount;
+		this.quantity = quantity;
+	}
 }
 
