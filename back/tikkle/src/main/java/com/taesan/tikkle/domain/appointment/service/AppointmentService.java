@@ -7,6 +7,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.taesan.tikkle.domain.account.dto.DepositType;
+import com.taesan.tikkle.domain.account.entity.DepositLog;
+import com.taesan.tikkle.domain.account.repository.DepositLogRepository;
+import com.taesan.tikkle.domain.account.repository.TradeLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +48,11 @@ public class AppointmentService {
 	@Autowired
 	private MemberRepository memberRepository;
 	@Autowired
+	private TradeLogRepository tradeLogRepository;
+	@Autowired
 	private FileService fileService;
+    @Autowired
+    private DepositLogRepository depositLogRepository;
 
 	public List<TodoAppointmentResponse> getTodoAppointments(UUID memberId) {
 		List<Appointment> appointments = new ArrayList<>();
@@ -104,7 +112,14 @@ public class AppointmentService {
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 		if (account.getTimeQnt() < appointment.getTimeQnt())
 			throw new CustomException(ErrorCode.ACCOUNT_INSUFFICIENT_BALANCE);
+
 		account.setBalance(account.getTimeQnt() - appointment.getTimeQnt());
+		DepositLog depositLog = DepositLog.builder()
+									.type(DepositType.DEPOSIT)
+									.amount(appointment.getTimeQnt())
+									.account(account)
+									.build();
+		depositLogRepository.save(depositLog);
 		return appointment.getId();
 	}
 
@@ -125,6 +140,13 @@ public class AppointmentService {
 			Account account = accountRepository.findByMemberIdAndDeletedAtIsNull(member.getId())
 				.orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 			account.setBalance(account.getTimeQnt() + appointment.getTimeQnt());
+
+			DepositLog depositLog = DepositLog.builder()
+					.type(DepositType.REFUND)
+					.amount(appointment.getTimeQnt())
+					.account(account)
+					.build();
+			depositLogRepository.save(depositLog);
 			// TODO : 존재하는 약속이지만 이미 삭제된 약속이라면?
 		} else {
 			throw new CustomException(ErrorCode.APPOINTMENT_NOT_AUTHORIZED);
