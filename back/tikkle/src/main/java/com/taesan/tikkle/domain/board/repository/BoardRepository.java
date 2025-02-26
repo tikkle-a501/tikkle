@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.taesan.tikkle.domain.board.entity.Board;
@@ -23,6 +25,12 @@ public interface BoardRepository extends JpaRepository<Board, UUID> {
 	
 	// memberId에 따른 게시글 조회 최신순으로 반환
 	List<Board> findByMemberIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID username);
+
+	@Query("SELECT b FROM Board b " +
+			"WHERE b.deletedAt IS NULL AND b.status = :status AND b.member.id = :memberId " +
+			"ORDER BY b.createdAt DESC")
+	List<Board> findActiveBoardsByMember(@Param("status") String status, @Param("memberId") UUID memberId);
+
 }
 
 
