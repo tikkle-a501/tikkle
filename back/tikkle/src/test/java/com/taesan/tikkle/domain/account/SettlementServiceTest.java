@@ -8,6 +8,7 @@ import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.account.repository.ExchangeRepository;
 import com.taesan.tikkle.domain.account.service.SettlementService;
+import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.rate.entity.Rate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ public class SettlementServiceTest {
 
     @Mock
     private BalanceSnapshotRepository balanceSnapshotRepository;
+
+    @Mock
+    private BoardRepository boardRepository;
 
     private UUID accountId;
     private Account account;
