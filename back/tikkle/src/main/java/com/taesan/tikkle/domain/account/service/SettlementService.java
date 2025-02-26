@@ -36,7 +36,11 @@ public class SettlementService {
     private static final Logger logger = LoggerFactory.getLogger(SettlementService.class);
 
 
+    /*
+        TODO: 배치 처리 변환 필요
+     */
     @Transactional
+    @Scheduled(cron = "0 30 23 * * *")
     public boolean performDailySettlement() {
         boolean isFlawless = true;
 
