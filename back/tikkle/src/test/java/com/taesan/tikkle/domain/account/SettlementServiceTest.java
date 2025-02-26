@@ -8,7 +8,11 @@ import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.account.repository.ExchangeRepository;
 import com.taesan.tikkle.domain.account.service.SettlementService;
+import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
+import com.taesan.tikkle.domain.member.entity.Member;
+import com.taesan.tikkle.domain.member.entity.Role;
+import com.taesan.tikkle.domain.organization.entity.Organization;
 import com.taesan.tikkle.domain.rate.entity.Rate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +48,11 @@ public class SettlementServiceTest {
     private BoardRepository boardRepository;
 
     private UUID accountId;
+    private UUID boardId;
+    private Organization organization;
     private Account account;
+    private Board activeBoard;
+    private Member member;
     private ExchangeLog exchangeLog;
     private Rate rate;
     private BalanceSnapshot balanceSnapshot;
@@ -52,6 +60,32 @@ public class SettlementServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        organization = Organization.builder()
+                .name("testOrg")
+                .paymentPolicy("testPolicy")
+                .provider(0)
+                .domainAddr("tikkle")
+                .build();
+
+        member = Member.builder()
+                .organization(organization)
+                .email("test@test.com")
+                .role(Role.ROLE_USER)
+                .nickname("testNick")
+                .name("testName")
+                .build();
+
+        activeBoard = Board.builder()
+                .member(member)
+                .title("Active Board")
+                .content("This is a test board")
+                .status("진행중")
+                .time(1)
+                .viewCount(0)
+                .build();
+
+        boardId = activeBoard.getId();
 
         account = Account.builder()
                 .timeQnt(10)
@@ -202,6 +236,42 @@ public class SettlementServiceTest {
         boolean result = settlementService.performDailySettlement();
 
         // Then: 모든 계좌의 잔액이 일치하면 true를 반환해야 함
+        assertTrue(result);
+    }
+
+    @Test
+    public void should_ReturnTrue_When_ActiveBoardsExist() {
+        when(boardRepository.findActiveBoardsByMember("진행중", member.getId()))
+                .thenReturn(List.of(activeBoard));
+
+        List<Board> boards = boardRepository.findActiveBoardsByMember("진행중", member.getId());
+
+        assertFalse(boards.isEmpty());
+        assertEquals(1, boards.size());
+        assertEquals("진행중", boards.get(0).getStatus());
+
+        boolean result = settlementService.performDailySettlement();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void should_HandleActiveBoardsAndExchangeLogsTogether() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(23, 29, 59);
+
+        List<ExchangeLog> exchangeLogs = Arrays.asList(exchangeLog);
+        List<Account> accounts = Arrays.asList(account);
+        List<Board> activeBoards = Arrays.asList(activeBoard);
+
+        when(exchangeRepository.findByCreatedAtBetween(startOfDay, endOfDay)).thenReturn(exchangeLogs);
+        when(accountRepository.findAll()).thenReturn(accounts);
+        when(boardRepository.findActiveBoardsByMember("진행중", member.getId()))
+                .thenReturn(activeBoards);
+
+        boolean result = settlementService.performDailySettlement();
+
         assertTrue(result);
     }
 }
