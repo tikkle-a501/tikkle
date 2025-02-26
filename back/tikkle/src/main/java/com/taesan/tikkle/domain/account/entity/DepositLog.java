@@ -4,6 +4,7 @@ import com.taesan.tikkle.domain.account.dto.DepositType;
 import com.taesan.tikkle.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +27,7 @@ public class DepositLog extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DepositType type; // DEPOSIT(보증금 차감), REFUND(보증금 반환)
 
+    @Builder
     public DepositLog(Account account, Integer amount, DepositType type) {
         this.account = account;
         this.amount = amount;
