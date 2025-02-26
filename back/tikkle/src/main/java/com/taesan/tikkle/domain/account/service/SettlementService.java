@@ -101,6 +101,9 @@ public class SettlementService {
         return isFlawless;
     }
 
+    /*
+        TODO: 배치 처리 변환 필요
+     */
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void createSnapshots() {
