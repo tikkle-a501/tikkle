@@ -14,6 +14,7 @@ import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
 import com.taesan.tikkle.domain.config.security.CustomUserDetails;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,8 +41,33 @@ public class SettlementService {
     private final BalanceSnapshotRepository balanceSnapshotRepository;
     private final DepositLogRepository depositLogRepository;
     private final BoardRepository boardRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(SettlementService.class);
 
+    private final Map<String, SnapshotStrategy> snapshotStrategyMap;
+    private SnapshotStrategyType snapshotStrategyType;
+    private SnapshotStrategy snapshotStrategy;
+
+    @PostConstruct
+    public void init() {
+        // 기본 전략으로 원래 findAll()만 이용하던 JPA 코드 이용
+        snapshotStrategyType = SnapshotStrategyType.JPA;
+        snapshotStrategy = snapshotStrategyMap.get(snapshotStrategyType.getBeanName());
+
+        if (snapshotStrategy == null) {
+            throw new IllegalStateException("Default strategy (JPA) not found!");
+        }
+
+        logger.info("Initialized with default strategy: {} ({})",
+                snapshotStrategyType.name(), snapshotStrategyType.getDescription());
+    }
+
+    public void setSnapshotStrategy(SnapshotStrategyType strategyType, SnapshotStrategy strategy) {
+        this.snapshotStrategyType = strategyType;
+        this.snapshotStrategy = strategy;
+        logger.info("SnapshotStrategyType: {} ({})",
+                strategyType.name(), strategyType.getDescription());
+    }
 
     /*
         TODO: 배치 처리 변환 필요
@@ -122,22 +148,17 @@ public class SettlementService {
         return isFlawless;
     }
 
-    /*
-        TODO: 배치 처리 변환 필요
-     */
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void createSnapshots() {
-        List<Account> accounts = accountRepository.findAll();
-        List<BalanceSnapshot> snapshots = accounts.stream()
-                .map(account -> BalanceSnapshot.builder()
-                        .accountId(account.getId())
-                        .timeQnt(account.getTimeQnt())
-                        .rankingPoint(account.getRankingPoint())
-                        .build())
-                .toList();
+        logger.info("Creating snapshots with strategy: {} ({})",
+                snapshotStrategyType.name(), snapshotStrategyType.getDescription());
 
-        balanceSnapshotRepository.saveAll(snapshots);
+        long startTime = System.currentTimeMillis();
+        snapshotStrategy.createSnapShots();
+        long endTime = System.currentTimeMillis();
+
+        logger.info("Completed snapshot creation in {} ms", (endTime - startTime));
     }
 }
 
