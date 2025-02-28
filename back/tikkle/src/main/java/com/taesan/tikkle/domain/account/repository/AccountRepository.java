@@ -4,15 +4,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.entity.Account;
 import com.taesan.tikkle.domain.account.entity.ExchangeLog;
+
+import static org.hibernate.annotations.QueryHints.READ_ONLY;
+import static org.hibernate.jpa.HibernateHints.HINT_FETCH_SIZE;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID> {
@@ -31,4 +37,11 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 	List<ExchangeLog> findExchangeLogsByMemberId(@Param("memberId") UUID memberId);
 
 	Optional<Account> findByMemberIdAndDeletedAtIsNull(UUID id);
+
+	@QueryHints(value = {
+			@QueryHint(name = HINT_FETCH_SIZE, value = "" + 1000),
+			@QueryHint(name = READ_ONLY, value = "true")
+	})
+	@Query("SELECT a FROM Account a")
+	Stream<Account> findAllAccounts();
 }
