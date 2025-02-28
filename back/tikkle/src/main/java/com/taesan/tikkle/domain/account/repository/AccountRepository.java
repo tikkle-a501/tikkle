@@ -37,11 +37,4 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 	List<ExchangeLog> findExchangeLogsByMemberId(@Param("memberId") UUID memberId);
 
 	Optional<Account> findByMemberIdAndDeletedAtIsNull(UUID id);
-
-	@QueryHints(value = {
-			@QueryHint(name = HINT_FETCH_SIZE, value = "" + 1000),
-			@QueryHint(name = READ_ONLY, value = "true")
-	})
-	@Query("SELECT a FROM Account a")
-	Stream<Account> findAllAccounts();
 }
