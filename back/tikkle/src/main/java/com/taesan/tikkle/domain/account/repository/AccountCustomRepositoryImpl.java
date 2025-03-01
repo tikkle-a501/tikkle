@@ -10,6 +10,9 @@ import java.util.stream.Stream;
 import static org.hibernate.annotations.QueryHints.READ_ONLY;
 import static org.hibernate.jpa.HibernateHints.HINT_FETCH_SIZE;
 
+/*
+    테스트 비교를 위한 클래스이므로, 로직 확정 전까지는 AccountCustom... 으로 고수
+ */
 @Repository
 public class AccountCustomRepositoryImpl implements AccountCustomRepository {
 
