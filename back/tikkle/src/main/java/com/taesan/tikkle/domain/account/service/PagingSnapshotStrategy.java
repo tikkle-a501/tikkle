@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,24 +46,27 @@ public class PagingSnapshotStrategy implements SnapshotStrategy {
         boolean hasMoreData = true;
 
         while (hasMoreData) {
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
-            Page<Account> accountPage = accountRepository.findAll(pageable);
 
-            // 스냅샷 생성 및 저장
-            List<BalanceSnapshot> batchSnapshots = accountPage.getContent().stream()
+            // 1. COUNT 쿼리 없는 Slice로 account 가져오기
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Slice<Account> accountSlice = accountRepository.findAllAsSlice(pageable);
+
+            // 2. 해당 Slice 내에서 BalanceSnapshot으로 변경
+            List<BalanceSnapshot> batchSnapshots = accountSlice.getContent().stream()
                     .map(this::convertToSnapshot)
                     .collect(Collectors.toList());
 
+            // 3. 영속화 이후 영속성 컨텍스트 초기화
             balanceSnapshotRepository.saveAll(batchSnapshots);
-
             entityManager.flush();
             entityManager.clear();
 
             totalProcessed += batchSnapshots.size();
             logger.debug("Processed page {} with {} accounts", pageNumber, batchSnapshots.size());
 
+            // 4. 다음 Slice 준비
             pageNumber++;
-            hasMoreData = !accountPage.isLast();
+            hasMoreData = !accountSlice.hasNext();
         }
 
         logger.info("Created {} snapshots using Paging strategy", totalProcessed);
