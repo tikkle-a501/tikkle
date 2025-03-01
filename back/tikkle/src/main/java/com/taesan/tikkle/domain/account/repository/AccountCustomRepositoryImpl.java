@@ -3,12 +3,14 @@ package com.taesan.tikkle.domain.account.repository;
 import com.taesan.tikkle.domain.account.entity.Account;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Repository;
 
 import java.util.stream.Stream;
 
 import static org.hibernate.annotations.QueryHints.READ_ONLY;
 import static org.hibernate.jpa.HibernateHints.HINT_FETCH_SIZE;
 
+@Repository
 public class AccountCustomRepositoryImpl implements AccountCustomRepository {
 
     @PersistenceContext
