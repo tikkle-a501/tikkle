@@ -7,6 +7,8 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import jakarta.persistence.QueryHint;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -37,4 +39,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 	List<ExchangeLog> findExchangeLogsByMemberId(@Param("memberId") UUID memberId);
 
 	Optional<Account> findByMemberIdAndDeletedAtIsNull(UUID id);
+
+	Slice<Account> findAllAsSlice(Pageable pageable);
 }
