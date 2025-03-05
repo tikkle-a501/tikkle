@@ -3,6 +3,7 @@ package com.taesan.tikkle.domain.account.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
@@ -154,11 +155,11 @@ public class SettlementService {
         logger.info("Creating snapshots with strategy: {} ({})",
                 snapshotStrategyType.name(), snapshotStrategyType.getDescription());
 
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         snapshotStrategy.createSnapShots();
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
 
-        logger.info("Completed snapshot creation in {} ms", (endTime - startTime));
+        logger.info("Completed snapshot creation in {} ms", TimeUnit.NANOSECONDS.toMillis(endTime - startTime));
     }
 }
 
