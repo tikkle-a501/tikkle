@@ -3,17 +3,17 @@ package com.taesan.tikkle.domain.account.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
-import com.taesan.tikkle.domain.account.entity.DepositLog;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.account.repository.DepositLogRepository;
-import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
+import com.taesan.tikkle.domain.account.service.strategy.SnapshotStrategy;
+import com.taesan.tikkle.domain.account.service.strategy.SnapshotStrategyType;
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
-import com.taesan.tikkle.domain.config.security.CustomUserDetails;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,12 +50,12 @@ public class SettlementService {
 
     @PostConstruct
     public void init() {
-        // 기본 전략으로 원래 findAll()만 이용하던 JPA 코드 이용
-        snapshotStrategyType = SnapshotStrategyType.JPA;
+        // 성능 테스트 이후 어플리케이션 메모리 사용 거의 없으며, 수행 시간 낮은 JDBC 전략 이용
+        snapshotStrategyType = SnapshotStrategyType.JDBC;
         snapshotStrategy = snapshotStrategyMap.get(snapshotStrategyType.getBeanName());
 
         if (snapshotStrategy == null) {
-            throw new IllegalStateException("Default strategy (JPA) not found!");
+            throw new IllegalStateException("Default strategy (JDBC) not found!");
         }
 
         logger.info("Initialized with default strategy: {} ({})",
@@ -154,11 +154,11 @@ public class SettlementService {
         logger.info("Creating snapshots with strategy: {} ({})",
                 snapshotStrategyType.name(), snapshotStrategyType.getDescription());
 
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         snapshotStrategy.createSnapShots();
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
 
-        logger.info("Completed snapshot creation in {} ms", (endTime - startTime));
+        logger.info("Completed snapshot creation in {} ms", TimeUnit.NANOSECONDS.toMillis(endTime - startTime));
     }
 }
 
