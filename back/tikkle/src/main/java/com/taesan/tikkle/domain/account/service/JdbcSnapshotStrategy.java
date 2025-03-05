@@ -21,7 +21,7 @@ public class JdbcSnapshotStrategy implements SnapshotStrategy {
     public void createSnapShots() {
         logger.info("Creating snapshots using JDBC");
         int insertedCount = balanceSnapshotCustomRepository.insertDirectlyFromAccounts();
-        logger.info("Created {} snapshots using JDBC bulk insert", insertedCount);
+        logger.info("Created {} snapshots using JDBC directly SELECT INTO", insertedCount);
     }
 
     @Override
