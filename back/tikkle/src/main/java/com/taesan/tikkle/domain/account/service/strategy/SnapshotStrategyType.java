@@ -1,4 +1,4 @@
-package com.taesan.tikkle.domain.account.service;
+package com.taesan.tikkle.domain.account.service.strategy;
 
 public enum SnapshotStrategyType {
     JPA("JPA findAll() saveAll() with Batch", "jpaSnapshotStrategy"),
