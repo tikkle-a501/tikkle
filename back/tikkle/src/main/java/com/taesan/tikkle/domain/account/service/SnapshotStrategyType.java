@@ -1,10 +1,10 @@
 package com.taesan.tikkle.domain.account.service;
 
 public enum SnapshotStrategyType {
-    JPA("JPA findAll()", "jpaSnapshotStrategy"),
-    STREAM("STREAM API", "streamSnapshotStrategy"),
-    PAGING("PAGING", "pagingSnapshotStrategy"),
-    JDBC("JDBC BULK INSERT", "jdbcSnapshotStrategy");
+    JPA("JPA findAll() saveAll() with Batch", "jpaSnapshotStrategy"),
+    STREAM("STREAM API with Batch", "streamSnapshotStrategy"),
+    PAGING("PAGING with Batch", "pagingSnapshotStrategy"),
+    JDBC("JDBC SELECT INTO", "jdbcSnapshotStrategy");
 
     private final String description;
     private final String beanName;
