@@ -51,12 +51,12 @@ public class SettlementService {
 
     @PostConstruct
     public void init() {
-        // 기본 전략으로 원래 findAll()만 이용하던 JPA 코드 이용
-        snapshotStrategyType = SnapshotStrategyType.JPA;
+        // 성능 테스트 이후 어플리케이션 메모리 사용 거의 없으며, 수행 시간 낮은 JDBC 전략 이용
+        snapshotStrategyType = SnapshotStrategyType.JDBC;
         snapshotStrategy = snapshotStrategyMap.get(snapshotStrategyType.getBeanName());
 
         if (snapshotStrategy == null) {
-            throw new IllegalStateException("Default strategy (JPA) not found!");
+            throw new IllegalStateException("Default strategy (JDBC) not found!");
         }
 
         logger.info("Initialized with default strategy: {} ({})",
