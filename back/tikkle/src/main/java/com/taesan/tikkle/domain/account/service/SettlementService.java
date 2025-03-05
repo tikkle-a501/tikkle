@@ -8,13 +8,12 @@ import java.util.stream.Collectors;
 
 import com.taesan.tikkle.domain.account.dto.ExchangeType;
 import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
-import com.taesan.tikkle.domain.account.entity.DepositLog;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.account.repository.DepositLogRepository;
-import com.taesan.tikkle.domain.appointment.repository.AppointmentRepository;
+import com.taesan.tikkle.domain.account.service.strategy.SnapshotStrategy;
+import com.taesan.tikkle.domain.account.service.strategy.SnapshotStrategyType;
 import com.taesan.tikkle.domain.board.entity.Board;
 import com.taesan.tikkle.domain.board.repository.BoardRepository;
-import com.taesan.tikkle.domain.config.security.CustomUserDetails;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

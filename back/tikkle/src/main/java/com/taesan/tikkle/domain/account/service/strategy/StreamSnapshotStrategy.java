@@ -1,9 +1,8 @@
-package com.taesan.tikkle.domain.account.service;
+package com.taesan.tikkle.domain.account.service.strategy;
 
 import com.taesan.tikkle.domain.account.entity.Account;
 import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
 import com.taesan.tikkle.domain.account.repository.AccountCustomRepository;
-import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -11,13 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 @Component("streamSnapshotStrategy")

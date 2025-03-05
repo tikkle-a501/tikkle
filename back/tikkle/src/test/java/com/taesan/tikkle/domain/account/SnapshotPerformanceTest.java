@@ -1,14 +1,11 @@
 package com.taesan.tikkle.domain.account;
 
 import com.github.f4b6a3.ulid.UlidCreator;
-import com.taesan.tikkle.domain.account.entity.Account;
-import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
 import com.taesan.tikkle.domain.account.repository.AccountRepository;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotCustomRepository;
 import com.taesan.tikkle.domain.account.repository.BalanceSnapshotRepository;
 import com.taesan.tikkle.domain.account.service.*;
-import com.taesan.tikkle.domain.member.entity.Member;
-import com.taesan.tikkle.domain.member.entity.Role;
+import com.taesan.tikkle.domain.account.service.strategy.*;
 import com.taesan.tikkle.domain.member.repository.MemberRepository;
 import com.taesan.tikkle.domain.organization.entity.Organization;
 import com.taesan.tikkle.domain.organization.repository.OrganizationRepository;
@@ -18,12 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,7 +31,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @DataJpaTest
 @Testcontainers

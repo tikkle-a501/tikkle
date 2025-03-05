@@ -1,4 +1,4 @@
-package com.taesan.tikkle.domain.account.service;
+package com.taesan.tikkle.domain.account.service.strategy;
 
 import com.taesan.tikkle.domain.account.entity.Account;
 import com.taesan.tikkle.domain.account.entity.BalanceSnapshot;
